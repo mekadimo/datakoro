@@ -1,0 +1,25 @@
+[package]
+authors = ["Lajto"]
+description = "Datakoro GUI."
+edition = "2021"
+license = "AGPLv3"
+name = "datakoro_gui"
+repository = "https://github.com/mekadimo/datakoro"
+version = "0.1.0"
+
+[dependencies]
+datakoro_client = { path = "../client" }
+leptos.workspace = true
+leptos_actix = { workspace = true, optional = true }
+leptos_icons.workspace = true
+leptos_meta.workspace = true
+leptos_router.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+
+[features]
+csr = []
+default = []
+hydrate = []
+ssr = []
