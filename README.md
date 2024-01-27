@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./.assets/datakoro-readme-logo.png" alt="Datakoro"/>
+<img src="./gui/assets/img/datakoro-readme-logo.png" alt="Datakoro"/>
 
 Mekadimo's universal database. Storing all concepts made by humanity.
 
@@ -17,9 +17,11 @@ March 20, 2024.
 # About Datakoro
 
 Datakoro is a universal database with one particular goal: to store all
-humanity's knowledge in the form of concepts and relations (a graph), so anyone
-can access to information and the current state of science. Its structure
-reflects how we humans abstract concepts in a sane way, mathematizing the world.
+humanity's knowledge in a
+[graph](https://en.wikipedia.org/wiki/Graph_(discrete_mathematics))
+of concepts and relations, so anyone can access to information and the current
+state of science. Its structure reflects how we humans abstract concepts in a
+sane way, mathematizing the world.
 
 This database can be considered as an 'encyclopedia of concepts'. There are
 more ambitious long-term goals, such as automating decision-making by analyzing
@@ -33,9 +35,11 @@ main reasons for being open-source are transparency and continuity; that's why
 the license is the GNU AGPL v3.
 
 Datakoro is part of the Mekadimo Project. It's its main tool, along with a
-mathematical conlang called 'Mekaranto', to change the world by moving from a
-fiction-based society (Primadimo) to a science-based society (Mekadimo). The
-project will be presented on March 20, 2024.
+mathematical
+[constructed language](https://en.wikipedia.org/wiki/Constructed_language)
+called 'Mekaranto', to change the world by moving from a fiction-based society
+(Primadimo) to a science-based society (Mekadimo). The project will be
+presented on March 20, 2024.
 
 ## FAQ
 
@@ -83,8 +87,54 @@ Technical questions:
 
 # Installation
 
-Work in progress.
+## Development
 
-# Development
+*NOTE: If you want to contribute to this project, please read first the
+`DEVELOPMENT.md` file.*
+
+We use [Docker](https://www.docker.com/) containers during the development of
+Datakoro, so we don't mix our local environment with Datakoro's requirements.
+We assume you are using a common GNU/Linux distribution like Debian, Fedora
+or Arch, a text editor like VS Code, and that your terminal is running in the
+root directory of this repository. But feel free to use other tools if you
+know what you're doing.
+
+First of all, we need TLS certificates so NGINX can do its job. This is not
+mandatory, since we can access Datakoro with non-encrypted HTTP requests, but
+it's recommended to have a fully working environment. Create some certificates
+for this case is as simple as running:
+
+```sh
+make dev-certs
+```
+
+Then, all Docker containers can be created and start running with:
+
+```sh
+make up
+
+# In a new terminal, we run all database migrations:
+make migrate
+```
+
+And that's it! Datakoro should be ready to use in:
+
+- HTTP: http://localhost:8001/
+- HTTPS: https://localhost:8443/
+
+In our Makefile you can find other useful commands, like:
+
+```sh
+make up-fresh  # Remove Docker volumes and then `make up`
+make rebuild   # Rebuild all containers without cache
+
+make into-psql    # Access PostgreSQL shell `psql`
+make into-server  # Access shell of Datakoro server container
+
+make migrate    # Run all database migrations
+make migration  # Create new database migration
+```
+
+## Release
 
 Work in progress.

@@ -12,4 +12,9 @@ crate-type = ["cdylib", "rlib"]
 path = "../src/lib_hydration.rs"
 
 [dependencies]
+console_error_panic_hook.workspace = true
+console_log.workspace = true
+datakoro_gui = { path = "../../gui", features = ["hydrate"] }
 leptos = { workspace = true, features = [ "hydrate" ] }
+log.workspace = true
+wasm-bindgen.workspace = true

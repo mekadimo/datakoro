@@ -7,23 +7,27 @@ name = "datakoro_server"
 repository = "https://github.com/mekadimo/datakoro"
 version = "0.1.0"
 
+[[bin]]
+name = "datakoro_server"
+path = "./src/main.rs"
+
 [dependencies]
-actix-files = { workspace = true, optional = true }
-actix-identity = { workspace = true, optional = true }
-actix-multipart = { workspace = true, optional = true }
-actix-session = { workspace = true, optional = true }
-actix-web = { workspace = true, optional = true }
-leptos.workspace = true
-leptos_actix = { workspace = true, optional = true }
+actix-files.workspace = true
+actix-identity.workspace = true
+actix-multipart.workspace = true
+actix-session.workspace = true
+actix-web.workspace = true
+chrono.workspace = true
+datakoro_database = { path = "../database" }
+datakoro_gui = { path = "../gui", features = ["ssr"] }
+futures.workspace = true
+leptos = { workspace = true, features = ["ssr"]}
+leptos_actix.workspace = true
 leptos_icons.workspace = true
-leptos_meta.workspace = true
-leptos_router.workspace = true
+leptos_meta = { workspace = true, features = ["ssr"]}
+leptos_router = { workspace = true, features = ["ssr"]}
+rand.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+tokio.workspace = true
 uuid.workspace = true
-
-[features]
-csr = []
-default = []
-hydrate = []
-ssr = []

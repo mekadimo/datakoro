@@ -7,12 +7,10 @@ name = "datakoro_database"
 repository = "https://github.com/mekadimo/datakoro"
 version = "0.1.0"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "./src/lib.rs"
+
 [dependencies]
 chrono.workspace = true
 diesel.workspace = true
-
-[features]
-csr = []
-default = []
-hydrate = []
-ssr = []

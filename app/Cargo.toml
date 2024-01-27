@@ -7,8 +7,14 @@ name = "datakoro_app"
 repository = "https://github.com/mekadimo/datakoro"
 version = "0.1.0"
 
-[features]
-csr = []
-default = []
-hydrate = []
-ssr = []
+[[bin]]
+name = "datakoro_app"
+path = "./src/main.rs"
+
+[dependencies]
+console_error_panic_hook.workspace = true
+console_log.workspace = true
+datakoro_gui = { path = "../gui", features = ["csr"] }
+leptos = { workspace = true, features = [ "csr" ] }
+log.workspace = true
+wasm-bindgen.workspace = true
