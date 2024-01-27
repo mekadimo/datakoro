@@ -1,0 +1,8 @@
+[package]
+authors = ["Lajto"]
+description = "Datakoro CLI."
+edition = "2021"
+license = "AGPLv3"
+name = "datakoro_cli"
+repository = "https://github.com/mekadimo/datakoro"
+version = "0.1.0"
