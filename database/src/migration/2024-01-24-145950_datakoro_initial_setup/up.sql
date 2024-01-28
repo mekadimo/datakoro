@@ -19,6 +19,21 @@ CREATE TABLE user_concept (
     restricted_access  BOOL NOT NULL
 );
 
+-- Private data (DELETABLE)
+CREATE TABLE user_session (
+    id UUID PRIMARY KEY,
+
+    user_id    UUID NOT NULL REFERENCES user_concept,
+    csrf_token UUID NOT NULL UNIQUE,
+
+    ip                        TEXT        NOT NULL,
+    user_agent_request_header TEXT        NOT NULL,
+    start_date                TIMESTAMPTZ NOT NULL,
+
+    -- MUTABLE
+    last_request_date TIMESTAMPTZ NOT NULL
+);
+
 CREATE TABLE operation_concept (
     concept_id UUID PRIMARY KEY REFERENCES concept,
 
