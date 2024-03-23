@@ -11,8 +11,7 @@ Mekadimo's universal database. Storing all concepts made by humanity.
 
 </div>
 
-This repository will be a work in progress until the first release on
-March 20, 2024.
+This repository is a work in progress!
 
 # About Datakoro
 
@@ -34,8 +33,8 @@ as 'data with heart', since the orientation of this project is humanistic. The
 main reasons for being open-source are transparency and continuity; that's why
 the license is the GNU AGPL v3.
 
-Datakoro is part of the Mekadimo Project. It's its main tool, along with a
-mathematical
+Datakoro is part of the [Mekadimo Project](https://mekadimo.org).
+It's its main tool, along with a mathematical
 [constructed language](https://en.wikipedia.org/wiki/Constructed_language)
 called 'Mekaranto', to change the world by moving from a fiction-based society
 (Primadimo) to a science-based society (Mekadimo). The project will be
