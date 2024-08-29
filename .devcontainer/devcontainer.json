@@ -1,0 +1,66 @@
+{
+	"name": "Datakoro",
+	"dockerComposeFile": ["../docker-compose.yml"],
+	"service": "datakoro_server",
+	"workspaceFolder": "/srv/datakoro",
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+    "remoteUser": "root",
+    // "mounts": [
+    //     "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+    //     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+    // ],
+    // "postCreateCommand": "chmod 700 /root/.ssh && chmod 600 /root/.ssh/* && ln -sf /ssh-agent /root/.ssh-agent && echo 'export SSH_AUTH_SOCK=/root/.ssh-agent' >> /root/.bashrc",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "[javascript]": {
+                    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[svelte]": {
+                    "editor.defaultFormatter": "svelte.svelte-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[typescript]": {
+                    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "editor.formatOnPaste": false,
+                "editor.formatOnSave": false,
+                "editor.formatOnType": false,
+                "editor.insertSpaces": true,
+                "editor.tabSize": 4,
+                "files.insertFinalNewline": true,
+                "files.trimFinalNewlines": true
+            },
+            "extensions": [
+                "ms-azuretools.vscode-docker",
+                "ms-vscode-remote.vscode-remote-extensionpack",
+                "mikestead.dotenv",
+                "mhutchie.git-graph",
+                "william-voyek.vscode-nginx",
+                "geeksharp.openssl-configuration-file",
+                "ckolkman.vscode-postgres",
+                "uniquevision.vscode-plpgsql-lsp",
+                "eamodio.gitlens",
+                "svelte.svelte-vscode",
+                "rvest.vs-code-prettier-eslint",
+                "dbaeumer.vscode-eslint",
+                "Phu1237.vs-browser"
+            ]
+        }
+    }
+}

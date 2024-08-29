@@ -1,0 +1,73 @@
+version: "3"
+
+services:
+  master:
+    container_name: "${COMPOSE_PROJECT_NAME:-citus}_master"
+    image: "citusdata/citus:${TAG:-12.1.1}"
+    ports: ["${COORDINATOR_EXTERNAL_PORT:-5432}:5432"]
+    labels: ["com.citusdata.role=Master"]
+    environment: &AUTH
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      PGUSER: "${POSTGRES_USER}"
+      PGPASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
+    networks:
+      - datakoro_net
+
+  worker:
+    image: "citusdata/citus:${TAG:-12.1.1}"
+    labels: ["com.citusdata.role=Worker"]
+    depends_on: [manager]
+    environment: *AUTH
+    command: "/wait-for-manager.sh"
+    volumes:
+      - healthcheck-volume:/healthcheck
+    networks:
+      - datakoro_net
+
+  manager:
+    container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
+    image: "citusdata/membership-manager:0.3.0"
+    volumes:
+      - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock"
+      - healthcheck-volume:/healthcheck
+    depends_on: [master]
+    environment: *AUTH
+    networks:
+      - datakoro_net
+
+  datakoro_server:
+    container_name: datakoro_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    command: tail -f /dev/null
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/srv/datakoro
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@datakoro_master/${POSTGRES_USER}
+    depends_on:
+      - master
+    networks:
+      - datakoro_net
+
+  datakoro_server_nginx:
+    image: "nginx:stable-bookworm"
+    container_name: datakoro_server_nginx
+    ports:
+      - "8443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - datakoro_server
+    networks:
+      - datakoro_net
+volumes:
+  healthcheck-volume:
+networks:
+  datakoro_net:
