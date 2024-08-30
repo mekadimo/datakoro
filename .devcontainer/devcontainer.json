@@ -7,11 +7,9 @@
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
     "remoteUser": "root",
-    // "mounts": [
-    //     "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
-    //     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
-    // ],
-    // "postCreateCommand": "chmod 700 /root/.ssh && chmod 600 /root/.ssh/* && ln -sf /ssh-agent /root/.ssh-agent && echo 'export SSH_AUTH_SOCK=/root/.ssh-agent' >> /root/.bashrc",
+    "mounts": [
+        "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
+    ],
     "customizations": {
         "vscode": {
             "settings": {
