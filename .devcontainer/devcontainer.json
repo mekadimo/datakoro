@@ -15,8 +15,32 @@
     "customizations": {
         "vscode": {
             "settings": {
+                "[css]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[html]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
                 "[javascript]": {
-                    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[scss]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
                     "editor.formatOnPaste": false,
                     "editor.formatOnSave": true,
                     "editor.formatOnSaveMode": "file",
@@ -31,7 +55,7 @@
                     "editor.tabSize": 4
                 },
                 "[typescript]": {
-                    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
                     "editor.formatOnPaste": false,
                     "editor.formatOnSave": true,
                     "editor.formatOnSaveMode": "file",
@@ -57,7 +81,7 @@
                 "uniquevision.vscode-plpgsql-lsp",
                 "eamodio.gitlens",
                 "svelte.svelte-vscode",
-                "rvest.vs-code-prettier-eslint",
+                "esbenp.prettier-vscode",
                 "dbaeumer.vscode-eslint",
                 "Phu1237.vs-browser"
             ]

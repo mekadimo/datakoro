@@ -6,7 +6,9 @@ import { writable } from "svelte/store";
 const GLOBAL_CONTEXT_KEY = "global";
 
 // Silly User object that will be removed later
-interface TempUser { something: string }
+interface TempUser {
+    something: string;
+}
 
 interface AppGlobalState {
     currentTheme: Writable<"dark" | "light">; // TODO: store in user's browser
