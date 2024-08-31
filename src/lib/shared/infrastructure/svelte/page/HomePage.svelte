@@ -3,8 +3,9 @@
     import MagnifyingGlassIcon from "phosphor-svelte/lib/MagnifyingGlass";
 
     import TopBar from "../section/TopBar.svelte";
+    import { AppGlobalState } from "../model/AppGlobalState";
 
-    export let currentLanguageCode: string;
+    let { i18n } = AppGlobalState.get();
 
     let searchValue = "";
 
@@ -14,13 +15,13 @@
     }
 </script>
 
-<TopBar {currentLanguageCode} isFixed={false} showLogotype={false} />
+<TopBar isFixed={false} showLogotype={false} />
 <section class="section datakoro-home">
     <div class="columns is-centered">
         <div class="column home-search">
             <header class="has-text-centered mb-6 datakoro-title-header">
                 <img
-                    alt="DATAKORO"
+                    alt={$i18n.t("datakoro").toUpperCase()}
                     height="70px"
                     src="/img/datakoro-logotype-000-x70.png"
                 />
@@ -59,7 +60,7 @@
                     on:click={onClickSearch}
                     type="button"
                 >
-                    Search concepts
+                    {$i18n.t("search_concepts")}
                 </button>
             </div>
         </div>

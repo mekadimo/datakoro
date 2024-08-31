@@ -1,10 +1,8 @@
 <script lang="ts">
     import TopBar from "../section/TopBar.svelte";
-
-    export let currentLanguageCode: string;
 </script>
 
-<TopBar {currentLanguageCode} isFixed={true} showLogotype={true} />
+<TopBar isFixed={true} showLogotype={true} />
 <section class="section datakoro-view">Work in progres...</section>
 
 <style lang="scss">

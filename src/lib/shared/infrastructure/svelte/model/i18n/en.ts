@@ -1,0 +1,17 @@
+export const enTranslations = {
+    account: "Account",
+    change_current_language: "Change current language",
+    change_theme: "Change theme",
+    close: "Close",
+    contributions: "Contributions",
+    datakoro: "Datakoro",
+    language_en: "English",
+    language_es: "Spanish",
+    log_in: "Log in",
+    log_out: "Log out",
+    mekadimo_project: "Mekadimo Project",
+    profile: "Profile",
+    search_concepts: "Search concepts",
+    source_code: "Source code",
+    support_lajto: "Support Lajto!",
+};

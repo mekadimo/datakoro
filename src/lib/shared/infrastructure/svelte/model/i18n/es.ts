@@ -1,0 +1,17 @@
+export const esTranslations = {
+    account: "Cuenta",
+    change_current_language: "Cambiar idioma actual",
+    change_theme: "Cambiar tema",
+    close: "Cerrar",
+    contributions: "Contribuciones",
+    datakoro: "Datakoro",
+    language_en: "Inglés",
+    language_es: "Español",
+    log_in: "Iniciar sesión",
+    log_out: "Cerrar sesión",
+    mekadimo_project: "Proyecto Mekadimo",
+    profile: "Perfil",
+    search_concepts: "Buscar conceptos",
+    source_code: "Código fuente",
+    support_lajto: "¡Apoya a Lajto!",
+};

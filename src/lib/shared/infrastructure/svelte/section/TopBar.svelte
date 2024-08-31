@@ -4,80 +4,32 @@
     import BellSlashIcon from "phosphor-svelte/lib/BellSlash";
     import GlobeIcon from "phosphor-svelte/lib/Globe";
 
-    import { SvelteAppGlobalState } from "../model/SvelteAppGlobalState";
-    import { page } from "$app/stores";
+    import { AppGlobalState } from "../model/AppGlobalState";
+    import ChangeLanguageModal from "./ChangeLanguageModal.svelte";
 
-    export let currentLanguageCode: string;
     export let isFixed: boolean;
     export let showLogotype: boolean;
 
-    let { currentUser } = SvelteAppGlobalState.get();
+    let { currentUser, i18n } = AppGlobalState.get();
 
     let languageModalIsOpen = false;
 
-    function onClickHideLanguageModal(): void {
+    function hideLanguageModal(): void {
         languageModalIsOpen = false;
     }
 
-    function onClickShowLanguageModal(): void {
+    function showLanguageModal(): void {
         languageModalIsOpen = true;
     }
 
-    function onClickShowMenu(): void {
+    function showMenu(): void {
         // TODO
         console.log("Showing menu...");
-    }
-
-    function i18nUrl(languageCode: string): string {
-        const url = $page.url.pathname;
-        const regex = /^\/[a-z]+(\/|$)/;
-        const newUrl = url.replace(regex, `/${languageCode}$1`);
-        return newUrl;
     }
 </script>
 
 <header class="has-text-centered">
-    <div class="modal" class:is-active={languageModalIsOpen}>
-        <div class="modal-background" on:click={onClickHideLanguageModal}></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Change current language</p>
-                <button
-                    aria-label="close"
-                    class="delete"
-                    on:click={onClickHideLanguageModal}
-                ></button>
-            </header>
-            <section class="modal-card-body">
-                <aside class="menu">
-                    <ul class="menu-list">
-                        <li>
-                            <a
-                                class:is-active={"en" === currentLanguageCode}
-                                href={i18nUrl("en")}
-                            >
-                                English
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                class:is-active={"es" === currentLanguageCode}
-                                href={i18nUrl("es")}
-                            >
-                                Español (Spanish)
-                            </a>
-                        </li>
-                    </ul>
-                </aside>
-            </section>
-            <footer class="modal-card-foot">
-                <div class="buttons">
-                    <button class="button is-link">Save changes</button>
-                    <button class="button">Cancel</button>
-                </div>
-            </footer>
-        </div>
-    </div>
+    <ChangeLanguageModal isOpen={languageModalIsOpen} {hideLanguageModal} />
     <nav
         aria-label="main navigation"
         class:is-fixed-top={isFixed}
@@ -86,9 +38,9 @@
     >
         <div class="navbar-brand">
             {#if showLogotype}
-                <a class="navbar-item" href={`/${currentLanguageCode}`}>
+                <a class="navbar-item" href={`/${$i18n.language}`}>
                     <img
-                        alt="DATAKORO"
+                        alt={$i18n.t("datakoro").toUpperCase()}
                         height="70px"
                         src="/img/datakoro-logotype-000-x28.png"
                     />
@@ -100,7 +52,7 @@
                 aria-label="menu"
                 class="navbar-burger"
                 data-target="navbarBasicExample"
-                on:click={onClickShowMenu}
+                on:click={showMenu}
             >
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -111,20 +63,14 @@
 
         <div class="navbar-menu">
             <div class="navbar-start">
-                <a
-                    class="navbar-item"
-                    href=""
-                    on:click={onClickShowLanguageModal}
-                >
+                <a class="navbar-item" href="" on:click={showLanguageModal}>
                     <span>
                         <span class="language-selector-icon">
                             <GlobeIcon color="#444" size="1em" />
                         </span>
-                        {currentLanguageCode.toUpperCase()}
+                        {$i18n.language.toUpperCase()}
                     </span>
                 </a>
-
-                <a class="navbar-item" href=""> Contributions </a>
             </div>
 
             <div class="navbar-end">
@@ -136,9 +82,11 @@
                                 href="https://www.patreon.com/Lajto"
                                 target="_blank"
                             >
-                                <strong>Support Lajto!</strong>
+                                <strong>{$i18n.t("support_lajto")}</strong>
                             </a>
-                            <a class="button is-light" href=""> Log in </a>
+                            <a class="button is-light" href="">
+                                {$i18n.t("log_in")}
+                            </a>
                         </div>
                     </div>
                 {:else}
@@ -164,10 +112,19 @@
                         </a>
 
                         <div class="navbar-dropdown">
-                            <a class="navbar-item"> Profile </a>
-                            <a class="navbar-item"> Account </a>
+                            <a class="navbar-item" href="">
+                                {$i18n.t("profile")}
+                            </a>
+                            <a class="navbar-item" href="">
+                                {$i18n.t("contributions")}
+                            </a>
+                            <a class="navbar-item" href="">
+                                {$i18n.t("account")}
+                            </a>
                             <hr class="navbar-divider" />
-                            <a class="navbar-item"> Log out </a>
+                            <a class="navbar-item" href="">
+                                {$i18n.t("log_out")}
+                            </a>
                         </div>
                     </div>
                 {/if}

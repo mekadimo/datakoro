@@ -1,18 +1,20 @@
 <script lang="ts">
-    // import MoonIcon from "phosphor-svelte/lib/Moon";
-    // import SunIcon from "phosphor-svelte/lib/Sun";
+    import MoonIcon from "phosphor-svelte/lib/Moon";
+    import SunIcon from "phosphor-svelte/lib/Sun";
 
-    // import { SvelteAppGlobalState } from "../model/SvelteAppGlobalState";
+    import { AppGlobalState } from "../model/AppGlobalState";
 
-    // let { currentTheme } = SvelteAppGlobalState.get();
+    let { i18n } = AppGlobalState.get();
 
-    // function onClickChangeTheme(): void {
-    //     if ("light" === $currentTheme) {
-    //         currentTheme.set("dark");
-    //     } else {
-    //         currentTheme.set("light");
-    //     }
-    // }
+    let { currentTheme } = AppGlobalState.get();
+
+    function onClickChangeTheme(): void {
+        if ("light" === $currentTheme) {
+            currentTheme.set("dark");
+        } else {
+            currentTheme.set("light");
+        }
+    }
 </script>
 
 <footer class="footer">
@@ -22,23 +24,24 @@
                 <p>
                     © 2024
                     <a class="mr-5" href="https://mekadimo.org" target="_blank">
-                        Mekadimo Project
+                        {$i18n.t("mekadimo_project")}
                     </a>
-                    <!-- <a class="mr-5" href="">What is Datakoro?</a> -->
-                    <!-- <a class="mr-5" href="">Terms</a> -->
                     <a
                         class="mr-5"
                         href="https://github.com/mekadimo/datakoro"
                         target="_blank"
                     >
-                        Source code
+                        {$i18n.t("source_code")}
                     </a>
                 </p>
             </div>
-            <!-- <div class="column has-text-right">
+            <div class="column has-text-right">
                 <p>
                     <span class="change-theme ml-5">
-                        <button on:click={onClickChangeTheme}>
+                        <button
+                            on:click={onClickChangeTheme}
+                            title={$i18n.t("change_theme")}
+                        >
                             {#if "light" === $currentTheme}
                                 <MoonIcon color="#444" size="1.5em" />
                             {/if}
@@ -48,7 +51,7 @@
                         </button>
                     </span>
                 </p>
-            </div> -->
+            </div>
         </div>
     </div>
 </footer>

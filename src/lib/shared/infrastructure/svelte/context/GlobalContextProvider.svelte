@@ -1,7 +1,12 @@
 <script lang="ts">
-    import { SvelteAppGlobalState } from "../model/SvelteAppGlobalState";
+    import { page } from "$app/stores";
 
-    SvelteAppGlobalState.init();
+    import { AppGlobalState } from "../model/AppGlobalState";
+
+    AppGlobalState.init($page.params.languageCode);
+
+    let { i18n } = AppGlobalState.get();
+    $: $i18n.changeLanguage($page.params.languageCode);
 </script>
 
 <slot />
