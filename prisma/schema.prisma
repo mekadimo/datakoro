@@ -1,0 +1,211 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["typedSql", "views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model concept {
+  id                                                                      String               @id @db.Uuid
+  operation_concept_id                                                    String               @db.Uuid
+  transaction_concept_id                                                  String               @db.Uuid
+  transaction_date                                                        DateTime             @db.Timestamptz(6)
+  operation_concept_concept_operation_concept_idTooperation_concept       operation_concept    @relation("concept_operation_concept_idTooperation_concept", fields: [operation_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_concept_operation")
+  transaction_concept_concept_transaction_concept_idTotransaction_concept transaction_concept  @relation("concept_transaction_concept_idTotransaction_concept", fields: [transaction_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_concept_transaction")
+  magnitude_concept_magnitude_concept_concept_idToconcept                 magnitude_concept?   @relation("magnitude_concept_concept_idToconcept")
+  magnitude_concept_magnitude_concept_concept_id_magnitudeToconcept       magnitude_concept[]  @relation("magnitude_concept_concept_id_magnitudeToconcept")
+  number_concept                                                          number_concept?
+  operation_concept_operation_concept_concept_idToconcept                 operation_concept?   @relation("operation_concept_concept_idToconcept")
+  relation_relation_concept_id_abstractionToconcept                       relation[]           @relation("relation_concept_id_abstractionToconcept")
+  relation_relation_concept_id_conceptToconcept                           relation[]           @relation("relation_concept_id_conceptToconcept")
+  relation_relation_concept_id_propertyToconcept                          relation[]           @relation("relation_concept_id_propertyToconcept")
+  relation_relation_concept_id_qualityToconcept                           relation[]           @relation("relation_concept_id_qualityToconcept")
+  relation_relation_concept_id_quality_typeToconcept                      relation[]           @relation("relation_concept_id_quality_typeToconcept")
+  relation_rule_relation_rule_concept_id_abstractionToconcept             relation_rule[]      @relation("relation_rule_concept_id_abstractionToconcept")
+  relation_rule_relation_rule_concept_idToconcept                         relation_rule[]      @relation("relation_rule_concept_idToconcept")
+  relation_rule_relation_rule_concept_id_propertyToconcept                relation_rule[]      @relation("relation_rule_concept_id_propertyToconcept")
+  text_concept                                                            text_concept?
+  transaction_concept_transaction_concept_concept_idToconcept             transaction_concept? @relation("transaction_concept_concept_idToconcept")
+  user_concept                                                            user_concept?
+
+  @@index([operation_concept_id], map: "idx_concept_operation_concept_id", type: Hash)
+  @@index([transaction_concept_id], map: "idx_concept_transaction_concept_id", type: Hash)
+}
+
+model magnitude_concept {
+  concept_id                                              String                  @id @db.Uuid
+  concept_id_magnitude                                    String                  @db.Uuid
+  number_range_value                                      Unsupported("numrange")
+  transaction_date                                        DateTime                @db.Timestamptz(6)
+  concept_magnitude_concept_concept_idToconcept           concept                 @relation("magnitude_concept_concept_idToconcept", fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_magnitude_concept_concept_id_magnitudeToconcept concept                 @relation("magnitude_concept_concept_id_magnitudeToconcept", fields: [concept_id_magnitude], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([concept_id_magnitude, number_range_value])
+  @@index([number_range_value], map: "idx_magnitude_concept_number_range_value", type: Gist)
+}
+
+model number_concept {
+  concept_id       String   @id @db.Uuid
+  number_value     Decimal  @unique @db.Decimal
+  transaction_date DateTime @db.Timestamptz(6)
+  concept          concept  @relation(fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model operation_concept {
+  concept_id                                              String                @id @db.Uuid
+  user_concept_id                                         String                @db.Uuid
+  start_date                                              DateTime              @db.Timestamptz(6)
+  end_date                                                DateTime?             @db.Timestamptz(6)
+  concept_concept_operation_concept_idTooperation_concept concept[]             @relation("concept_operation_concept_idTooperation_concept")
+  concept_operation_concept_concept_idToconcept           concept               @relation("operation_concept_concept_idToconcept", fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_concept                                            user_concept          @relation(fields: [user_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+  relation                                                relation[]
+  relation_rule                                           relation_rule[]
+  transaction_concept                                     transaction_concept[]
+
+  @@index([user_concept_id], map: "idx_operation_concept_user_concept_id", type: Hash)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model relation {
+  id                                                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  concept_id_concept                                String              @db.Uuid
+  concept_id_abstraction                            String              @db.Uuid
+  concept_id_property                               String              @db.Uuid
+  order_number                                      BigInt
+  concept_id_quality                                String              @db.Uuid
+  concept_id_quality_type                           String              @db.Uuid
+  is_active                                         Boolean
+  transaction_date                                  DateTime            @db.Timestamptz(6)
+  operation_concept_id                              String              @db.Uuid
+  transaction_concept_id                            String              @db.Uuid
+  relation_id_source                                String              @db.Uuid
+  concept_id_source                                 String              @db.Uuid
+  concept_relation_concept_id_abstractionToconcept  concept             @relation("relation_concept_id_abstractionToconcept", fields: [concept_id_abstraction], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_relation_concept_id_conceptToconcept      concept             @relation("relation_concept_id_conceptToconcept", fields: [concept_id_concept], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_relation_concept_id_propertyToconcept     concept             @relation("relation_concept_id_propertyToconcept", fields: [concept_id_property], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_relation_concept_id_qualityToconcept      concept             @relation("relation_concept_id_qualityToconcept", fields: [concept_id_quality], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_relation_concept_id_quality_typeToconcept concept             @relation("relation_concept_id_quality_typeToconcept", fields: [concept_id_quality_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  operation_concept                                 operation_concept   @relation(fields: [operation_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+  relation                                          relation            @relation("relationTorelation", fields: [relation_id_source, concept_id_source], references: [id, concept_id_concept], onDelete: NoAction, onUpdate: NoAction)
+  other_relation                                    relation[]          @relation("relationTorelation")
+  transaction_concept                               transaction_concept @relation(fields: [transaction_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([id, concept_id_concept])
+  @@index([concept_id_concept], map: "idx_relation_concept_id_concept", type: Hash)
+  @@index([operation_concept_id], map: "idx_relation_operation_concept_id", type: Hash)
+  @@index([transaction_concept_id], map: "idx_relation_transaction_concept_id", type: Hash)
+}
+
+model active_relation {
+  id                      String   @id @db.Uuid
+  concept_id_concept      String   @db.Uuid
+  concept_id_abstraction  String   @db.Uuid
+  concept_id_property     String   @db.Uuid
+  order_number            BigInt
+  concept_id_quality      String   @db.Uuid
+  concept_id_quality_type String   @db.Uuid
+  is_active               Boolean
+  transaction_date        DateTime @db.Timestamptz(6)
+  operation_concept_id    String   @db.Uuid
+  transaction_concept_id  String   @db.Uuid
+  relation_id_source      String   @db.Uuid
+  concept_id_source       String   @db.Uuid
+
+  @@unique([id, concept_id_concept])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model relation_rule {
+  id                                                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  concept_id                                            String              @db.Uuid
+  concept_id_abstraction                                String              @db.Uuid
+  concept_id_property                                   String              @db.Uuid
+  max_relation_number                                   BigInt?
+  fixed_order                                           Boolean
+  unique_per_branch                                     Boolean
+  unique_per_concept                                    Boolean
+  is_active                                             Boolean
+  transaction_date                                      DateTime            @db.Timestamptz(6)
+  operation_concept_id                                  String              @db.Uuid
+  transaction_concept_id                                String              @db.Uuid
+  concept_relation_rule_concept_id_abstractionToconcept concept             @relation("relation_rule_concept_id_abstractionToconcept", fields: [concept_id_abstraction], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_relation_rule_concept_idToconcept             concept             @relation("relation_rule_concept_idToconcept", fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  concept_relation_rule_concept_id_propertyToconcept    concept             @relation("relation_rule_concept_id_propertyToconcept", fields: [concept_id_property], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  operation_concept                                     operation_concept   @relation(fields: [operation_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+  transaction_concept                                   transaction_concept @relation(fields: [transaction_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([concept_id_abstraction, concept_id_property], map: "idx_relation_rule_abstraction_property")
+  @@index([concept_id], map: "idx_relation_rule_concept_id", type: Hash)
+  @@index([operation_concept_id], map: "idx_relation_rule_operation_concept_id", type: Hash)
+  @@index([transaction_concept_id], map: "idx_relation_rule_transaction_concept_id", type: Hash)
+}
+
+view active_relation_rule {
+  id                     String   @id @db.Uuid
+  concept_id             String   @db.Uuid
+  concept_id_abstraction String   @db.Uuid
+  concept_id_property    String   @db.Uuid
+  max_relation_number    BigInt?
+  fixed_order            Boolean
+  unique_per_branch      Boolean
+  unique_per_concept     Boolean
+  is_active              Boolean
+  transaction_date       DateTime @db.Timestamptz(6)
+  operation_concept_id   String   @db.Uuid
+  transaction_concept_id String   @db.Uuid
+}
+
+model text_concept {
+  concept_id       String   @id @db.Uuid
+  text_value       String   @unique
+  transaction_date DateTime @db.Timestamptz(6)
+  concept          concept  @relation(fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model transaction_concept {
+  concept_id                                                  String            @id @db.Uuid
+  operation_concept_id                                        String            @db.Uuid
+  transaction_date                                            DateTime          @db.Timestamptz(6)
+  concept_concept_transaction_concept_idTotransaction_concept concept[]         @relation("concept_transaction_concept_idTotransaction_concept")
+  relation                                                    relation[]
+  relation_rule                                               relation_rule[]
+  concept_transaction_concept_concept_idToconcept             concept           @relation("transaction_concept_concept_idToconcept", fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  operation_concept                                           operation_concept @relation(fields: [operation_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([operation_concept_id], map: "idx_transaction_concept_operation_concept_id", type: Hash)
+}
+
+model user_concept {
+  concept_id         String              @id @db.Uuid
+  transaction_date   DateTime            @db.Timestamptz(6)
+  email              String              @unique
+  encrypted_password String
+  is_admin           Boolean
+  restricted_access  Boolean
+  suspended_account  Boolean
+  operation_concept  operation_concept[]
+  concept            concept             @relation(fields: [concept_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_session       user_session[]
+}
+
+model user_session {
+  id                        String       @id @db.Uuid
+  secret_key                String       @db.Uuid
+  user_id                   String       @db.Uuid
+  csrf_token                String       @unique @db.Uuid
+  ip                        String
+  user_agent_request_header String
+  start_date                DateTime     @db.Timestamptz(6)
+  last_request_date         DateTime     @db.Timestamptz(6)
+  user_concept              user_concept @relation(fields: [user_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([secret_key], map: "idx_user_session_secret_key", type: Hash)
+  @@index([user_id], map: "idx_user_session_user_id", type: Hash)
+}

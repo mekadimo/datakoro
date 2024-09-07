@@ -1,11 +1,11 @@
 {
-	"name": "Datakoro",
-	"dockerComposeFile": ["../docker-compose.yml"],
-	"service": "datakoro_server",
-	"workspaceFolder": "/srv/datakoro",
-	"features": {
-		"ghcr.io/devcontainers/features/git:1": {}
-	},
+    "name": "Datakoro",
+    "dockerComposeFile": ["../docker-compose.yml"],
+    "service": "datakoro_server",
+    "workspaceFolder": "/srv/datakoro",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
     "remoteUser": "root",
     "mounts": [
         "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
@@ -31,6 +31,30 @@
                 },
                 "[javascript]": {
                     "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[json]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[jsonc]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode",
+                    "editor.formatOnPaste": false,
+                    "editor.formatOnSave": true,
+                    "editor.formatOnSaveMode": "file",
+                    "editor.formatOnType": false,
+                    "editor.tabSize": 4
+                },
+                "[prisma]": {
+                    "editor.defaultFormatter": "Prisma.prisma",
                     "editor.formatOnPaste": false,
                     "editor.formatOnSave": true,
                     "editor.formatOnSaveMode": "file",
@@ -81,6 +105,7 @@
                 "svelte.svelte-vscode",
                 "esbenp.prettier-vscode",
                 "dbaeumer.vscode-eslint",
+                "prisma.prisma",
                 "Phu1237.vs-browser"
             ]
         }

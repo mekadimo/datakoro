@@ -54,6 +54,12 @@ export class AppGlobalState {
             interpolation: {
                 escapeValue: false, // not needed for svelte as it escapes by default
             },
+            // TODO
+            // fallbackLng: "en",
+            // ns: "common",
+            // backend: {
+            //     loadPath: "/locales/{{lng}}/{{ns}}.json",
+            // },
         });
         return createI18nStore(i18next);
     }
