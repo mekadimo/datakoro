@@ -44,8 +44,6 @@ services:
       dockerfile: Dockerfile
     tty: true
     command: tail -f /dev/null
-    ports:
-      - "5173:5173"
     volumes:
       - .:/srv/datakoro
     environment:
