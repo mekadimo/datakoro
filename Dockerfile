@@ -4,7 +4,9 @@ WORKDIR /app
 
 RUN apt -y update \
     && apt upgrade -y \
-    && apt install -y make bash bash-completion openssl sass \
+    && apt install -y bash bash-completion make openssl sass \
+    && wget https://raw.githubusercontent.com/scop/bash-completion/1.x/completions/make -O /etc/bash_completion.d/make \
+    && source /etc/bash_completion \
     && apt-get -y autoremove --purge \
     && apt -y clean \
     && rm -rf /var/lib/apt/lists/*
