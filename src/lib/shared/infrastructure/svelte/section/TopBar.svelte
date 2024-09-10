@@ -88,17 +88,17 @@
                     <div class="navbar-item">
                         <div class="buttons">
                             <a
+                                class="button is-light"
+                                href={`/${$i18n.language}/view?c=${ID_DATAKORO_LOGIN.shortValue}`}
+                            >
+                                {$i18n.t("log_in")}
+                            </a>
+                            <a
                                 class="button is-link support-button"
                                 href="https://www.patreon.com/Lajto"
                                 target="_blank"
                             >
                                 <strong>{$i18n.t("support_lajto")}</strong>
-                            </a>
-                            <a
-                                class="button is-light"
-                                href={`/${$i18n.language}/view?c=${ID_DATAKORO_LOGIN.shortValue}`}
-                            >
-                                {$i18n.t("log_in")}
                             </a>
                         </div>
                     </div>
