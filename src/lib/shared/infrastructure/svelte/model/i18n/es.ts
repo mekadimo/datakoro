@@ -31,7 +31,9 @@ export const esTranslations = {
         "Concepto de transacción no encontrado.",
     "exception.unexpected_database_error":
         "Error inesperado en la base de datos.",
+    "exception.unknown_error": "Error desconocido.",
     "exception.user_concept_not_found": "Concepto de usuario no encontrado.",
+    "exception.user_not_logged_in": "Usuario no conectado.",
     "exception.user_session_not_found": "Sesión de usuario no encontrada.",
     "language_en": "Inglés",
     "language_es": "Español",

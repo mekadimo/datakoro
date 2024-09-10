@@ -1,4 +1,4 @@
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../../../../operation/infrastructure/prisma/model/DbTransaction";
 import type { RawRelationSearchCriteria } from "../../../domain/model/Relation";
 import { RawRelation } from "../../../domain/model/Relation";
 import { RawRelationField } from "../../../domain/model/Relation";

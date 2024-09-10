@@ -1,4 +1,4 @@
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../../../../operation/infrastructure/prisma/model/DbTransaction";
 import type { TextConceptSearchCriteria } from "../../../domain/model/TextConcept";
 import type { TextConceptValue } from "../../../domain/model/TextConcept";
 import { ConceptId } from "../../../domain/model/ConceptId";
@@ -29,7 +29,7 @@ export class DbTextConceptManager {
         const textConcept = TextConcept.create({
             conceptId: concept.id,
             value: value,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            transactionConceptDate: transaction.concept.date,
         });
 
         const dbTextConcept = DbTextConcept.fromDomain(textConcept);

@@ -1,6 +1,6 @@
 import type { ActiveRelation } from "../../../../graph/domain/model/Relation";
 import type { ActiveRelationRuleSearchCriteria } from "../../../domain/model/RelationRule";
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../model/DbTransaction";
 import type { RawRelationRuleSearchCriteria } from "../../../domain/model/RelationRule";
 import type { RelationRuleId } from "../../../domain/model/RelationRule";
 import type { RelationRuleMaxRelationNumber } from "../../../domain/model/RelationRule";
@@ -50,9 +50,9 @@ export class DbRelationRuleManager {
             transaction: transaction,
         });
         const rawRelationRule = RawRelationRule.create({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
             conceptConceptId: concept.id,
             conceptAbstractionId: abstractionId,
             conceptPropertyId: propertyId,
@@ -111,9 +111,9 @@ export class DbRelationRuleManager {
         const rawRelationRule = relationRule.toRaw();
 
         rawRelationRule.setInactive({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
         });
         const dbRelationRule = DbRawRelationRule.fromDomain(rawRelationRule);
         await RawRelationRuleSqlExecutor.insert(
@@ -528,9 +528,9 @@ export class DbRelationRuleManager {
                 transaction: transaction,
             });
         relationRule.update({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
             fixedOrder: fixedOrder,
             uniquePerBranch: uniquePerBranch,
             uniquePerConcept: uniquePerConcept,

@@ -1,9 +1,6 @@
 import type { ConceptId } from "../../../../graph/domain/model/ConceptId";
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../model/DbTransaction";
 import type { TransactionConceptSearchCriteria } from "../../../domain/model/TransactionConcept";
-import { DbGraphManager } from "../../../../graph/infrastructure/prisma/service/DbGraphManager";
-import { DbTransactionConcept } from "../model/DbTransactionConcept";
-import { ID_DATAKORO_TRANSACTION } from "../../../../graph/domain/model/ConceptId";
 import { TransactionConcept } from "../../../domain/model/TransactionConcept";
 import { TransactionConceptField } from "../../../domain/model/TransactionConcept";
 import { TransactionConceptNotFoundException } from "../../../../shared/domain/model/DomainException";
@@ -12,33 +9,6 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbTransactionConceptManager {
-    public static async addTransactionConcept({
-        transaction,
-    }: {
-        transaction: DbTransaction;
-    }): Promise<TransactionConcept> {
-        await DbGraphManager.addConcept({
-            transaction: transaction,
-            conceptId: transaction.currentTransactionConceptId,
-            abstractionId: ID_DATAKORO_TRANSACTION,
-        });
-
-        const transactionConcept = TransactionConcept.create({
-            conceptId: transaction.currentTransactionConceptId,
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
-        });
-
-        const dbTransactionConcept =
-            DbTransactionConcept.fromDomain(transactionConcept);
-        await TransactionConceptSqlExecutor.insert(
-            transaction.prismaTx,
-            dbTransactionConcept,
-        );
-
-        return transactionConcept;
-    }
-
     public static async findTransactionConceptById({
         transaction,
         conceptId,

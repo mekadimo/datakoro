@@ -1,35 +1,41 @@
 <script lang="ts">
+    import ConceptAbstractionViewPage from "./view/ConceptAbstractionViewPage.svelte";
+    import DatakoroLoginConceptViewPage from "./view/DatakoroLoginConceptViewPage.svelte";
+    import DatakoroSearchConceptViewPage from "./view/DatakoroSearchConceptViewPage.svelte";
     import TopBar from "../section/TopBar.svelte";
+    import type { DtoDatakoroLoginConceptView } from "$lib/view/application/dto/DtoDatakoroLoginConceptView";
+    import type { DtoDatakoroSearchConceptView } from "$lib/view/application/dto/DtoDatakoroSearchConceptView";
+    import { DtoDatakoroLoginConceptViewTransformer } from "$lib/view/application/dto/DtoDatakoroLoginConceptView";
+    import { DtoDatakoroSearchConceptViewTransformer } from "$lib/view/application/dto/DtoDatakoroSearchConceptView";
+    import type { DtoConceptAbstractionView } from "$lib/view/application/dto/DtoConceptAbstractionView";
+    import { DtoConceptAbstractionViewTransformer } from "$lib/view/application/dto/DtoConceptAbstractionView";
+    import { ID_CONCEPT } from "$lib/graph/domain/model/ConceptId";
+    import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
+    import { ID_DATAKORO_SEARCH } from "$lib/graph/domain/model/ConceptId";
 
-    export let data: {
-        testResults: {
-            concept_id: string;
-            text_value: string;
-            transaction_date: Date;
-        }[];
-    };
+    export let data:
+        | DtoConceptAbstractionView
+        | DtoDatakoroLoginConceptView
+        | DtoDatakoroSearchConceptView;
 </script>
 
 <TopBar isFixed={true} showLogotype={true} />
-<section class="section datakoro-view">
-    <table class="table">
-        <thead>
-            <th>ID</th>
-            <th>TEXT</th>
-            <th>DATE</th>
-        </thead>
-        <tbody>
-            {#each data.testResults as testResult}
-                <tr>
-                    <td>
-                        <code>{testResult.concept_id}</code>
-                    </td>
-                    <td>{testResult.text_value}</td>
-                    <td>{testResult.transaction_date}</td>
-                </tr>
-            {/each}
-        </tbody>
-    </table>
+<section class="section datakoro-view is-fullheight">
+    {#if data.conceptId === ID_DATAKORO_LOGIN.shortValue}
+        <DatakoroLoginConceptViewPage
+            data={DtoDatakoroLoginConceptViewTransformer.toDomain(data)}
+        />
+    {:else if data.conceptId === ID_DATAKORO_SEARCH.shortValue}
+        <DatakoroSearchConceptViewPage
+            data={DtoDatakoroSearchConceptViewTransformer.toDomain(data)}
+        />
+    {:else if data.abstractionId === ID_CONCEPT.shortValue}
+        <ConceptAbstractionViewPage
+            data={DtoConceptAbstractionViewTransformer.toDomain(data)}
+        />
+    {:else}
+        NOT SUPPORTED
+    {/if}
 </section>
 
 <style lang="scss">

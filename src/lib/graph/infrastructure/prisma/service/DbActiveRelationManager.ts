@@ -1,5 +1,5 @@
 import type { ActiveRelationSearchCriteria } from "../../../domain/model/Relation";
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../../../../operation/infrastructure/prisma/model/DbTransaction";
 import { ActiveRelation } from "../../../domain/model/Relation";
 import { ActiveRelationField } from "../../../domain/model/Relation";
 import { ActiveRelationSqlExecutor } from "../statement/ActiveRelationSqlExecutor";
@@ -31,9 +31,9 @@ export class DbActiveRelationManager {
 
         const rawRelation = relation.toRaw();
         rawRelation.setInactive({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
         });
 
         const dbRawRelation = DbRawRelation.fromDomain(rawRelation);
@@ -178,9 +178,9 @@ export class DbActiveRelationManager {
         });
 
         relation.updateOrder({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
             orderNumber: orderNumber,
         });
         const rawRelation = relation.toRaw();

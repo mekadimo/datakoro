@@ -1,37 +1,44 @@
-import { Prisma } from "@prisma/client";
+import { error } from "@sveltejs/kit";
 
-import { PRISMA_CLIENT } from "$lib/shared/infrastructure/prisma/model/Prisma";
-import { TextConceptSqlExecutor } from "$lib/graph/infrastructure/prisma/statement/TextConceptSqlExecutor";
+import type { DtoConceptAbstractionView } from "$lib/view/application/dto/DtoConceptAbstractionView";
+import type { DtoDatakoroLoginConceptView } from "$lib/view/application/dto/DtoDatakoroLoginConceptView";
+import type { DtoDatakoroSearchConceptView } from "$lib/view/application/dto/DtoDatakoroSearchConceptView";
+import type { DtoGetViewInput } from "$lib/view/application/dto/DtoFrontendView.js";
+import { DbOperationService } from "$lib/operation/infrastructure/prisma/service/DbOperationService";
+import { FrontendViewUseCase } from "$lib/view/application/use_case/FrontendViewUseCase.js";
 
-export async function load(): Promise<{
-    testResults: {
-        concept_id: string;
-        text_value: string;
-        transaction_date: Date;
-    }[];
-}> {
-    const testResults = await PRISMA_CLIENT.$transaction(
-        async (prismaTransaction) => {
-            const results = await TextConceptSqlExecutor.select(
-                prismaTransaction,
-                {},
-            );
-            return results.map((c) => {
-                return {
-                    concept_id: c.concept_id,
-                    text_value: c.text_value,
-                    transaction_date: c.transaction_date,
-                };
-            });
-        },
-        {
-            maxWait: 5000, // default: 2000
-            timeout: 10000, // default: 5000
-            isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // optional, default defined by database configuration
-        },
-    );
+export async function load({
+    url,
+}): Promise<
+    | DtoConceptAbstractionView
+    | DtoDatakoroLoginConceptView
+    | DtoDatakoroSearchConceptView
+> {
+    const cGetParam = url.searchParams.get("c");
+    if (null == cGetParam) {
+        throw error(404, "Concept not found.");
+    }
 
-    return {
-        testResults,
+    const aGetParam = url.searchParams.get("a");
+
+    const getParams = url.searchParams.entries();
+    const extraGetParams: { [key: string]: string } = {};
+    for (const getParam of getParams) {
+        if ("c" == getParam[0] || "a" == getParam[0]) {
+            continue;
+        }
+        extraGetParams[getParam[0]] = getParam[1];
+    }
+
+    const dtoInput: DtoGetViewInput = {
+        conceptId: cGetParam,
+        abstractionId: aGetParam,
+        parameters: extraGetParams,
     };
+    const operationService = new DbOperationService(null);
+    const dtoOutput = await FrontendViewUseCase.getView(
+        operationService,
+        dtoInput,
+    );
+    return dtoOutput;
 }

@@ -1,6 +1,6 @@
 export interface FieldOrder<F> {
-    direction: FieldOrderDirection;
-    field: F;
+    readonly direction: FieldOrderDirection;
+    readonly field: F;
 }
 
 export enum FieldOrderDirection {

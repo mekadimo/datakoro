@@ -1,7 +1,7 @@
 import type { ActiveRelationFilter } from "../../../domain/model/Relation";
 import type { ActiveRelationSearchCriteria } from "../../../domain/model/Relation";
 import type { ConceptSearchCriteria } from "../../../domain/model/Concept";
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../../../../operation/infrastructure/prisma/model/DbTransaction";
 import { ActiveRelation } from "../../../domain/model/Relation";
 import { ActiveRelationField } from "../../../domain/model/Relation";
 import { ActiveRelationSqlExecutor } from "../statement/ActiveRelationSqlExecutor";
@@ -57,17 +57,17 @@ export class DbGraphManager {
         const concept = Concept.create({
             conceptId:
                 undefined == conceptId ? ConceptId.generateRandom() : conceptId,
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
         });
         const dbConcept = DbConcept.fromDomain(concept);
         await ConceptSqlExecutor.insert(transaction.prismaTx, dbConcept);
 
         const rawSelfAbstractionRelation = RawRelation.create({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
             inputConceptId: concept.id,
             inputAbstractionId: ID_ABSTRACTION,
             inputPropertyId: ID_ABSTRACTION,
@@ -109,9 +109,9 @@ export class DbGraphManager {
         transaction: DbTransaction;
     }): Promise<ActiveRelation> {
         const rawRelation = RawRelation.create({
-            operationConceptId: transaction.currentOperationConceptId,
-            transactionConceptId: transaction.currentTransactionConceptId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            operationConceptId: transaction.concept.operationId,
+            transactionConceptId: transaction.concept.id,
+            transactionConceptDate: transaction.concept.date,
             inputConceptId: conceptId,
             inputAbstractionId: abstractionId,
             inputPropertyId: propertyId,
@@ -605,10 +605,9 @@ export class DbGraphManager {
 
         const rawRelations = relationsOfAbstraction.map((r) =>
             RawRelation.createInherited({
-                operationConceptId: transaction.currentOperationConceptId,
-                transactionConceptId: transaction.currentTransactionConceptId,
-                transactionConceptDate:
-                    transaction.currentTransactionConceptDate,
+                operationConceptId: transaction.concept.operationId,
+                transactionConceptId: transaction.concept.id,
+                transactionConceptDate: transaction.concept.date,
                 inheritorConceptId: conceptId,
                 originalRelation: r.toRaw(),
             }),

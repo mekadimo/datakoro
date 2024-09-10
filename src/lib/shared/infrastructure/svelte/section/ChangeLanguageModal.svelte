@@ -15,7 +15,8 @@
     function i18nUrl(languageCode: string): string {
         const url = $page.url.pathname;
         const regex = /^\/[a-z]+(\/|$)/;
-        const newUrl = url.replace(regex, `/${languageCode}$1`);
+        const newUrl =
+            url.replace(regex, `/${languageCode}$1`) + $page.url.search;
         return newUrl;
     }
 </script>

@@ -529,6 +529,15 @@ BEGIN
         TRUE
     );
 
+    PERFORM add_first_concept(cid_datakoro_view(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_concept_view(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_abstraction_view(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_view_concept(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_login(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_view_datakoro_login(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_search(), cid_concept());
+    PERFORM add_first_concept(cid_datakoro_view_datakoro_search(), cid_concept());
+
     /* --------------------------------------------- */
 
     PERFORM add_first_concept(cid_language(), cid_concept());
@@ -726,6 +735,32 @@ BEGIN
         cid_mekaranto_language(),
         'Mekaranto',
         'mekaranto'
+    );
+
+    PERFORM add_names(
+        cid_datakoro_view(),
+        'Datakoro view',
+        'vista de Datakoro'
+    );
+    PERFORM add_names(
+        cid_datakoro_concept_view(),
+        'Datakoro concept view',
+        'vista de concepto de Datakoro'
+    );
+    PERFORM add_names(
+        cid_datakoro_abstraction_view(),
+        'Datakoro abstraction view',
+        'vista de abstracción de Datakoro'
+    );
+    PERFORM add_names(
+        cid_datakoro_login(),
+        'Datakoro login',
+        'Inicio de sesión de Datakoro'
+    );
+    PERFORM add_names(
+        cid_datakoro_search(),
+        'Datakoro search engine',
+        'Buscador de Datakoro'
     );
 
 END;

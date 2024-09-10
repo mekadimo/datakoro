@@ -1,9 +1,6 @@
 import type { ConceptId } from "../../../../graph/domain/model/ConceptId";
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../model/DbTransaction";
 import type { OperationConceptSearchCriteria } from "../../../domain/model/OperationConcept";
-import { DbGraphManager } from "../../../../graph/infrastructure/prisma/service/DbGraphManager";
-import { DbOperationConcept } from "../model/DbOperationConcept";
-import { ID_DATAKORO_OPERATION } from "../../../../graph/domain/model/ConceptId";
 import { OperationConcept } from "../../../domain/model/OperationConcept";
 import { OperationConceptField } from "../../../domain/model/OperationConcept";
 import { OperationConceptNotFoundException } from "../../../../shared/domain/model/DomainException";
@@ -12,33 +9,6 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbOperationConceptManager {
-    public static async addOperationConcept({
-        transaction,
-    }: {
-        transaction: DbTransaction;
-    }): Promise<OperationConcept> {
-        await DbGraphManager.addConcept({
-            transaction: transaction,
-            conceptId: transaction.currentOperationConceptId,
-            abstractionId: ID_DATAKORO_OPERATION,
-        });
-
-        const operationConcept = OperationConcept.create({
-            conceptId: transaction.currentOperationConceptId,
-            userConceptId: transaction.currentUserId,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
-        });
-
-        const dbOperationConcept =
-            DbOperationConcept.fromDomain(operationConcept);
-        await OperationConceptSqlExecutor.insert(
-            transaction.prismaTx,
-            dbOperationConcept,
-        );
-
-        return operationConcept;
-    }
-
     public static async findOperationConceptById({
         transaction,
         conceptId,

@@ -111,7 +111,6 @@ model active_relation {
   order_number            BigInt
   concept_id_quality      String   @db.Uuid
   concept_id_quality_type String   @db.Uuid
-  is_active               Boolean
   transaction_date        DateTime @db.Timestamptz(6)
   operation_concept_id    String   @db.Uuid
   transaction_concept_id  String   @db.Uuid
@@ -156,7 +155,6 @@ view active_relation_rule {
   fixed_order            Boolean
   unique_per_branch      Boolean
   unique_per_concept     Boolean
-  is_active              Boolean
   transaction_date       DateTime @db.Timestamptz(6)
   operation_concept_id   String   @db.Uuid
   transaction_concept_id String   @db.Uuid

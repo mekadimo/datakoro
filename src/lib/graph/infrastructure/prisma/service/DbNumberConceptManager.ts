@@ -1,4 +1,4 @@
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../../../../operation/infrastructure/prisma/model/DbTransaction";
 import type { NumberConceptSearchCriteria } from "../../../domain/model/NumberConcept";
 import type { NumberConceptValue } from "../../../domain/model/NumberConcept";
 import { ConceptId } from "../../../domain/model/ConceptId";
@@ -29,7 +29,7 @@ export class DbNumberConceptManager {
         const numberConcept = NumberConcept.create({
             conceptId: concept.id,
             value: value,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            transactionConceptDate: transaction.concept.date,
         });
 
         const dbNumberConcept = DbNumberConcept.fromDomain(numberConcept);

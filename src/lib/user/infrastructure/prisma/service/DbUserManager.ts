@@ -1,4 +1,4 @@
-import type { DbTransaction } from "../../../../shared/infrastructure/prisma/model/DbTransaction";
+import type { DbTransaction } from "../../../../operation/infrastructure/prisma/model/DbTransaction";
 import type { ServerUserConceptEncryptedPassword } from "../../../domain/model/ServerUserConcept";
 import type { ServerUserConceptSearchCriteria } from "../../../domain/model/ServerUserConcept";
 import type { ServerUserSessionSearchCriteria } from "../../../domain/model/ServerUserSession";
@@ -54,7 +54,7 @@ export class DbUserManager {
             isAdmin: isAdmin,
             restrictedAccess: restrictedAccess,
             suspendedAccount: suspendedAccount,
-            transactionConceptDate: transaction.currentTransactionConceptDate,
+            transactionConceptDate: transaction.concept.date,
         });
 
         const dbUserConcept = DbUserConcept.fromServerDomain(userConcept);

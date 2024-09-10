@@ -4,8 +4,9 @@
     import BellSlashIcon from "phosphor-svelte/lib/BellSlash";
     import GlobeIcon from "phosphor-svelte/lib/Globe";
 
-    import { AppGlobalState } from "../model/AppGlobalState";
     import ChangeLanguageModal from "./ChangeLanguageModal.svelte";
+    import { AppGlobalState } from "../model/AppGlobalState";
+    import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
 
     export let isFixed: boolean;
     export let showLogotype: boolean;
@@ -30,6 +31,15 @@
 
 <header class="has-text-centered">
     <ChangeLanguageModal isOpen={languageModalIsOpen} {hideLanguageModal} />
+
+    {#if showLogotype}
+        <!-- TODO: Implement naming system and use the proper ones -->
+        <nav class="view-nav">
+            <h1>Mekadimo Project</h1>
+            <h2>Concept</h2>
+        </nav>
+    {/if}
+
     <nav
         aria-label="main navigation"
         class:is-fixed-top={isFixed}
@@ -84,7 +94,10 @@
                             >
                                 <strong>{$i18n.t("support_lajto")}</strong>
                             </a>
-                            <a class="button is-light" href="">
+                            <a
+                                class="button is-light"
+                                href={`/${$i18n.language}/view?c=${ID_DATAKORO_LOGIN.shortValue}`}
+                            >
                                 {$i18n.t("log_in")}
                             </a>
                         </div>
@@ -144,7 +157,7 @@
     }
 
     .navbar.is-fixed-top {
-        background-color: #fff;
+        background-color: transparent;
         border-bottom: #ddd 1px solid;
     }
 
@@ -161,5 +174,22 @@
 
     .support-button:hover {
         color: white;
+    }
+
+    .view-nav {
+        background-color: #fff;
+        width: 100%;
+        height: 57px;
+        position: fixed;
+    }
+
+    .view-nav h1 {
+        font-weight: bold;
+        margin: 5px 300px 0 300px;
+    }
+
+    .view-nav h2 {
+        font-style: italic;
+        margin: 0 300px;
     }
 </style>

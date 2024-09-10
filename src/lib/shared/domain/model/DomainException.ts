@@ -20,7 +20,7 @@ interface DomainExceptionI18nContext {
     [key: string]: string;
 }
 
-abstract class DomainException {
+export abstract class DomainException {
     public readonly code: string;
     public readonly context: DomainExceptionContext;
     public readonly i18nKey: string;
@@ -176,9 +176,21 @@ export class UnexpectedDatabaseErrorException extends DomainException {
     }
 }
 
+export class UnknownErrorException extends DomainException {
+    constructor() {
+        super({ code: "unknown_error" });
+    }
+}
+
 export class UserConceptNotFoundException extends DomainException {
     constructor(context: { id: string } | { email: string }) {
         super({ code: "user_concept_not_found", context: context });
+    }
+}
+
+export class UserNotLoggedInException extends DomainException {
+    constructor() {
+        super({ code: "user_not_logged_in" });
     }
 }
 

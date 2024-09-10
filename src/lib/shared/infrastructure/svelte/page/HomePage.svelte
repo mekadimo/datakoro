@@ -4,21 +4,21 @@
 
     import TopBar from "../section/TopBar.svelte";
     import { AppGlobalState } from "../model/AppGlobalState";
+    import { ID_DATAKORO_SEARCH } from "../../../../graph/domain/model/ConceptId";
 
     let { i18n } = AppGlobalState.get();
 
     let searchValue = "";
-
-    function onClickSearch(): void {
-        // TODO (use classic form?)
-        console.log("Searching...");
-    }
 </script>
 
 <TopBar isFixed={false} showLogotype={false} />
 <section class="section datakoro-home">
     <div class="columns is-centered">
-        <div class="column home-search">
+        <form
+            action={`/${$i18n.language}/view`}
+            class="column home-search"
+            method="GET"
+        >
             <header class="has-text-centered mb-6 datakoro-title-header">
                 <img
                     alt={$i18n.t("datakoro").toUpperCase()}
@@ -27,26 +27,37 @@
                 />
             </header>
 
+            <input
+                type="hidden"
+                name="c"
+                value={ID_DATAKORO_SEARCH.shortValue}
+            />
+
             <div class="control has-icons-left has-icons-right mb-5">
+                <!-- svelte-ignore a11y-autofocus -->
                 <input
+                    autofocus
                     bind:value={searchValue}
                     class="input is-large is-rounded"
+                    name="q"
                     type="text"
                 />
-                <span class="icon is-medium is-left">
+                <span
+                    class="icon is-medium is-left"
+                    class:search-icon-disabled={"" === searchValue}
+                    class:search-icon-enabled={"" !== searchValue}
+                >
                     <GraphIcon
-                        class={"" === searchValue
-                            ? "search-icon-disabled"
-                            : "search-icon-enabled"}
                         color={"" === searchValue ? "#dddedf" : "#313640"}
                         size="1.5em"
                     />
                 </span>
-                <span class="icon is-medium is-right">
+                <span
+                    class="icon is-medium is-right"
+                    class:search-icon-disabled={"" === searchValue}
+                    class:search-icon-enabled={"" !== searchValue}
+                >
                     <MagnifyingGlassIcon
-                        class={"" === searchValue
-                            ? "search-icon-disabled"
-                            : "search-icon-enabled"}
                         color={"" === searchValue ? "#dddedf" : "#313640"}
                         size="1.5em"
                     />
@@ -57,13 +68,12 @@
                 <button
                     class="button is-link is-medium"
                     disabled={"" === searchValue}
-                    on:click={onClickSearch}
-                    type="button"
+                    type="submit"
                 >
                     {$i18n.t("search_concepts")}
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
