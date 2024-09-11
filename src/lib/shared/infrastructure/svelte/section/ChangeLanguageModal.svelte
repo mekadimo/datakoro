@@ -2,6 +2,8 @@
     import { AppGlobalState } from "../model/AppGlobalState";
     import { page } from "$app/stores";
 
+    const URL_LANGUAGE_CODE_REGEX = /^\/[a-z-]+(\/|$)/;
+
     let { i18n } = AppGlobalState.get();
 
     export let isOpen: boolean;
@@ -14,9 +16,9 @@
 
     function i18nUrl(languageCode: string, currentPage: typeof $page): string {
         const url = currentPage.url.pathname;
-        const regex = /^\/[a-z]+(\/|$)/;
         const newUrl =
-            url.replace(regex, `/${languageCode}$1`) + currentPage.url.search;
+            url.replace(URL_LANGUAGE_CODE_REGEX, `/${languageCode}$1`) +
+            currentPage.url.search;
         return newUrl;
     }
 </script>
