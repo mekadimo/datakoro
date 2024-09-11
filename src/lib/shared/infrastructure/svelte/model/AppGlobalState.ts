@@ -6,6 +6,7 @@ import { getContext } from "svelte";
 import { setContext } from "svelte";
 import { writable } from "svelte/store";
 
+import type { ConceptId } from "$lib/graph/domain/model/ConceptId";
 import { enTranslations } from "./i18n/en";
 import { esTranslations } from "./i18n/es";
 
@@ -17,6 +18,8 @@ interface TempUser {
 }
 
 interface AppGlobalStateProps {
+    currentAbstractionId: Writable<ConceptId | null>;
+    currentConceptId: Writable<ConceptId | null>;
     currentTheme: Writable<"dark" | "light">; // TODO: store in user's browser
     currentUser: Writable<TempUser | null>;
     i18n: Writable<i18n>;
@@ -33,8 +36,10 @@ export class AppGlobalState {
     static init(languageCode: string): void {
         const i18n = AppGlobalState.initI18n(languageCode);
         const globalState: AppGlobalStateProps = {
-            currentUser: writable(null),
+            currentAbstractionId: writable(null),
+            currentConceptId: writable(null),
             currentTheme: writable("light"),
+            currentUser: writable(null),
             i18n,
         };
         setContext(GLOBAL_CONTEXT_KEY, globalState);

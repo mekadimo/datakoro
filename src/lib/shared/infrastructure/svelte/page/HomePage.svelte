@@ -2,7 +2,6 @@
     import GraphIcon from "phosphor-svelte/lib/Graph";
     import MagnifyingGlassIcon from "phosphor-svelte/lib/MagnifyingGlass";
 
-    import TopBar from "../section/TopBar.svelte";
     import { AppGlobalState } from "../model/AppGlobalState";
     import { ID_DATAKORO_SEARCH } from "../../../../graph/domain/model/ConceptId";
 
@@ -11,7 +10,6 @@
     let searchValue = "";
 </script>
 
-<TopBar isFixed={false} showLogotype={false} />
 <section class="section datakoro-home">
     <div class="columns is-centered">
         <form

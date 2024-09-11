@@ -2,13 +2,12 @@
     import ConceptAbstractionViewPage from "./view/ConceptAbstractionViewPage.svelte";
     import DatakoroLoginConceptViewPage from "./view/DatakoroLoginConceptViewPage.svelte";
     import DatakoroSearchConceptViewPage from "./view/DatakoroSearchConceptViewPage.svelte";
-    import TopBar from "../section/TopBar.svelte";
+    import type { DtoConceptAbstractionView } from "$lib/view/application/dto/DtoConceptAbstractionView";
     import type { DtoDatakoroLoginConceptView } from "$lib/view/application/dto/DtoDatakoroLoginConceptView";
     import type { DtoDatakoroSearchConceptView } from "$lib/view/application/dto/DtoDatakoroSearchConceptView";
+    import { DtoConceptAbstractionViewTransformer } from "$lib/view/application/dto/DtoConceptAbstractionView";
     import { DtoDatakoroLoginConceptViewTransformer } from "$lib/view/application/dto/DtoDatakoroLoginConceptView";
     import { DtoDatakoroSearchConceptViewTransformer } from "$lib/view/application/dto/DtoDatakoroSearchConceptView";
-    import type { DtoConceptAbstractionView } from "$lib/view/application/dto/DtoConceptAbstractionView";
-    import { DtoConceptAbstractionViewTransformer } from "$lib/view/application/dto/DtoConceptAbstractionView";
     import { ID_CONCEPT } from "$lib/graph/domain/model/ConceptId";
     import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
     import { ID_DATAKORO_SEARCH } from "$lib/graph/domain/model/ConceptId";
@@ -19,7 +18,6 @@
         | DtoDatakoroSearchConceptView;
 </script>
 
-<TopBar isFixed={true} showLogotype={true} />
 <section class="section datakoro-view is-fullheight">
     {#if data.conceptId === ID_DATAKORO_LOGIN.shortValue}
         <DatakoroLoginConceptViewPage

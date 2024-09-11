@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ViewHyperlink from "../../widget/ViewHyperlink.svelte";
     import type { ConceptAbstractionView } from "../../../../../view/domain/model/ConceptAbstractionView";
     import { AppGlobalState } from "../../model/AppGlobalState";
     import { ID_CONCEPT } from "../../../../../graph/domain/model/ConceptId";
@@ -30,39 +31,51 @@
         {#each data.data.conceptRelations as conceptRelation}
             <tr>
                 <td>
-                    <a
-                        href={`/${$i18n.language}/view?c=${conceptRelation.abstractionId.shortValue}&a=${ID_CONCEPT.shortValue}`}
+                    <ViewHyperlink
+                        params={{
+                            c: conceptRelation.abstractionId.shortValue,
+                            a: ID_CONCEPT.shortValue,
+                        }}
                     >
                         <code>
                             {conceptRelation.abstractionId.shortValue}
                         </code>
-                    </a>
+                    </ViewHyperlink>
                 </td>
                 <td>
-                    <a
-                        href={`/${$i18n.language}/view?c=${conceptRelation.propertyId.shortValue}&a=${ID_CONCEPT.shortValue}`}
+                    <ViewHyperlink
+                        params={{
+                            c: conceptRelation.propertyId.shortValue,
+                            a: ID_CONCEPT.shortValue,
+                        }}
                     >
                         <code>{conceptRelation.propertyId.shortValue}</code>
-                    </a>
+                    </ViewHyperlink>
                 </td>
                 <td>
                     <code>{conceptRelation.orderNumber.value}</code>
                 </td>
                 <td>
-                    <a
-                        href={`/${$i18n.language}/view?c=${conceptRelation.qualityId.shortValue}&a=${ID_CONCEPT.shortValue}`}
+                    <ViewHyperlink
+                        params={{
+                            c: conceptRelation.qualityId.shortValue,
+                            a: ID_CONCEPT.shortValue,
+                        }}
                     >
                         <code>{conceptRelation.qualityId.shortValue}</code>
-                    </a>
+                    </ViewHyperlink>
                 </td>
                 <td>
-                    <a
-                        href={`/${$i18n.language}/view?c=${conceptRelation.sourceConceptId.shortValue}&a=${ID_CONCEPT.shortValue}`}
+                    <ViewHyperlink
+                        params={{
+                            c: conceptRelation.sourceConceptId.shortValue,
+                            a: ID_CONCEPT.shortValue,
+                        }}
                     >
                         <code>
                             {conceptRelation.sourceConceptId.shortValue}
                         </code>
-                    </a>
+                    </ViewHyperlink>
                 </td>
                 <td>
                     <code>

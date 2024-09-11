@@ -5,13 +5,12 @@
     import GlobeIcon from "phosphor-svelte/lib/Globe";
 
     import ChangeLanguageModal from "./ChangeLanguageModal.svelte";
+    import ViewHyperlink from "../widget/ViewHyperlink.svelte";
     import { AppGlobalState } from "../model/AppGlobalState";
     import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
 
-    export let isFixed: boolean;
-    export let showLogotype: boolean;
-
-    let { currentUser, i18n } = AppGlobalState.get();
+    let { currentAbstractionId, currentConceptId, currentUser, i18n } =
+        AppGlobalState.get();
 
     let languageModalIsOpen = false;
 
@@ -32,22 +31,24 @@
 <header class="has-text-centered">
     <ChangeLanguageModal isOpen={languageModalIsOpen} {hideLanguageModal} />
 
-    {#if showLogotype}
+    {#if null != $currentConceptId}
         <!-- TODO: Implement naming system and use the proper ones -->
         <nav class="view-nav">
-            <h1>Mekadimo Project</h1>
-            <h2>Concept</h2>
+            <h1>{$currentConceptId.shortValue}</h1>
+            {#if null != $currentAbstractionId}
+                <h2>{$currentAbstractionId.shortValue}</h2>
+            {/if}
         </nav>
     {/if}
 
     <nav
         aria-label="main navigation"
-        class:is-fixed-top={isFixed}
+        class:is-fixed-top={null != $currentConceptId}
         class="navbar is-white"
         role="navigation"
     >
         <div class="navbar-brand">
-            {#if showLogotype}
+            {#if null != $currentConceptId}
                 <a class="navbar-item" href={`/${$i18n.language}`}>
                     <img
                         alt={$i18n.t("datakoro").toUpperCase()}
@@ -87,12 +88,12 @@
                 {#if null === $currentUser}
                     <div class="navbar-item">
                         <div class="buttons">
-                            <a
-                                class="button is-light"
-                                href={`/${$i18n.language}/view?c=${ID_DATAKORO_LOGIN.shortValue}`}
+                            <ViewHyperlink
+                                classStr="button is-light"
+                                params={{ c: ID_DATAKORO_LOGIN.shortValue }}
                             >
                                 {$i18n.t("log_in")}
-                            </a>
+                            </ViewHyperlink>
                             <a
                                 class="button is-link support-button"
                                 href="https://www.patreon.com/Lajto"
@@ -181,15 +182,27 @@
         width: 100%;
         height: 57px;
         position: fixed;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .view-nav h1 {
         font-weight: bold;
-        margin: 5px 300px 0 300px;
+        margin: 0;
     }
 
     .view-nav h2 {
         font-style: italic;
-        margin: 0 300px;
+        margin: 0;
+    }
+
+    .view-nav h1,
+    .view-nav h2 {
+        max-width: 100%;
+        padding: 0 300px;
+        box-sizing: border-box;
+        text-align: center;
     }
 </style>
