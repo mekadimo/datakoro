@@ -5,6 +5,8 @@ export const enTranslations = {
     "close": "Close",
     "contributions": "Contributions",
     "datakoro": "Datakoro",
+    "datakoro_01_in_dev": "Datakoro 0.1 is still under development.",
+    "email": "Email",
     "exception.cannot_delete_inherited_relation":
         'The relation "{{relationId}}" cannot be deleted, since it\'s inherited.',
     "exception.concept_not_found": "Concept not found.",
@@ -36,6 +38,7 @@ export const enTranslations = {
     "log_in": "Log in",
     "log_out": "Log out",
     "mekadimo_project": "Mekadimo Project",
+    "password": "Password",
     "profile": "Profile",
     "search_concepts": "Search concepts",
     "source_code": "Source code",

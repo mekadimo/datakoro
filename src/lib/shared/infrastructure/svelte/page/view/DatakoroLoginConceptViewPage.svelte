@@ -17,10 +17,14 @@
                 <div class="column is-6-tablet is-5-desktop is-4-widescreen">
                     <form action="" class="box">
                         <div class="content">
-                            <h1 class="has-text-centered">Login</h1>
+                            <h1 class="has-text-centered">
+                                {$i18n.t("log_in")}
+                            </h1>
                         </div>
                         <div class="field">
-                            <label for="" class="label">Email</label>
+                            <label for="" class="label">
+                                {$i18n.t("email")}
+                            </label>
                             <div class="control has-icons-left">
                                 <input class="input" disabled type="email" />
                                 <span class="icon is-small is-left">
@@ -32,7 +36,9 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label for="" class="label">Password</label>
+                            <label for="" class="label">
+                                {$i18n.t("password")}
+                            </label>
                             <div class="control has-icons-left">
                                 <input class="input" disabled type="password" />
                                 <span class="icon is-small is-left">
@@ -45,12 +51,12 @@
                         </div>
                         <div class="field">
                             <button class="button is-link" disabled>
-                                Login
+                                {$i18n.t("log_in")}
                             </button>
                         </div>
                         <div class="content">
                             <p class="has-text-danger has-red-text">
-                                Datakoro 0.1 is still under development.
+                                {$i18n.t("datakoro_01_in_dev")}
                             </p>
                         </div>
                     </form>

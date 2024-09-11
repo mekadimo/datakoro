@@ -5,6 +5,8 @@ export const esTranslations = {
     "close": "Cerrar",
     "contributions": "Contribuciones",
     "datakoro": "Datakoro",
+    "datakoro_01_in_dev": "Datakoro 0.1 aún sigue en desarrollo.",
+    "email": "Correo electrónico",
     "exception.cannot_delete_inherited_relation":
         'La relación "{{relationId}}" no puede eliminarse, ya que es heredada.',
     "exception.concept_not_found": "Concepto no encontrado.",
@@ -40,6 +42,7 @@ export const esTranslations = {
     "log_in": "Iniciar sesión",
     "log_out": "Cerrar sesión",
     "mekadimo_project": "Proyecto Mekadimo",
+    "password": "Contraseña",
     "profile": "Perfil",
     "search_concepts": "Buscar conceptos",
     "source_code": "Código fuente",
