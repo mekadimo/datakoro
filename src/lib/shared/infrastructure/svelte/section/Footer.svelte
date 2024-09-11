@@ -22,7 +22,7 @@
         <div class="columns is-centered">
             <div class="column has-text-left">
                 <p>
-                    © 2024
+                    © {new Date().getFullYear()}
                     <a class="mr-5" href="https://mekadimo.org" target="_blank">
                         {$i18n.t("mekadimo_project")}
                     </a>
