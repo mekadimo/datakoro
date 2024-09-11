@@ -43,8 +43,8 @@
 
     <nav
         aria-label="main navigation"
-        class:is-fixed-top={null != $currentConceptId}
-        class="navbar is-white"
+        class:has-current-concept={null != $currentConceptId}
+        class="navbar is-white is-fixed-top"
         role="navigation"
     >
         <div class="navbar-brand">
@@ -159,6 +159,9 @@
 
     .navbar.is-fixed-top {
         background-color: transparent;
+    }
+
+    .navbar.has-current-concept {
         border-bottom: #ddd 1px solid;
     }
 

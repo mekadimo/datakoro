@@ -77,7 +77,7 @@
 
 <style lang="scss">
     .datakoro-home {
-        padding-top: 56px;
+        padding-top: 250px;
     }
 
     .datakoro-title-header {

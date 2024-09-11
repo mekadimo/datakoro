@@ -18,27 +18,18 @@
         | DtoDatakoroSearchConceptView;
 </script>
 
-<section class="section datakoro-view is-fullheight">
-    {#if data.conceptId === ID_DATAKORO_LOGIN.shortValue}
-        <DatakoroLoginConceptViewPage
-            data={DtoDatakoroLoginConceptViewTransformer.toDomain(data)}
-        />
-    {:else if data.conceptId === ID_DATAKORO_SEARCH.shortValue}
-        <DatakoroSearchConceptViewPage
-            data={DtoDatakoroSearchConceptViewTransformer.toDomain(data)}
-        />
-    {:else if data.abstractionId === ID_CONCEPT.shortValue}
-        <ConceptAbstractionViewPage
-            data={DtoConceptAbstractionViewTransformer.toDomain(data)}
-        />
-    {:else}
-        NOT SUPPORTED
-    {/if}
-</section>
-
-<style lang="scss">
-    .datakoro-view {
-        padding: 56px 0 0 0;
-        // TODO: Use full screen height as min height
-    }
-</style>
+{#if data.conceptId === ID_DATAKORO_LOGIN.shortValue}
+    <DatakoroLoginConceptViewPage
+        data={DtoDatakoroLoginConceptViewTransformer.toDomain(data)}
+    />
+{:else if data.conceptId === ID_DATAKORO_SEARCH.shortValue}
+    <DatakoroSearchConceptViewPage
+        data={DtoDatakoroSearchConceptViewTransformer.toDomain(data)}
+    />
+{:else if data.abstractionId === ID_CONCEPT.shortValue}
+    <ConceptAbstractionViewPage
+        data={DtoConceptAbstractionViewTransformer.toDomain(data)}
+    />
+{:else}
+    NOT SUPPORTED
+{/if}

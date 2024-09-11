@@ -11,8 +11,14 @@
     }
 </script>
 
+<TopBar />
 <div class="hero is-fullheight">
-    <TopBar />
     <slot />
     <Footer />
 </div>
+
+<style lang="scss">
+    .main-wrapper {
+        padding: 0;
+    }
+</style>
