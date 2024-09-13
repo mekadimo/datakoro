@@ -45,7 +45,6 @@
         aria-label="main navigation"
         class:has-current-concept={null != $currentConceptId}
         class="navbar is-white is-fixed-top"
-        role="navigation"
     >
         <div class="navbar-brand">
             {#if null != $currentConceptId}
@@ -74,14 +73,14 @@
 
         <div class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="" on:click={showLanguageModal}>
+                <button class="navbar-item" on:click={showLanguageModal}>
                     <span>
                         <span class="language-selector-icon">
                             <GlobeIcon color="#444" size="1em" />
                         </span>
                         {$i18n.language.toUpperCase()}
                     </span>
-                </a>
+                </button>
             </div>
 
             <div class="navbar-end">
@@ -104,17 +103,17 @@
                         </div>
                     </div>
                 {:else}
-                    <a class="navbar-item" href="">
-                        <!-- <BellIcon color="#111111" size="1.5em" />
-                        <BellSlashIcon color="#111111" size="1.5em" /> -->
+                    <button class="navbar-item">
                         <span class="notification-bell">
+                            <BellIcon color="#111111" size="1.5em" />
+                            <BellSlashIcon color="#111111" size="1.5em" />
                             <BellRingingIcon color="#111111" size="1.5em" />
                         </span>
                         <span class="tag is-black notification-tag">+9</span>
-                    </a>
+                    </button>
 
                     <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link" href="">
+                        <button class="navbar-link">
                             <span>Lajto</span>
                             <figure class="image is-24x24">
                                 <img
@@ -123,22 +122,34 @@
                                     src="https://avatars.githubusercontent.com/u/85128868?s=400&u=23a894ff6b788c000f7c54651eabbb47596e22b0&v=4"
                                 />
                             </figure>
-                        </a>
+                        </button>
 
                         <div class="navbar-dropdown">
-                            <a class="navbar-item" href="">
+                            <ViewHyperlink
+                                classStr="navbar-item"
+                                params={{ c: ID_DATAKORO_LOGIN.shortValue }}
+                            >
                                 {$i18n.t("profile")}
-                            </a>
-                            <a class="navbar-item" href="">
+                            </ViewHyperlink>
+                            <ViewHyperlink
+                                classStr="navbar-item"
+                                params={{ c: ID_DATAKORO_LOGIN.shortValue }}
+                            >
                                 {$i18n.t("contributions")}
-                            </a>
-                            <a class="navbar-item" href="">
+                            </ViewHyperlink>
+                            <ViewHyperlink
+                                classStr="navbar-item"
+                                params={{ c: ID_DATAKORO_LOGIN.shortValue }}
+                            >
                                 {$i18n.t("account")}
-                            </a>
+                            </ViewHyperlink>
                             <hr class="navbar-divider" />
-                            <a class="navbar-item" href="">
+                            <ViewHyperlink
+                                classStr="navbar-item"
+                                params={{ c: ID_DATAKORO_LOGIN.shortValue }}
+                            >
                                 {$i18n.t("log_out")}
-                            </a>
+                            </ViewHyperlink>
                         </div>
                     </div>
                 {/if}
@@ -148,10 +159,6 @@
 </header>
 
 <style lang="scss">
-    .language-select {
-        max-width: 200px;
-    }
-
     .language-selector-icon {
         position: relative;
         top: 2px;
