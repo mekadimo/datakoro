@@ -9,6 +9,14 @@
     let { i18n } = AppGlobalState.get();
 </script>
 
+<svelte:head>
+    <title>
+        {data.conceptId.shortValue} - {data.abstractionId.shortValue} - {$i18n.t(
+            "datakoro",
+        )}
+    </title>
+</svelte:head>
+
 <section class="datakoro-normal-view">
     <ul>
         <li><b>ID:</b> {data.data.concept.id.shortValue}</li>

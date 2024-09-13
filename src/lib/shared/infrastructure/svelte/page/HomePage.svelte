@@ -10,6 +10,10 @@
     let searchValue = "";
 </script>
 
+<svelte:head>
+    <title>{$i18n.t("datakoro")}</title>
+</svelte:head>
+
 <section class="section datakoro-home">
     <div class="columns is-centered">
         <form

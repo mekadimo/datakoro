@@ -10,6 +10,10 @@
     let { i18n } = AppGlobalState.get();
 </script>
 
+<svelte:head>
+    <title>{data.conceptId.shortValue} - {$i18n.t("datakoro")}</title>
+</svelte:head>
+
 <section class="hero is-fullheight">
     <div class="hero-body">
         <div class="container">

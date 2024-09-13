@@ -7,6 +7,10 @@
     let { i18n } = AppGlobalState.get();
 </script>
 
+<svelte:head>
+    <title>{data.conceptId.shortValue} - {$i18n.t("datakoro")}</title>
+</svelte:head>
+
 <section class="datakoro-normal-view">
     <h1>Showing results of "{data.parameters.q}"</h1>
 
