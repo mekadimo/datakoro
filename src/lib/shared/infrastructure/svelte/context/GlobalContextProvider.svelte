@@ -1,11 +1,11 @@
 <script lang="ts">
     import { page } from "$app/stores";
 
-    import { AppGlobalState } from "../model/AppGlobalState";
+    import { GlobalState } from "../model/GlobalState";
 
-    AppGlobalState.init($page.params.languageCode);
+    GlobalState.init($page.params.languageCode);
 
-    let { i18n } = AppGlobalState.get();
+    let { i18n } = GlobalState.get();
     $: $i18n.changeLanguage($page.params.languageCode);
 </script>
 

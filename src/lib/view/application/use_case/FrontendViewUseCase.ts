@@ -13,6 +13,26 @@ import { DtoDatakoroSearchConceptViewTransformer } from "../dto/DtoDatakoroSearc
 import { ID_CONCEPT } from "../../../graph/domain/model/ConceptId";
 import { ID_DATAKORO_LOGIN } from "../../../graph/domain/model/ConceptId";
 import { ID_DATAKORO_SEARCH } from "../../../graph/domain/model/ConceptId";
+import { languageCodeToConceptId } from "$lib/view/domain/model/SupportedLanguage";
+
+function collectConceptIds(data: any): ConceptId[] {
+    const result: ConceptId[] = [];
+
+    function recurse(obj: any) {
+        if (obj instanceof ConceptId) {
+            result.push(obj);
+        } else if (typeof obj === "object" && obj !== null) {
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    recurse(obj[key]);
+                }
+            }
+        }
+    }
+
+    recurse(data);
+    return result;
+}
 
 export class FrontendViewUseCase {
     private static async getConceptAbstractionView({
@@ -20,11 +40,13 @@ export class FrontendViewUseCase {
         conceptId,
         operationService,
         parameters,
+        preferredLanguageConceptId,
     }: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         operationService: OperationService;
         parameters: { [key: string]: string };
+        preferredLanguageConceptId: ConceptId;
     }): Promise<DtoConceptAbstractionView> {
         const response = await operationService.runToRead(async (operation) => {
             const graphRepository = operation.graphRepository;
@@ -32,6 +54,18 @@ export class FrontendViewUseCase {
             const concept = await graphRepository.getConceptById(conceptId);
             const conceptRelations =
                 await graphRepository.getConceptRelationsById(conceptId);
+
+            const allConceptIds = collectConceptIds([
+                conceptId,
+                abstractionId,
+                concept,
+                conceptRelations,
+            ]);
+            const conceptNames =
+                await graphRepository.getConceptNamesWithPreferredLanguage(
+                    allConceptIds,
+                    preferredLanguageConceptId,
+                );
 
             const view = new ConceptAbstractionView({
                 conceptId: conceptId,
@@ -41,6 +75,7 @@ export class FrontendViewUseCase {
                     concept: concept,
                     conceptRelations: conceptRelations,
                 },
+                names: conceptNames,
             });
             return DtoConceptAbstractionViewTransformer.fromDomain(view);
         });
@@ -49,29 +84,55 @@ export class FrontendViewUseCase {
 
     private static async getDatakoroLoginConceptView({
         conceptId,
+        operationService,
         parameters,
+        preferredLanguageConceptId,
     }: {
         conceptId: ConceptId;
+        operationService: OperationService;
         parameters: { [key: string]: string };
+        preferredLanguageConceptId: ConceptId;
     }): Promise<DtoDatakoroLoginConceptView> {
-        const view = new DatakoroLoginConceptView({
-            conceptId: conceptId,
-            parameters: parameters,
+        const response = await operationService.runToRead(async (operation) => {
+            const graphRepository = operation.graphRepository;
+
+            const allConceptIds = collectConceptIds([conceptId]);
+            const conceptNames =
+                await graphRepository.getConceptNamesWithPreferredLanguage(
+                    allConceptIds,
+                    preferredLanguageConceptId,
+                );
+
+            const view = new DatakoroLoginConceptView({
+                conceptId: conceptId,
+                parameters: parameters,
+                names: conceptNames,
+            });
+            return DtoDatakoroLoginConceptViewTransformer.fromDomain(view);
         });
-        return DtoDatakoroLoginConceptViewTransformer.fromDomain(view);
+        return response;
     }
 
     private static async getDatakoroSearchConceptView({
         conceptId,
         operationService,
         parameters,
+        preferredLanguageConceptId,
     }: {
         conceptId: ConceptId;
         operationService: OperationService;
         parameters: { [key: string]: string };
+        preferredLanguageConceptId: ConceptId;
     }): Promise<DtoDatakoroSearchConceptView> {
         const response = await operationService.runToRead(async (operation) => {
             const graphRepository = operation.graphRepository;
+
+            const allConceptIds = collectConceptIds([conceptId]);
+            const conceptNames =
+                await graphRepository.getConceptNamesWithPreferredLanguage(
+                    allConceptIds,
+                    preferredLanguageConceptId,
+                );
 
             const view = new DatakoroSearchConceptView({
                 conceptId: conceptId,
@@ -82,6 +143,7 @@ export class FrontendViewUseCase {
                     results: [], // TODO
                 },
                 parameters: parameters,
+                names: conceptNames,
             });
             return DtoDatakoroSearchConceptViewTransformer.fromDomain(view);
         });
@@ -95,6 +157,9 @@ export class FrontendViewUseCase {
         const conceptId = new ConceptId(dto.conceptId);
         const abstractionId =
             null == dto.abstractionId ? null : new ConceptId(dto.abstractionId);
+        const preferredLanguageConceptId = languageCodeToConceptId(
+            dto.preferredLanguageCode,
+        );
 
         if (abstractionId?.shortValue === ID_CONCEPT.shortValue) {
             return await FrontendViewUseCase.getConceptAbstractionView({
@@ -102,6 +167,7 @@ export class FrontendViewUseCase {
                 conceptId: conceptId,
                 operationService: operationService,
                 parameters: dto.parameters,
+                preferredLanguageConceptId: preferredLanguageConceptId,
             });
         }
         if (
@@ -110,7 +176,9 @@ export class FrontendViewUseCase {
         ) {
             return await FrontendViewUseCase.getDatakoroLoginConceptView({
                 conceptId: conceptId,
+                operationService: operationService,
                 parameters: dto.parameters,
+                preferredLanguageConceptId: preferredLanguageConceptId,
             });
         }
         if (
@@ -121,6 +189,7 @@ export class FrontendViewUseCase {
                 conceptId: conceptId,
                 operationService: operationService,
                 parameters: dto.parameters,
+                preferredLanguageConceptId: preferredLanguageConceptId,
             });
         }
 

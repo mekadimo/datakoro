@@ -1,4 +1,5 @@
 export const esTranslations = {
+    "abstraction": "Abstracción",
     "account": "Cuenta",
     "change_current_language": "Cambiar idioma actual",
     "change_theme": "Cambiar tema",
@@ -6,6 +7,7 @@ export const esTranslations = {
     "contributions": "Contribuciones",
     "datakoro": "Datakoro",
     "datakoro_01_in_dev": "Datakoro 0.1 aún sigue en desarrollo.",
+    "date": "Fecha",
     "email": "Correo electrónico",
     "exception.cannot_delete_inherited_relation":
         'La relación "{{relationId}}" no puede eliminarse, ya que es heredada.',
@@ -21,6 +23,8 @@ export const esTranslations = {
     "exception.invalid_positive_non_zero_integer_exception":
         'El número "{{value}}" no es un entero positivo distinto de cero.',
     "exception.invalid_uuid": 'El valor "{{value}}" no es una UUID válida.',
+    "exception.language_code_not_supported":
+        'El código de idioma "{{languageCode}}" no está soportado.',
     "exception.magnitude_concept_not_found":
         "Concepto de magnitud no encontrado.",
     "exception.number_concept_not_found": "Concepto de número no encontrado.",
@@ -42,9 +46,18 @@ export const esTranslations = {
     "log_in": "Iniciar sesión",
     "log_out": "Cerrar sesión",
     "mekadimo_project": "Proyecto Mekadimo",
+    "operation": "Operación",
+    "order_k_number": "Orden",
+    "origin_concept": "Concepto de origen",
+    "origin_relation": "Relación de origen",
     "password": "Contraseña",
     "profile": "Perfil",
+    "property": "Propiedad",
+    "quality": "Cualidad",
+    "relation": "Relación",
     "search_concepts": "Buscar conceptos",
     "source_code": "Código fuente",
     "support_lajto": "¡Apoya a Lajto!",
+    "transaction": "Transacción",
+    "unknown_concept_name": 'concepto "{{id}}"',
 };

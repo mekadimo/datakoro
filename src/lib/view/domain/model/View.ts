@@ -1,3 +1,4 @@
+import type { ConceptName } from "$lib/graph/domain/model/ConceptName";
 import { ConceptId } from "../../../graph/domain/model/ConceptId";
 import { ConceptNotFoundException } from "$lib/shared/domain/model/DomainException";
 import { ID_CONCEPT } from "../../../graph/domain/model/ConceptId";
@@ -14,19 +15,30 @@ export abstract class View {
     readonly conceptId: ConceptId;
     readonly abstractionId: ConceptId | null;
     readonly parameters: { [key: string]: string };
+    readonly names: { [conceptIdShort: string]: ConceptName };
 
     constructor({
         conceptId,
         abstractionId,
         parameters,
+        names,
     }: {
         conceptId: ConceptId;
         abstractionId: ConceptId | null;
         parameters: { [key: string]: string };
+        names: { [conceptIdShort: string]: ConceptName };
     }) {
         this.conceptId = conceptId;
         this.abstractionId = abstractionId;
         this.parameters = parameters;
+        this.names = names;
+    }
+
+    public getConceptName(conceptId: ConceptId): ConceptName | null {
+        if (!Object.hasOwn(this.names, conceptId.shortValue)) {
+            return null;
+        }
+        return this.names[conceptId.shortValue];
     }
 }
 
@@ -37,16 +49,19 @@ export abstract class AbstractionView extends View {
         conceptId,
         abstractionId,
         parameters,
+        names,
     }: {
         conceptId: ConceptId;
         abstractionId: ConceptId;
         parameters: { [key: string]: string };
+        names: { [conceptIdShort: string]: ConceptName };
     }) {
         AbstractionView.assertIsSupported(abstractionId);
         super({
             conceptId: conceptId,
             abstractionId: abstractionId,
             parameters: parameters,
+            names: names,
         });
     }
 
@@ -69,15 +84,18 @@ export abstract class ConceptView extends View {
     constructor({
         conceptId,
         parameters,
+        names,
     }: {
         conceptId: ConceptId;
         parameters: { [key: string]: string };
+        names: { [conceptIdShort: string]: ConceptName };
     }) {
         ConceptView.assertIsSupported(conceptId);
         super({
             conceptId: conceptId,
             abstractionId: null,
             parameters: parameters,
+            names: names,
         });
     }
 

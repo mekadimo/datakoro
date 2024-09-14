@@ -6,11 +6,15 @@
 
     import ChangeLanguageModal from "./ChangeLanguageModal.svelte";
     import ViewHyperlink from "../widget/ViewHyperlink.svelte";
-    import { AppGlobalState } from "../model/AppGlobalState";
+    import { GlobalState } from "../model/GlobalState";
     import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
 
-    let { currentAbstractionId, currentConceptId, currentUser, i18n } =
-        AppGlobalState.get();
+    let {
+        currentViewAbstractionName,
+        currentViewConceptName,
+        currentUser,
+        i18n,
+    } = GlobalState.get();
 
     let languageModalIsOpen = false;
 
@@ -31,23 +35,23 @@
 <header class="has-text-centered">
     <ChangeLanguageModal isOpen={languageModalIsOpen} {hideLanguageModal} />
 
-    {#if null != $currentConceptId}
+    {#if null != $currentViewConceptName}
         <!-- TODO: Implement naming system and use the proper ones -->
         <nav class="view-nav">
-            <h1>{$currentConceptId.shortValue}</h1>
-            {#if null != $currentAbstractionId}
-                <h2>{$currentAbstractionId.shortValue}</h2>
+            <h1>{$currentViewConceptName}</h1>
+            {#if null != $currentViewAbstractionName}
+                <h2>{$currentViewAbstractionName}</h2>
             {/if}
         </nav>
     {/if}
 
     <nav
         aria-label="main navigation"
-        class:has-current-concept={null != $currentConceptId}
+        class:has-current-concept={null != $currentViewConceptName}
         class="navbar is-white is-fixed-top"
     >
         <div class="navbar-brand">
-            {#if null != $currentConceptId}
+            {#if null != $currentViewConceptName}
                 <a class="navbar-item" href={`/${$i18n.language}`}>
                     <img
                         alt={$i18n.t("datakoro").toUpperCase()}

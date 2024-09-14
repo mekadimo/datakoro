@@ -1,18 +1,14 @@
 <script lang="ts">
-    import { AppGlobalState } from "../model/AppGlobalState";
+    import { GlobalState } from "../model/GlobalState";
+    import { SUPPORTED_LANGUAGES } from "$lib/view/domain/model/SupportedLanguage";
     import { page } from "$app/stores";
 
     const URL_LANGUAGE_CODE_REGEX = /^\/[a-z-]+(\/|$)/;
 
-    let { i18n } = AppGlobalState.get();
+    let { i18n } = GlobalState.get();
 
     export let isOpen: boolean;
     export let hideLanguageModal: () => void;
-
-    const SUPPORTED_LANGUAGES = [
-        { code: "en", originalName: "English" },
-        { code: "es", originalName: "Español" },
-    ];
 
     function i18nUrl(languageCode: string, currentPage: typeof $page): string {
         const url = currentPage.url.pathname;
@@ -45,14 +41,18 @@
                     {#each SUPPORTED_LANGUAGES as supportedLanguage}
                         <li>
                             <a
-                                class:is-active={supportedLanguage.code ===
-                                    $i18n.language}
-                                href={i18nUrl(supportedLanguage.code, $page)}
+                                class:is-active={supportedLanguage.code
+                                    .value === $i18n.language}
+                                href={i18nUrl(
+                                    supportedLanguage.code.value,
+                                    $page,
+                                )}
                             >
-                                {supportedLanguage.originalName}
-                                {#if supportedLanguage.code !== $i18n.language}
+                                {supportedLanguage.originalName.value}
+                                {#if supportedLanguage.code.value !== $i18n.language}
                                     ({$i18n.t(
-                                        "language_" + supportedLanguage.code,
+                                        "language_" +
+                                            supportedLanguage.code.value,
                                     )})
                                 {/if}
                             </a>

@@ -2,10 +2,10 @@
     import GraphIcon from "phosphor-svelte/lib/Graph";
     import MagnifyingGlassIcon from "phosphor-svelte/lib/MagnifyingGlass";
 
-    import { AppGlobalState } from "../model/AppGlobalState";
+    import { GlobalState } from "../model/GlobalState";
     import { ID_DATAKORO_SEARCH } from "../../../../graph/domain/model/ConceptId";
 
-    let { i18n } = AppGlobalState.get();
+    let { i18n } = GlobalState.get();
 
     let searchValue = "";
 </script>

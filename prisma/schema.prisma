@@ -207,3 +207,13 @@ model user_session {
   @@index([secret_key], map: "idx_user_session_secret_key", type: Hash)
   @@index([user_id], map: "idx_user_session_user_id", type: Hash)
 }
+
+// TODO: This is temporal; remove once it's not needed
+model temp_concept_name {
+  concept_id_name     String @db.Uuid
+  concept_id_concept  String @db.Uuid
+  concept_id_language String @db.Uuid
+  text_value          String
+
+  @@unique([concept_id_name, concept_id_language])
+}

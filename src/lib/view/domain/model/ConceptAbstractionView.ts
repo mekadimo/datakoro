@@ -1,5 +1,6 @@
 import type { ActiveRelation } from "$lib/graph/domain/model/Relation";
 import type { Concept } from "$lib/graph/domain/model/Concept";
+import type { ConceptName } from "$lib/graph/domain/model/ConceptName";
 import { AbstractionView } from "./View";
 import { ConceptId } from "../../../graph/domain/model/ConceptId";
 import { ConceptNotFoundException } from "$lib/shared/domain/model/DomainException";
@@ -18,11 +19,13 @@ export class ConceptAbstractionView extends AbstractionView {
         conceptId,
         data,
         parameters,
+        names,
     }: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         data: ViewData;
         parameters: { [key: string]: string };
+        names: { [conceptIdShort: string]: ConceptName };
     }) {
         if (abstractionId.shortValue !== ID_CONCEPT.shortValue) {
             throw new ConceptNotFoundException({
@@ -34,6 +37,7 @@ export class ConceptAbstractionView extends AbstractionView {
             conceptId: conceptId,
             abstractionId: abstractionId,
             parameters: parameters,
+            names: names,
         });
         this.data = data;
     }

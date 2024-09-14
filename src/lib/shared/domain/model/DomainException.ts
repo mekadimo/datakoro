@@ -114,6 +114,12 @@ export class InvalidUuidException extends DomainException {
     }
 }
 
+export class LanguageCodeNotSupportedException extends DomainException {
+    constructor(context: { languageCode: string }) {
+        super({ code: "language_code_not_supported", context: context });
+    }
+}
+
 export class MagnitudeConceptNotFoundException extends DomainException {
     constructor(context: { id: string }) {
         super({ code: "magnitude_concept_not_found", context: context });

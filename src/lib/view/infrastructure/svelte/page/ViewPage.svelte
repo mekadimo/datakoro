@@ -8,6 +8,7 @@
     import { DtoConceptAbstractionViewTransformer } from "$lib/view/application/dto/DtoConceptAbstractionView";
     import { DtoDatakoroLoginConceptViewTransformer } from "$lib/view/application/dto/DtoDatakoroLoginConceptView";
     import { DtoDatakoroSearchConceptViewTransformer } from "$lib/view/application/dto/DtoDatakoroSearchConceptView";
+    import { GlobalState } from "../../../../shared/infrastructure/svelte/model/GlobalState";
     import { ID_CONCEPT } from "$lib/graph/domain/model/ConceptId";
     import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
     import { ID_DATAKORO_SEARCH } from "$lib/graph/domain/model/ConceptId";
@@ -16,19 +17,33 @@
         | DtoConceptAbstractionView
         | DtoDatakoroLoginConceptView
         | DtoDatakoroSearchConceptView;
+
+    let { currentViewAbstractionName, currentViewConceptName, i18n } =
+        GlobalState.get();
 </script>
 
-{#if data.conceptId === ID_DATAKORO_LOGIN.shortValue}
+<svelte:head>
+    <title>
+        {$currentViewConceptName}
+        {null == $currentViewAbstractionName
+            ? ""
+            : ` - ${$currentViewAbstractionName}`}
+        -
+        {$i18n.t("datakoro")}
+    </title>
+</svelte:head>
+
+{#if data.abstractionId === ID_CONCEPT.shortValue}
+    <ConceptAbstractionViewPage
+        data={DtoConceptAbstractionViewTransformer.toDomain(data)}
+    />
+{:else if data.conceptId === ID_DATAKORO_LOGIN.shortValue}
     <DatakoroLoginConceptViewPage
         data={DtoDatakoroLoginConceptViewTransformer.toDomain(data)}
     />
 {:else if data.conceptId === ID_DATAKORO_SEARCH.shortValue}
     <DatakoroSearchConceptViewPage
         data={DtoDatakoroSearchConceptViewTransformer.toDomain(data)}
-    />
-{:else if data.abstractionId === ID_CONCEPT.shortValue}
-    <ConceptAbstractionViewPage
-        data={DtoConceptAbstractionViewTransformer.toDomain(data)}
     />
 {:else}
     NOT SUPPORTED

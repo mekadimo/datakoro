@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { AppGlobalState } from "../model/AppGlobalState";
+    import { GlobalState } from "../model/GlobalState";
 
-    let { i18n } = AppGlobalState.get();
+    let { i18n } = GlobalState.get();
 
     export let classStr: string | undefined = undefined;
     export let params: {

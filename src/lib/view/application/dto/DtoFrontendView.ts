@@ -1,5 +1,6 @@
 export interface DtoGetViewInput {
-    readonly conceptId: string;
     readonly abstractionId: string | null;
+    readonly conceptId: string;
     readonly parameters: { [key: string]: string };
+    readonly preferredLanguageCode: string;
 }

@@ -1,21 +1,32 @@
 <script lang="ts">
     import type { DatakoroSearchConceptView } from "../../../../../view/domain/model/DatakoroSearchConceptView";
-    import { AppGlobalState } from "../../model/AppGlobalState";
+    import type { View } from "$lib/view/domain/model/View";
+    import { ConceptId } from "../../../../../graph/domain/model/ConceptId";
+    import { GlobalState } from "../../../../../shared/infrastructure/svelte/model/GlobalState";
 
     export let data: DatakoroSearchConceptView;
 
-    let { i18n } = AppGlobalState.get();
-</script>
+    let { currentViewAbstractionName, currentViewConceptName, i18n } =
+        GlobalState.get();
 
-<svelte:head>
-    <title>{data.conceptId.shortValue} - {$i18n.t("datakoro")}</title>
-</svelte:head>
+    function getConceptName(conceptId: ConceptId, view: View): string {
+        const nameText =
+            view.getConceptName(conceptId)?.text.capitalizedValue ??
+            $i18n.t("unknown_concept_name", {
+                id: conceptId.shortValue,
+            });
+        return nameText;
+    }
+
+    $: currentViewAbstractionName.set(null);
+    $: currentViewConceptName.set(getConceptName(data.conceptId, data));
+</script>
 
 <section class="datakoro-normal-view">
     <h1>Showing results of "{data.parameters.q}"</h1>
 
     <!-- TODO: Create pagination component -->
-    <nav
+    <!-- <nav
         class="pagination is-centered"
         role="navigation"
         aria-label="pagination"
@@ -53,7 +64,7 @@
                 >
             </li>
         </ul>
-    </nav>
+    </nav> -->
 </section>
 
 <style lang="scss">

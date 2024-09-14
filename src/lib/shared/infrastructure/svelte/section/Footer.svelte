@@ -2,11 +2,11 @@
     import MoonIcon from "phosphor-svelte/lib/Moon";
     import SunIcon from "phosphor-svelte/lib/Sun";
 
-    import { AppGlobalState } from "../model/AppGlobalState";
+    import { GlobalState } from "../model/GlobalState";
 
-    let { i18n } = AppGlobalState.get();
+    let { i18n } = GlobalState.get();
 
-    let { currentTheme } = AppGlobalState.get();
+    let { currentTheme } = GlobalState.get();
 
     function onClickChangeTheme(): void {
         if ("light" === $currentTheme) {

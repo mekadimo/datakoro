@@ -8,6 +8,7 @@ import { DbOperationService } from "$lib/operation/infrastructure/prisma/service
 import { FrontendViewUseCase } from "$lib/view/application/use_case/FrontendViewUseCase.js";
 
 export async function load({
+    params,
     url,
 }): Promise<
     | DtoConceptAbstractionView
@@ -34,6 +35,7 @@ export async function load({
         conceptId: cGetParam,
         abstractionId: aGetParam,
         parameters: extraGetParams,
+        preferredLanguageCode: params.languageCode,
     };
     const operationService = new DbOperationService(null);
     const dtoOutput = await FrontendViewUseCase.getView(

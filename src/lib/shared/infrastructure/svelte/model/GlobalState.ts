@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import i18nextInstance from "i18next";
 import type { Writable } from "svelte/store";
 import type { i18n } from "i18next";
 import { createI18nStore } from "svelte-i18next";
@@ -6,7 +6,6 @@ import { getContext } from "svelte";
 import { setContext } from "svelte";
 import { writable } from "svelte/store";
 
-import type { ConceptId } from "$lib/graph/domain/model/ConceptId";
 import { enTranslations } from "./i18n/en";
 import { esTranslations } from "./i18n/es";
 
@@ -17,44 +16,28 @@ interface TempUser {
     something: string;
 }
 
-interface AppGlobalStateProps {
-    currentAbstractionId: Writable<ConceptId | null>;
-    currentConceptId: Writable<ConceptId | null>;
+interface GlobalStateProps {
+    currentViewAbstractionName: Writable<string | null>;
+    currentViewConceptName: Writable<string | null>;
     currentTheme: Writable<"dark" | "light">; // TODO: store in user's browser
     currentUser: Writable<TempUser | null>;
     i18n: Writable<i18n>;
 }
 
-export class AppGlobalState {
-    static get(): AppGlobalStateProps {
+export class GlobalState {
+    static get(): GlobalStateProps {
         const globalContext = getContext(
             GLOBAL_CONTEXT_KEY,
-        ) as AppGlobalStateProps;
+        ) as GlobalStateProps;
         return globalContext;
     }
 
     static init(languageCode: string): void {
-        const i18n = AppGlobalState.initI18n(languageCode);
-        const globalState: AppGlobalStateProps = {
-            currentAbstractionId: writable(null),
-            currentConceptId: writable(null),
-            currentTheme: writable("light"),
-            currentUser: writable(null),
-            i18n,
-        };
-        setContext(GLOBAL_CONTEXT_KEY, globalState);
-    }
-
-    private static initI18n(languageCode: string): Writable<i18n> {
-        i18next.init({
+        i18nextInstance.init({
             lng: languageCode,
             resources: {
-                en: {
-                    translation: enTranslations,
-                },
-                es: {
-                    translation: esTranslations,
-                },
+                en: { translation: enTranslations },
+                es: { translation: esTranslations },
             },
             interpolation: {
                 escapeValue: false, // not needed for svelte as it escapes by default
@@ -66,6 +49,14 @@ export class AppGlobalState {
             //     loadPath: "/locales/{{lng}}/{{ns}}.json",
             // },
         });
-        return createI18nStore(i18next);
+
+        const globalState: GlobalStateProps = {
+            currentViewAbstractionName: writable(null),
+            currentViewConceptName: writable(null),
+            currentTheme: writable("light"),
+            currentUser: writable(null),
+            i18n: createI18nStore(i18nextInstance),
+        };
+        setContext(GLOBAL_CONTEXT_KEY, globalState);
     }
 }

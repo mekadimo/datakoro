@@ -1,3 +1,32 @@
+
+-- TODO: This is temporal; remove once it's not needed
+CREATE TABLE temp_concept_name (
+    concept_id_name UUID NOT NULL REFERENCES concept,
+    concept_id_concept UUID NOT NULL REFERENCES concept,
+    concept_id_language UUID NULL REFERENCES concept,
+    text_value TEXT NOT NULL REFERENCES text_concept (text_value),
+
+    UNIQUE(concept_id_name, concept_id_language)
+);
+
+CREATE INDEX idx_temp_concept_name_concept_id_concept
+ON temp_concept_name
+USING HASH (concept_id_concept);
+
+CREATE INDEX idx_temp_concept_name_concept_id_concept_language
+ON temp_concept_name
+USING BTREE (concept_id_concept, concept_id_language);
+
+CREATE INDEX idx_temp_concept_name_text_value
+ON temp_concept_name
+USING BTREE (text_value);
+
+
+
+/* ------------------------------------------------------------------------- */
+
+
+
 CREATE FUNCTION add_fundamental_concept(input_concept_id UUID)
 RETURNS VOID
 AS $$
@@ -315,6 +344,20 @@ BEGIN
         cid_signifier(),
         cid_concept(),
         input_concept_id
+    );
+
+    -- TODO: This is temporal; remove once it's not needed
+    INSERT INTO temp_concept_name (
+        concept_id_name,
+        concept_id_concept,
+        concept_id_language,
+        text_value
+    )
+    VALUES (
+        name_id,
+        input_concept_id,
+        language_id,
+        name_value
     );
 END;
 $$ LANGUAGE plpgsql;
@@ -755,11 +798,11 @@ BEGIN
     PERFORM add_names(
         cid_datakoro_login(),
         'Datakoro login',
-        'Inicio de sesión de Datakoro'
+        'Inicio de Sesión de Datakoro'
     );
     PERFORM add_names(
         cid_datakoro_search(),
-        'Datakoro search engine',
+        'Datakoro Search Engine',
         'Buscador de Datakoro'
     );
 

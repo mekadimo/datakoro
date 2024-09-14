@@ -1,4 +1,5 @@
 export const enTranslations = {
+    "abstraction": "Abstraction",
     "account": "Account",
     "change_current_language": "Change current language",
     "change_theme": "Change theme",
@@ -6,6 +7,7 @@ export const enTranslations = {
     "contributions": "Contributions",
     "datakoro": "Datakoro",
     "datakoro_01_in_dev": "Datakoro 0.1 is still under development.",
+    "date": "Date",
     "email": "Email",
     "exception.cannot_delete_inherited_relation":
         'The relation "{{relationId}}" cannot be deleted, since it\'s inherited.',
@@ -21,6 +23,8 @@ export const enTranslations = {
     "exception.invalid_positive_non_zero_integer_exception":
         'The number "{{value}}" is not a non zero positive integer.',
     "exception.invalid_uuid": 'The value "{{value}}" is not a valid UUID.',
+    "exception.language_code_not_supported":
+        'The language code "{{languageCode}}" is not supported.',
     "exception.magnitude_concept_not_found": "Magnitude concept not found.",
     "exception.number_concept_not_found": "Number concept not found.",
     "exception.operation_concept_not_found": "Operation concept not found.",
@@ -38,9 +42,20 @@ export const enTranslations = {
     "log_in": "Log in",
     "log_out": "Log out",
     "mekadimo_project": "Mekadimo Project",
+    "operation": "Operation",
+    "order_k_number": "Order",
+    "origin_concept": "Origin concept",
+    "origin_relation": "Origin relation",
     "password": "Password",
     "profile": "Profile",
+    "property": "Property",
+    "quality": "Quality",
+    "relation": "Relation",
     "search_concepts": "Search concepts",
     "source_code": "Source code",
+    "source_concept": "Source concept",
+    "source_relation": "Source relation",
     "support_lajto": "Support Lajto!",
+    "transaction": "Transaction",
+    "unknown_concept_name": 'concept "{{id}}"',
 };
