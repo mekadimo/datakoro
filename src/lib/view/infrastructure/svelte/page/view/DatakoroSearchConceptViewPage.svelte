@@ -72,7 +72,7 @@
                         />
                     </span>
                 </div>
-                <p>
+                <p class="search-results">
                     {#if 0 === data.data.numberOfTotalResults}
                         {$i18n.t("search_not_found", {
                             query: data.parameters.q,
@@ -110,5 +110,9 @@
 
     .panel {
         border: solid #eee 1px;
+    }
+
+    .search-results {
+        font-style: italic;
     }
 </style>
