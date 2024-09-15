@@ -17,6 +17,7 @@
     } = GlobalState.get();
 
     let languageModalIsOpen = false;
+    let smallScreenMenuIsOpen = false;
 
     function hideLanguageModal(): void {
         languageModalIsOpen = false;
@@ -26,9 +27,8 @@
         languageModalIsOpen = true;
     }
 
-    function showMenu(): void {
-        // TODO
-        console.log("Showing menu...");
+    function toggleSmallScreenMenu(): void {
+        smallScreenMenuIsOpen = !smallScreenMenuIsOpen;
     }
 </script>
 
@@ -36,7 +36,6 @@
     <ChangeLanguageModal isOpen={languageModalIsOpen} {hideLanguageModal} />
 
     {#if null != $currentViewConceptName}
-        <!-- TODO: Implement naming system and use the proper ones -->
         <nav class="view-nav">
             <h1>{$currentViewConceptName}</h1>
             {#if null != $currentViewAbstractionName}
@@ -65,8 +64,9 @@
                 aria-expanded="false"
                 aria-label="menu"
                 class="navbar-burger"
+                class:is-active={smallScreenMenuIsOpen}
                 data-target="navbarBasicExample"
-                on:click={showMenu}
+                on:click={toggleSmallScreenMenu}
             >
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -75,7 +75,7 @@
             </button>
         </div>
 
-        <div class="navbar-menu">
+        <div class="navbar-menu" class:is-active={smallScreenMenuIsOpen}>
             <div class="navbar-start">
                 <button class="navbar-item" on:click={showLanguageModal}>
                     <span>
@@ -169,7 +169,7 @@
     }
 
     .navbar.is-fixed-top {
-        background-color: transparent;
+        background-color: white;
     }
 
     .navbar.has-current-concept {
@@ -192,14 +192,16 @@
     }
 
     .view-nav {
-        background-color: #fff;
-        width: 100%;
-        height: 57px;
-        position: fixed;
+        align-items: center;
+        background-color: transparent;
         display: flex;
         flex-direction: column;
+        height: 57px;
         justify-content: center;
-        align-items: center;
+        position: fixed;
+        z-index: 100;
+        left: 300px;
+        right: 300px;
     }
 
     .view-nav h1 {
@@ -214,9 +216,13 @@
 
     .view-nav h1,
     .view-nav h2 {
-        max-width: 100%;
-        padding: 0 300px;
+        width: 100%;
+        padding: 0;
         box-sizing: border-box;
         text-align: center;
+    }
+
+    .navbar-burger span {
+        background-color: black;
     }
 </style>
