@@ -21,6 +21,24 @@ export class DbGraphRepository extends GraphRepository {
         return concept;
     }
 
+    // TODO: This is temporal; remove raw Prisma use once it's not needed
+    public async getConceptIdsBySearch(
+        queryText: string,
+        languageId: ConceptId,
+    ): Promise<ConceptId[]> {
+        const results =
+            await this.transaction.prismaTx.temp_concept_name.findMany({
+                where: {
+                    concept_id_language: { equals: languageId.longValue },
+                    text_value: { contains: queryText, mode: "insensitive" },
+                },
+            });
+        const conceptIds = results.map(
+            (r) => new ConceptId(r.concept_id_concept),
+        );
+        return conceptIds;
+    }
+
     public async getConceptNamesWithPreferredLanguage(
         conceptIds: ConceptId[],
         languageId: ConceptId,

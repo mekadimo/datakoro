@@ -56,6 +56,9 @@ export const esTranslations = {
     "quality": "Cualidad",
     "relation": "Relación",
     "search_concepts": "Buscar conceptos",
+    "search_not_found":
+        "No se encontró ningún concepto cuyo nombre incluya '{{query}}'.",
+    "search_results": "Conceptos encontrados: {{total}}",
     "source_code": "Código fuente",
     "support_lajto": "¡Apoya a Lajto!",
     "transaction": "Transacción",

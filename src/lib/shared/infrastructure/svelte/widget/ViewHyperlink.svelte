@@ -4,6 +4,7 @@
     let { i18n } = GlobalState.get();
 
     export let classStr: string | undefined = undefined;
+    export let disableUnderline: boolean = false;
     export let params: {
         c: string;
         [key: string]: string | number | boolean;
@@ -19,6 +20,21 @@
     };
 </script>
 
-<a class={classStr} href={`/${$i18n.language}/view?${getParams()}`}>
+<a
+    class={classStr}
+    class:disabled-underline={disableUnderline}
+    href={`/${$i18n.language}/view?${getParams()}`}
+>
     <slot />
 </a>
+
+<style lang="scss">
+    .disabled-underline,
+    .disabled-underline:hover {
+        text-decoration: none;
+    }
+
+    .panel {
+        border: solid #eee 1px;
+    }
+</style>

@@ -13,6 +13,12 @@ export abstract class GraphRepository {
 
     public abstract getConceptById(conceptId: ConceptId): Promise<Concept>;
 
+    // TODO: This is temporal; remove raw Prisma use once it's not needed
+    public abstract getConceptIdsBySearch(
+        queryText: string,
+        languageId: ConceptId,
+    ): Promise<ConceptId[]>;
+
     public abstract getConceptNamesWithPreferredLanguage(
         conceptIds: ConceptId[],
         languageId: ConceptId,

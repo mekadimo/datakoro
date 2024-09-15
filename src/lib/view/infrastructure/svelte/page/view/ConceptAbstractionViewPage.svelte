@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <table class="table">
+    <table class="table mb-6">
         <thead>
             <th>{$i18n.t("relation").toUpperCase()}</th>
             <th>{$i18n.t("abstraction").toUpperCase()}</th>

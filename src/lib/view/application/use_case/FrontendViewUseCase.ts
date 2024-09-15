@@ -127,7 +127,12 @@ export class FrontendViewUseCase {
         const response = await operationService.runToRead(async (operation) => {
             const graphRepository = operation.graphRepository;
 
-            const allConceptIds = collectConceptIds([conceptId]);
+            const conceptIds = await graphRepository.getConceptIdsBySearch(
+                parameters["q"],
+                preferredLanguageConceptId,
+            );
+
+            const allConceptIds = collectConceptIds([conceptId, conceptIds]);
             const conceptNames =
                 await graphRepository.getConceptNamesWithPreferredLanguage(
                     allConceptIds,
@@ -137,10 +142,11 @@ export class FrontendViewUseCase {
             const view = new DatakoroSearchConceptView({
                 conceptId: conceptId,
                 data: {
-                    numberOfResultsPerPage: 0, // TODO
-                    numberOfTotalResults: 0, // TODO
-                    pageNumber: 0, // TODO
-                    results: [], // TODO
+                    // TODO
+                    numberOfResultsPerPage: conceptIds.length,
+                    numberOfTotalResults: conceptIds.length,
+                    pageNumber: 1,
+                    results: conceptIds,
                 },
                 parameters: parameters,
                 names: conceptNames,

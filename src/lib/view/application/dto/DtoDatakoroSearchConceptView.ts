@@ -1,19 +1,14 @@
-import type { DtoConcept } from "$lib/graph/application/dto/DtoConcept";
 import type { DtoConceptView } from "./DtoView";
 import { ConceptId } from "$lib/graph/domain/model/ConceptId";
 import { DatakoroSearchConceptView } from "$lib/view/domain/model/DatakoroSearchConceptView";
 import { DtoConceptNameTransformer } from "$lib/graph/application/dto/DtoConceptName";
-import { DtoConceptTransformer } from "$lib/graph/application/dto/DtoConcept";
 
 export interface DtoDatakoroSearchConceptView extends DtoConceptView {
     readonly data: {
         readonly numberOfResultsPerPage: number;
         readonly numberOfTotalResults: number;
         readonly pageNumber: number;
-        readonly results: {
-            readonly concept: DtoConcept;
-            readonly abstractions: DtoConcept[];
-        }[];
+        readonly results: string[];
     };
 }
 
@@ -28,16 +23,7 @@ export class DtoDatakoroSearchConceptViewTransformer {
                 numberOfResultsPerPage: view.data.numberOfResultsPerPage,
                 numberOfTotalResults: view.data.numberOfTotalResults,
                 pageNumber: view.data.pageNumber,
-                results: view.data.results.map((result) => {
-                    return {
-                        concept: DtoConceptTransformer.fromDomain(
-                            result.concept,
-                        ),
-                        abstractions: result.abstractions.map((a) =>
-                            DtoConceptTransformer.fromDomain(a),
-                        ),
-                    };
-                }),
+                results: view.data.results.map((r) => r.shortValue),
             },
             parameters: view.parameters,
             names: Object.fromEntries(
@@ -60,14 +46,7 @@ export class DtoDatakoroSearchConceptViewTransformer {
                 numberOfResultsPerPage: dto.data.numberOfResultsPerPage,
                 numberOfTotalResults: dto.data.numberOfTotalResults,
                 pageNumber: dto.data.pageNumber,
-                results: dto.data.results.map((result) => {
-                    return {
-                        concept: DtoConceptTransformer.toDomain(result.concept),
-                        abstractions: result.abstractions.map((a) =>
-                            DtoConceptTransformer.toDomain(a),
-                        ),
-                    };
-                }),
+                results: dto.data.results.map((r) => new ConceptId(r)),
             },
             parameters: dto.parameters,
             names: Object.fromEntries(

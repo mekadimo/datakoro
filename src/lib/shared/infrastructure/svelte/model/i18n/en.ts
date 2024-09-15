@@ -52,6 +52,8 @@ export const enTranslations = {
     "quality": "Quality",
     "relation": "Relation",
     "search_concepts": "Search concepts",
+    "search_not_found": "No concept whose name includes '{{query}}' was found.",
+    "search_results": "Found concepts: {{total}}",
     "source_code": "Source code",
     "source_concept": "Source concept",
     "source_relation": "Source relation",
