@@ -2,9 +2,8 @@ version: "3"
 
 services:
   master:
-    container_name: "${COMPOSE_PROJECT_NAME:-citus}_master"
+    container_name: "${COMPOSE_PROJECT_NAME}-master"
     image: "citusdata/citus:${TAG:-12.1.1}"
-    ports: ["${COORDINATOR_EXTERNAL_PORT:-5432}:5432"]
     labels: ["com.citusdata.role=Master"]
     environment: &AUTH
       POSTGRES_USER: "${POSTGRES_USER}"
@@ -13,7 +12,9 @@ services:
       PGPASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
     networks:
-      - datakoro_net
+      datakoro_net:
+        aliases:
+          - datakoro_master
 
   worker:
     image: "citusdata/citus:${TAG:-12.1.1}"
@@ -22,23 +23,25 @@ services:
     environment: *AUTH
     command: "/wait-for-manager.sh"
     volumes:
-      - healthcheck-volume:/healthcheck
+      - healthcheck_volume:/healthcheck
     networks:
       - datakoro_net
 
   manager:
-    container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
+    container_name: "${COMPOSE_PROJECT_NAME}-manager"
     image: "citusdata/membership-manager:0.3.0"
     volumes:
       - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock"
-      - healthcheck-volume:/healthcheck
+      - healthcheck_volume:/healthcheck
     depends_on: [master]
     environment: *AUTH
     networks:
-      - datakoro_net
+      datakoro_net:
+        aliases:
+          - datakoro_manager
 
   datakoro_server:
-    container_name: datakoro_server
+    container_name: "${COMPOSE_PROJECT_NAME}-server"
     build:
       context: .
       dockerfile: Dockerfile
@@ -48,24 +51,29 @@ services:
       - .:/srv/datakoro
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@datakoro_master/${POSTGRES_USER}
+      - RUN_SERVER=${RUN_SERVER}
     depends_on:
       - master
     networks:
-      - datakoro_net
+      datakoro_net:
+        aliases:
+          - datakoro_server
 
   datakoro_server_nginx:
     image: "nginx:stable-bookworm"
-    container_name: datakoro_server_nginx
+    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx"
     ports:
-      - "8443:443"
+      - "${WEB_SERVER_PORT}:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./certs:/etc/nginx/certs
     depends_on:
       - datakoro_server
     networks:
-      - datakoro_net
+      datakoro_net:
+        aliases:
+          - datakoro_server_nginx
 volumes:
-  healthcheck-volume:
+  healthcheck_volume:
 networks:
   datakoro_net:

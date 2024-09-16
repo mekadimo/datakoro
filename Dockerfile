@@ -1,6 +1,9 @@
 FROM node:22.6-bookworm AS builder
 
-WORKDIR /app
+COPY ./entrypoint.sh /srv/entrypoint.sh
+RUN chmod 755 /srv/entrypoint.sh
+
+WORKDIR /srv/datakoro
 
 RUN apt -y update \
     && apt upgrade -y \
@@ -9,3 +12,5 @@ RUN apt -y update \
     && apt-get -y autoremove --purge \
     && apt -y clean \
     && rm -rf /var/lib/apt/lists/*
+
+CMD ["/srv/entrypoint.sh"]

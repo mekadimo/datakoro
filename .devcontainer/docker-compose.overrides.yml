@@ -1,0 +1,4 @@
+version: "3"
+services:
+  master:
+    ports: ["5432:5432"]
