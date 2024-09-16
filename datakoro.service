@@ -4,13 +4,12 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-Type=oneshot
-WorkingDirectory=/srv/datakoro
-ExecStart=/usr/bin/docker compose --env-file /srv/.env.prod up -d
-ExecStop=/usr/bin/docker compose down
-RemainAfterExit=true
-TimeoutStartSec=0
+Type=simple
 Restart=always
+WorkingDirectory=/srv/datakoro
+Group=docker
+ExecStart=/usr/bin/docker compose --env-file /srv/.env.prod up
+ExecStop=/usr/bin/docker compose down
 
 [Install]
 WantedBy=multi-user.target
