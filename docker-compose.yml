@@ -79,8 +79,16 @@ services:
   datakoro_server_nginx_production:
     image: "nginx:stable-bookworm"
     container_name: "${COMPOSE_PROJECT_NAME}-server-nginx-production"
+    entrypoint: >
+      /bin/sh -c '
+      echo "Waiting LE certificates to be available...";
+      while [ ! -f "/etc/letsencrypt/live/${CERTBOT_DOMAIN}/fullchain.pem" ] || [ ! -f "/etc/letsencrypt/live/${CERTBOT_DOMAIN}/privkey.pem" ]; do
+          sleep 1;
+      done;
+      echo "LE certificates found!";
+      nginx -g 'daemon off;'
+      '
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf
@@ -88,10 +96,34 @@ services:
       - /srv/certbot/var/www/certbot:/var/www/certbot
     depends_on:
       - datakoro_server
+    environment:
+      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
     networks:
       datakoro_net:
         aliases:
-          - datakoro_server_nginx_development
+          - datakoro_server_nginx_production
+    profiles:
+      - production
+
+  datakoro_server_nginx_certbot:
+    image: "nginx:stable-bookworm"
+    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx-production"
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.certbot.conf:/etc/nginx/nginx.conf
+      - /srv/certbot/etc/letsencrypt:/etc/letsencrypt
+      - /srv/certbot/var/www/certbot:/var/www/certbot
+    depends_on:
+      - datakoro_server
+    environment:
+      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+    networks:
+      datakoro_net:
+        aliases:
+          - datakoro_server_nginx_certbot
     profiles:
       - production
 
