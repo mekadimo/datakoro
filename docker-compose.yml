@@ -59,20 +59,72 @@ services:
         aliases:
           - datakoro_server
 
-  datakoro_server_nginx:
+  datakoro_server_nginx_development:
     image: "nginx:stable-bookworm"
-    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx"
+    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx-development"
     ports:
       - "${WEB_SERVER_PORT}:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf
       - ./certs:/etc/nginx/certs
     depends_on:
       - datakoro_server
     networks:
       datakoro_net:
         aliases:
-          - datakoro_server_nginx
+          - datakoro_server_nginx_development
+    profiles:
+      - development
+
+  datakoro_server_nginx_production:
+    image: "nginx:stable-bookworm"
+    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx-production"
+    ports:
+      - "${WEB_SERVER_PORT}:443"
+      - "${WEB_SERVER_PORT}:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
+      - /srv/certbot/etc/letsencrypt:/etc/letsencrypt
+      - /srv/certbot/var/www/certbot:/var/www/certbot
+    depends_on:
+      - datakoro_server
+    networks:
+      datakoro_net:
+        aliases:
+          - datakoro_server_nginx_development
+    profiles:
+      - production
+
+  certbot:
+    image: certbot/certbot
+    container_name: "${COMPOSE_PROJECT_NAME}-certbot"
+    entrypoint: >
+      /bin/sh -c '
+      if [ ! -f /etc/letsencrypt/live/${CERTBOT_DOMAIN}/fullchain.pem ]; then
+        certbot certonly --webroot -w /var/www/certbot -d ${CERTBOT_DOMAIN} --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email --non-interactive;
+      fi;
+      trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot;
+        sleep 12h;
+      done;
+      '
+    environment:
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
+    volumes:
+      - /srv/certbot/etc/letsencrypt:/etc/letsencrypt
+      - /srv/certbot/var/www/certbot:/var/www/certbot
+    networks:
+      - datakoro_net
+    depends_on:
+      - datakoro_server_nginx_production
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    profiles:
+      - production
 volumes:
   healthcheck_volume:
 networks:

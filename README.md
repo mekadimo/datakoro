@@ -104,10 +104,10 @@ make dev-certs
 Then, all Docker containers can be created and start running (automatic if
 using VS Code Docker dev-containers).
 
-From a shell inside the container `datakoro_server`, we run migrations with:
+Once inside the devcontainer (`datakoro_server`), run:
 
 ```sh
-make migrate
+make install migrate
 ```
 
 And we run the server in development with:

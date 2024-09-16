@@ -1,6 +1,9 @@
 {
     "name": "Datakoro",
-    "dockerComposeFile": ["../docker-compose.yml"],
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "./docker-compose.overrides.yml"
+    ],
     "service": "datakoro_server",
     "workspaceFolder": "/srv/datakoro",
     "features": {
