@@ -86,7 +86,7 @@ services:
           sleep 1;
       done;
       echo "LE certificates found!";
-      nginx -g 'daemon off;'
+      nginx -g "daemon off;"
       '
     ports:
       - "443:443"
