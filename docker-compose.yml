@@ -108,7 +108,7 @@ services:
 
   datakoro_server_nginx_certbot:
     image: "nginx:stable-bookworm"
-    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx-production"
+    container_name: "${COMPOSE_PROJECT_NAME}-server-nginx-certbot"
     ports:
       - "80:80"
     volumes:
