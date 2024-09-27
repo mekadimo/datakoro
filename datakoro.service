@@ -9,7 +9,7 @@ Restart=always
 WorkingDirectory=/srv/datakoro
 Group=docker
 ExecStart=/usr/bin/docker compose --env-file /srv/.env.prod up
-ExecStop=/usr/bin/docker compose down
+ExecStop=/usr/bin/docker compose stop
 
 [Install]
 WantedBy=multi-user.target
