@@ -8,6 +8,7 @@ install:
 	npm install
 	rm -Rf ./static/styles/
 	mkdir -p ./static/styles/
+	cp ./node_modules/modern-normalize/modern-normalize.css ./static/styles/modern-normalize.css
 	cp ./node_modules/bulma/css/bulma.css ./static/styles/bulma.css
 	cp ./node_modules/bulma/css/bulma.css.map ./static/styles/bulma.css.map
 	cp ./node_modules/bulma/css/bulma.min.css ./static/styles/bulma.min.css
