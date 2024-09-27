@@ -5,6 +5,7 @@ import type { Decimal } from "decimal.js/decimal";
 import { InvalidPositiveIntegerException } from "./DomainException";
 import { InvalidPositiveNonZeroIntegerException } from "./DomainException";
 import { InvalidUuidException } from "./DomainException";
+import { MekadimoDate } from "./MekadimoDate";
 
 const SHORT_UUID_LENGTH = 22;
 const SHORT_UUID_TRANSLATOR = shortUUID(shortUUID.constants.flickrBase58);
@@ -22,7 +23,14 @@ export abstract class ValueObjectSingleValue<T> extends ValueObject {
 
 export abstract class BooleanValueObject extends ValueObjectSingleValue<boolean> {}
 
-export abstract class DateTimeValueObject extends ValueObjectSingleValue<Date> {}
+export abstract class DateTimeValueObject extends ValueObjectSingleValue<Date> {
+    public readonly mekadimoDate: MekadimoDate;
+
+    constructor(value: Date) {
+        super(value);
+        this.mekadimoDate = Object.freeze(new MekadimoDate(value));
+    }
+}
 
 export abstract class NumberValueObject<
     T extends Decimal | bigint,

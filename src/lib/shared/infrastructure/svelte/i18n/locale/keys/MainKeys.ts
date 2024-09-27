@@ -1,6 +1,7 @@
 export interface MainKeys {
     abstraction: string;
     account: string;
+    awtempo: string;
     change_current_language: string;
     change_theme: string;
     close: string;
@@ -9,16 +10,22 @@ export interface MainKeys {
     datakoro_01_in_dev: string;
     date: string;
     email: string;
+    gregorian_date: string;
     language_en: string;
     language_es: string;
     log_in: string;
     log_out: string;
+    mekadimo_date: string;
+    mekadimo_date_datakoro_day_format: string;
+    mekadimo_date_mekadimo_day_format: string;
+    mekadimo_date_planato_format: string;
     mekadimo_project: string;
     operation: string;
     order_k_number: string;
     origin_concept: string;
     origin_relation: string;
     password: string;
+    printuno: string;
     profile: string;
     property: string;
     quality: string;
@@ -26,8 +33,10 @@ export interface MainKeys {
     search_concepts: string;
     search_not_found: string;
     search_results: string;
+    sometro: string;
     source_code: string;
     support_lajto: string;
     transaction: string;
     unknown_concept_name: string;
+    vinro: string;
 }

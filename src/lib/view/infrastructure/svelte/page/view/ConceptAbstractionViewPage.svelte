@@ -1,6 +1,7 @@
 <script lang="ts">
     import ConceptUiName from "$lib/graph/infrastructure/svelte/widget/ConceptUiName.svelte";
-    import UiDate from "$lib/shared/infrastructure/svelte/widget/UiDate.svelte";
+    import UiGregorianDate from "$lib/shared/infrastructure/svelte/widget/UiGregorianDate.svelte";
+    import UiMekadimoDate from "$lib/shared/infrastructure/svelte/widget/UiMekadimoDate.svelte";
     import ViewHyperlink from "$lib/shared/infrastructure/svelte/widget/ViewHyperlink.svelte";
     import type { ConceptAbstractionView } from "$lib/view/domain/model/ConceptAbstractionView";
     import type { View } from "$lib/view/domain/model/View";
@@ -65,8 +66,15 @@
                         </code>
                     </li>
                     <li>
-                        <b>{$i18n.t("date")}:</b>
-                        <UiDate
+                        <b>{$i18n.t("mekadimo_date")}:</b>
+                        <UiMekadimoDate
+                            value={data.data.concept.transactionDate
+                                .mekadimoDate}
+                        />
+                    </li>
+                    <li>
+                        <b>{$i18n.t("gregorian_date")}:</b>
+                        <UiGregorianDate
                             value={data.data.concept.transactionDate.value}
                         />
                     </li>

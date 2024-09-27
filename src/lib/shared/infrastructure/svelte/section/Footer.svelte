@@ -2,7 +2,9 @@
     import MoonIcon from "phosphor-svelte/lib/Moon";
     import SunIcon from "phosphor-svelte/lib/Sun";
 
+    import UiMekadimoDate from "../widget/UiMekadimoDate.svelte";
     import { GlobalState } from "../model/GlobalState";
+    import { MekadimoDate } from "$lib/shared/domain/model/MekadimoDate";
 
     let { i18n } = GlobalState.get();
 
@@ -15,6 +17,8 @@
             currentTheme.set("light");
         }
     }
+
+    const currentMekadimoDate = new MekadimoDate(new Date());
 </script>
 
 <footer class="footer">
@@ -37,6 +41,9 @@
             </div>
             <div class="column has-text-right">
                 <p>
+                    <span class="ml-5">
+                        <UiMekadimoDate value={currentMekadimoDate} />
+                    </span>
                     <span class="change-theme ml-5">
                         <button
                             on:click={onClickChangeTheme}

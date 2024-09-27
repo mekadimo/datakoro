@@ -8,7 +8,7 @@
 
     let { i18n } = GlobalState.get();
 
-    const locales = {
+    const locales: { [key: string]: any } = {
         en: enUS,
         es: es,
     };
