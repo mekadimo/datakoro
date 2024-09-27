@@ -33,5 +33,5 @@ update-db-schema:
 	npx prisma generate
 	npx prisma generate --sql
 
-look-for-circular-dependencies:
+circular:
 	npx ds src
