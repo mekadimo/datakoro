@@ -1,0 +1,33 @@
+export interface MainKeys {
+    abstraction: string;
+    account: string;
+    change_current_language: string;
+    change_theme: string;
+    close: string;
+    contributions: string;
+    datakoro: string;
+    datakoro_01_in_dev: string;
+    date: string;
+    email: string;
+    language_en: string;
+    language_es: string;
+    log_in: string;
+    log_out: string;
+    mekadimo_project: string;
+    operation: string;
+    order_k_number: string;
+    origin_concept: string;
+    origin_relation: string;
+    password: string;
+    profile: string;
+    property: string;
+    quality: string;
+    relation: string;
+    search_concepts: string;
+    search_not_found: string;
+    search_results: string;
+    source_code: string;
+    support_lajto: string;
+    transaction: string;
+    unknown_concept_name: string;
+}
