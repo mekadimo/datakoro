@@ -13,4 +13,4 @@ RUN apt -y update \
     && apt -y clean \
     && rm -rf /var/lib/apt/lists/*
 
-CMD ["/srv/entrypoint.sh"]
+ENTRYPOINT ["/srv/entrypoint.sh"]
