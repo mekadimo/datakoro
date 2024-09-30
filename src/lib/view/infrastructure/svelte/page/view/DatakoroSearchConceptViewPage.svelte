@@ -13,8 +13,12 @@
 
     export let data: DatakoroSearchConceptView;
 
-    let { currentViewAbstractionName, currentViewConceptName, i18n } =
-        GlobalState.get();
+    let {
+        currentTheme,
+        currentViewAbstractionName,
+        currentViewConceptName,
+        i18n,
+    } = GlobalState.get();
 
     function getConceptName(conceptId: ConceptId, view: View): string {
         const nameText =
@@ -27,12 +31,24 @@
 
     let searchValue = data.parameters.q;
 
+    let searchIconDisabledColor: string;
+    let searchIconEnabledColor: string;
+
     $: currentViewAbstractionName.set(null);
     $: currentViewConceptName.set(getConceptName(data.conceptId, data));
+
+    // TODO: Manage this in app.scss
+    $: if ("light" === $currentTheme) {
+        searchIconDisabledColor = "#dddedf";
+        searchIconEnabledColor = "#313640";
+    } else {
+        searchIconDisabledColor = "#2c2e31";
+        searchIconEnabledColor = "#abb1bf";
+    }
 </script>
 
 <section class="container datakoro-normal-view">
-    <nav class="panel mt-4 mb-6">
+    <nav class="panel card-concept mt-4 mb-6">
         <div class="panel-block">
             <form
                 action={`/${$i18n.language}/view`}
@@ -57,7 +73,9 @@
                         class:search-icon-enabled={"" !== searchValue}
                     >
                         <GraphIcon
-                            color={"" === searchValue ? "#dddedf" : "#313640"}
+                            color={"" === searchValue
+                                ? searchIconDisabledColor
+                                : searchIconEnabledColor}
                             size="1.5em"
                         />
                     </span>
@@ -67,7 +85,9 @@
                         class:search-icon-enabled={"" !== searchValue}
                     >
                         <MagnifyingGlassIcon
-                            color={"" === searchValue ? "#dddedf" : "#313640"}
+                            color={"" === searchValue
+                                ? searchIconDisabledColor
+                                : searchIconEnabledColor}
                             size="1.5em"
                         />
                     </span>
@@ -95,7 +115,7 @@
                 }}
             >
                 <span class="panel-icon">
-                    <GraphIcon color="#313640" size="1em" />
+                    <GraphIcon size="1em" />
                 </span>
                 <ConceptUiName {conceptId} view={data} />
             </ViewHyperlink>
@@ -104,14 +124,6 @@
 </section>
 
 <style lang="scss">
-    a:hover {
-        text-decoration: none;
-    }
-
-    .panel {
-        border: solid #eee 1px;
-    }
-
     .search-results {
         font-style: italic;
     }

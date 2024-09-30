@@ -5,9 +5,21 @@
     import { GlobalState } from "../model/GlobalState";
     import { ID_DATAKORO_SEARCH } from "../../../../graph/domain/model/ConceptId";
 
-    let { i18n } = GlobalState.get();
+    let { currentTheme, i18n } = GlobalState.get();
 
     let searchValue = "";
+
+    let searchIconDisabledColor: string;
+    let searchIconEnabledColor: string;
+
+    // TODO: Manage this in app.scss
+    $: if ("light" === $currentTheme) {
+        searchIconDisabledColor = "#dddedf";
+        searchIconEnabledColor = "#313640";
+    } else {
+        searchIconDisabledColor = "#2c2e31";
+        searchIconEnabledColor = "#abb1bf";
+    }
 </script>
 
 <svelte:head>
@@ -25,7 +37,7 @@
                 <img
                     alt={$i18n.t("datakoro").toUpperCase()}
                     height="70px"
-                    src="/img/datakoro-logotype-000-x70.png"
+                    src="/img/datakoro-logotype-{$currentTheme}-theme-x70.png"
                 />
             </header>
 
@@ -50,7 +62,9 @@
                     class:search-icon-enabled={"" !== searchValue}
                 >
                     <GraphIcon
-                        color={"" === searchValue ? "#dddedf" : "#313640"}
+                        color={"" === searchValue
+                            ? searchIconDisabledColor
+                            : searchIconEnabledColor}
                         size="1.5em"
                     />
                 </span>
@@ -60,7 +74,9 @@
                     class:search-icon-enabled={"" !== searchValue}
                 >
                     <MagnifyingGlassIcon
-                        color={"" === searchValue ? "#dddedf" : "#313640"}
+                        color={"" === searchValue
+                            ? searchIconDisabledColor
+                            : searchIconEnabledColor}
                         size="1.5em"
                     />
                 </span>
@@ -68,7 +84,7 @@
 
             <div class="has-text-centered search-concepts-btn-container">
                 <button
-                    class="button is-link is-medium"
+                    class="button is-dark is-medium"
                     disabled={"" === searchValue}
                     type="submit"
                 >
@@ -95,13 +111,5 @@
 
     .search-concepts-btn-container {
         height: 200px;
-    }
-
-    .search-icon-disabled {
-        color: #dddedf;
-    }
-
-    .search-icon-enabled {
-        color: #313640;
     }
 </style>

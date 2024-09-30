@@ -27,7 +27,7 @@
 </script>
 
 <section class="container datakoro-normal-view">
-    <div class="card mt-4">
+    <div class="card card-concept mt-4">
         <div class="card-content">
             <div class="content">
                 <ul>
@@ -175,10 +175,6 @@
 </section>
 
 <style lang="scss">
-    .card {
-        border: solid #eee 1px;
-    }
-
     .table {
         width: 100%;
     }

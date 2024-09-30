@@ -10,6 +10,7 @@
     import { ID_DATAKORO_LOGIN } from "$lib/graph/domain/model/ConceptId";
 
     let {
+        currentTheme,
         currentViewAbstractionName,
         currentViewConceptName,
         currentUser,
@@ -55,7 +56,7 @@
                     <img
                         alt={$i18n.t("datakoro").toUpperCase()}
                         height="70px"
-                        src="/img/datakoro-logotype-000-x28.png"
+                        src="/img/datakoro-logotype-{$currentTheme}-theme-x28.png"
                     />
                 </a>
             {/if}
@@ -80,7 +81,7 @@
                 <button class="navbar-item" on:click={showLanguageModal}>
                     <span>
                         <span class="language-selector-icon">
-                            <GlobeIcon color="#444" size="1em" />
+                            <GlobeIcon size="1em" />
                         </span>
                         {$i18n.language.toUpperCase()}
                     </span>
@@ -92,13 +93,13 @@
                     <div class="navbar-item">
                         <div class="buttons">
                             <ViewHyperlink
-                                classStr="button is-light"
+                                classStr="button is-dark is-outlined"
                                 params={{ c: ID_DATAKORO_LOGIN.shortValue }}
                             >
                                 {$i18n.t("log_in")}
                             </ViewHyperlink>
                             <a
-                                class="button is-link support-button"
+                                class="button is-dark support-button"
                                 href="https://www.patreon.com/Lajto"
                                 target="_blank"
                             >
@@ -109,9 +110,9 @@
                 {:else}
                     <button class="navbar-item">
                         <span class="notification-bell">
-                            <BellIcon color="#111111" size="1.5em" />
-                            <BellSlashIcon color="#111111" size="1.5em" />
-                            <BellRingingIcon color="#111111" size="1.5em" />
+                            <BellIcon size="1.5em" />
+                            <BellSlashIcon size="1.5em" />
+                            <BellRingingIcon size="1.5em" />
                         </span>
                         <span class="tag is-black notification-tag">+9</span>
                     </button>
@@ -168,14 +169,6 @@
         top: 2px;
     }
 
-    .navbar.is-fixed-top {
-        background-color: white;
-    }
-
-    .navbar.has-current-concept {
-        border-bottom: #ddd 1px solid;
-    }
-
     .notification-bell {
         position: relative;
         left: 5px;
@@ -185,10 +178,6 @@
     .notification-tag {
         position: relative;
         right: 5px;
-    }
-
-    .support-button:hover {
-        color: white;
     }
 
     .view-nav {
@@ -220,9 +209,5 @@
         padding: 0;
         box-sizing: border-box;
         text-align: center;
-    }
-
-    .navbar-burger span {
-        background-color: black;
     }
 </style>

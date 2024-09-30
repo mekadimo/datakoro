@@ -53,10 +53,10 @@
                             title={$i18n.t("change_theme")}
                         >
                             {#if "light" === $currentTheme}
-                                <MoonIcon color="#444" size="1.5em" />
+                                <MoonIcon size="1.5em" />
                             {/if}
                             {#if "dark" === $currentTheme}
-                                <SunIcon color="#444" size="1.5em" />
+                                <SunIcon size="1.5em" />
                             {/if}
                         </button>
                     </span>
@@ -73,16 +73,10 @@
     }
 
     .footer {
-        color: #444;
         padding: 30px 24px 30px 24px;
     }
 
-    .footer a {
-        color: #444;
-    }
-
     .footer a:hover {
-        color: #000;
         text-decoration: none;
     }
 </style>

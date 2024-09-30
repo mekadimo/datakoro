@@ -25,7 +25,7 @@
     $: currentViewConceptName.set(getConceptName(data.conceptId, data));
 </script>
 
-<section class="hero is-fullheight">
+<section class="hero is-fullheight has-background-link">
     <div class="hero-body">
         <div class="container">
             <div class="columns is-centered">
@@ -43,10 +43,7 @@
                             <div class="control has-icons-left">
                                 <input class="input" disabled type="email" />
                                 <span class="icon is-small is-left">
-                                    <EnvelopeIcon
-                                        color="#dddedf"
-                                        size="1.5em"
-                                    />
+                                    <EnvelopeIcon size="1.5em" />
                                 </span>
                             </div>
                         </div>
@@ -57,10 +54,7 @@
                             <div class="control has-icons-left">
                                 <input class="input" disabled type="password" />
                                 <span class="icon is-small is-left">
-                                    <PasswordIcon
-                                        color="#dddedf"
-                                        size="1.5em"
-                                    />
+                                    <PasswordIcon size="1.5em" />
                                 </span>
                             </div>
                         </div>
@@ -80,9 +74,3 @@
         </div>
     </div>
 </section>
-
-<style lang="scss">
-    .hero {
-        background-color: #ddd;
-    }
-</style>
