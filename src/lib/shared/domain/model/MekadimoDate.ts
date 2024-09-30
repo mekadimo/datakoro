@@ -745,7 +745,11 @@ const PLANATO_DAY_MAP_NORMAL: { [key: string]: [number, number] } = {
 
 export class MekadimoDate {
     public readonly day: number;
+    public readonly hours: number;
+    public readonly milliseconds: number;
+    public readonly minutes: number;
     public readonly planato: number;
+    public readonly seconds: number;
     public readonly year: number;
 
     constructor(gregorianDate: Date) {
@@ -772,5 +776,10 @@ export class MekadimoDate {
 
         this.planato = planatoNumber;
         this.day = dayNumber;
+
+        this.hours = gregorianDate.getUTCHours();
+        this.minutes = gregorianDate.getUTCMinutes();
+        this.seconds = gregorianDate.getUTCSeconds();
+        this.milliseconds = gregorianDate.getUTCMilliseconds();
     }
 }
