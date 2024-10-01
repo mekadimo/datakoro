@@ -85,7 +85,7 @@ sudo cp /srv/datakoro/nginx.prod.conf /srv/nginx.conf
 
 sudo chmod -R 777 /srv/nginx.conf
 
-sed -i 's/CERTBOT_DOMAIN/datakoro.net/g' /srv/nginx.conf
+sudo sed -i 's/CERTBOT_DOMAIN/datakoro.net/g' /srv/nginx.conf
 
 sudo cp .env /srv/.env.prod
 
@@ -94,7 +94,7 @@ sudo chmod -R 777 /srv/.env.prod
 vim /srv/.env.prod
 # write production values
 
-sed -i 's/RUN_SERVER=true/RUN_SERVER=false/g' /srv/.env.prod
+sudo sed -i 's/RUN_SERVER=true/RUN_SERVER=false/g' /srv/.env.prod
 
 sudo cp datakoro.service /etc/systemd/system/datakoro.service
 
@@ -110,7 +110,7 @@ sudo docker exec -it datakoro-server bash -c "cd /srv/datakoro && make install m
 
 sudo systemctl stop datakoro
 
-sed -i 's/RUN_SERVER=false/RUN_SERVER=true/g' /srv/.env.prod
+sudo sed -i 's/RUN_SERVER=false/RUN_SERVER=true/g' /srv/.env.prod
 
 sudo systemctl enable datakoro
 
@@ -148,9 +148,9 @@ sudo cp /srv/datakoro/nginx.prod.conf /srv/nginx.conf
 
 sudo chmod -R 777 /srv/nginx.conf
 
-sed -i 's/CERTBOT_DOMAIN/datakoro.net/g' /srv/nginx.conf
+sudo sed -i 's/CERTBOT_DOMAIN/datakoro.net/g' /srv/nginx.conf
 
-sed -i 's/RUN_SERVER=true/RUN_SERVER=false/g' /srv/.env.prod
+sudo sed -i 's/RUN_SERVER=true/RUN_SERVER=false/g' /srv/.env.prod
 
 sudo systemctl start datakoro
 
@@ -162,7 +162,7 @@ sudo docker exec -it datakoro-server bash -c "cd /srv/datakoro && make install m
 
 sudo systemctl stop datakoro
 
-sed -i 's/RUN_SERVER=false/RUN_SERVER=true/g' /srv/.env.prod
+sudo sed -i 's/RUN_SERVER=false/RUN_SERVER=true/g' /srv/.env.prod
 
 sudo systemctl enable datakoro
 
