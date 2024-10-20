@@ -12,35 +12,27 @@ export class TextConcept {
     readonly transactionDate: TextConceptTransactionDate;
     readonly value: TextConceptValue;
 
-    constructor({
-        id,
-        transactionDate,
-        value,
-    }: {
+    constructor(input: {
         id: TextConceptId;
         transactionDate: TextConceptTransactionDate;
         value: TextConceptValue;
     }) {
-        this.id = id;
-        this.transactionDate = transactionDate;
-        this.value = value;
+        this.id = input.id;
+        this.transactionDate = input.transactionDate;
+        this.value = input.value;
     }
 
-    public static create({
-        conceptId,
-        value,
-        transactionConceptDate,
-    }: {
+    public static create(input: {
         conceptId: ConceptId;
         value: TextConceptValue;
         transactionConceptDate: TransactionConceptDate;
     }): TextConcept {
-        const id = new TextConceptId(conceptId.longValue);
+        const id = new TextConceptId(input.conceptId.longValue);
         const transactionDate = new TextConceptTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
-        return new TextConcept({ id, transactionDate, value });
+        return new TextConcept({ id, transactionDate, value: input.value });
     }
 }
 

@@ -5,15 +5,12 @@ export class ConceptName {
     readonly languageId: ConceptId | null;
     readonly text: ConceptNameText;
 
-    constructor({
-        languageId,
-        text,
-    }: {
+    constructor(input: {
         readonly languageId: ConceptId | null;
         readonly text: ConceptNameText;
     }) {
-        this.languageId = languageId;
-        this.text = text;
+        this.languageId = input.languageId;
+        this.text = input.text;
     }
 }
 

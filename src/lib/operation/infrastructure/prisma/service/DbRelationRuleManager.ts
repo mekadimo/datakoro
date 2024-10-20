@@ -24,15 +24,7 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbRelationRuleManager {
-    public static async addRelationRule({
-        abstractionId,
-        fixedOrder,
-        maxRelationNumber,
-        propertyId,
-        transaction,
-        uniquePerBranch,
-        uniquePerConcept,
-    }: {
+    public static async addRelationRule(input: {
         abstractionId: ConceptId;
         fixedOrder: RelationRuleFixedOrder;
         maxRelationNumber: RelationRuleMaxRelationNumber;
@@ -47,23 +39,23 @@ export class DbRelationRuleManager {
 
         const concept = await DbGraphManager.addConcept({
             abstractionId: ID_DATAKORO_RELATION_RULE,
-            transaction: transaction,
+            transaction: input.transaction,
         });
         const rawRelationRule = RawRelationRule.create({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
             conceptConceptId: concept.id,
-            conceptAbstractionId: abstractionId,
-            conceptPropertyId: propertyId,
-            maxRelationNumber: maxRelationNumber,
-            fixedOrder: fixedOrder,
-            uniquePerBranch: uniquePerBranch,
-            uniquePerConcept: uniquePerConcept,
+            conceptAbstractionId: input.abstractionId,
+            conceptPropertyId: input.propertyId,
+            maxRelationNumber: input.maxRelationNumber,
+            fixedOrder: input.fixedOrder,
+            uniquePerBranch: input.uniquePerBranch,
+            uniquePerConcept: input.uniquePerConcept,
         });
         const dbRawRelationRule = DbRawRelationRule.fromDomain(rawRelationRule);
         await RawRelationRuleSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbRawRelationRule,
         );
 
@@ -73,58 +65,52 @@ export class DbRelationRuleManager {
         return relationRule;
     }
 
-    public static async assertRelationOrderCanBeUpdated({
-        relation,
-        transaction,
-    }: {
+    public static async assertRelationOrderCanBeUpdated(input: {
         relation: ActiveRelation;
         transaction: DbTransaction;
     }): Promise<void> {
         const relationRule =
             await DbRelationRuleManager.getActiveRelationRuleByAbstractionAndProperty(
                 {
-                    abstractionId: relation.abstractionId,
-                    propertyId: relation.propertyId,
-                    transaction: transaction,
+                    abstractionId: input.relation.abstractionId,
+                    propertyId: input.relation.propertyId,
+                    transaction: input.transaction,
                 },
             );
-        if (relationRule.fixedOrder.value && !relation.isOriginal) {
+        if (relationRule.fixedOrder.value && !input.relation.isOriginal) {
             throw new RelationOrderCannotBeChangedException({
-                relationId: relation.id.shortValue,
-                relationIsOriginal: relation.isOriginal,
+                relationId: input.relation.id.shortValue,
+                relationIsOriginal: input.relation.isOriginal,
             });
         }
     }
 
-    public static async deleteRelationRule({
-        relationRuleId,
-        transaction,
-    }: {
+    public static async deleteRelationRule(input: {
         relationRuleId: RelationRuleId;
         transaction: DbTransaction;
     }): Promise<RawRelationRule> {
         const relationRule =
             await DbRelationRuleManager.getActiveRelationRuleById({
-                relationRuleId: relationRuleId,
-                transaction: transaction,
+                relationRuleId: input.relationRuleId,
+                transaction: input.transaction,
             });
         const rawRelationRule = relationRule.toRaw();
 
         rawRelationRule.setInactive({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
         });
         const dbRelationRule = DbRawRelationRule.fromDomain(rawRelationRule);
         await RawRelationRuleSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbRelationRule,
         );
 
         await DbGraphManager.addAbstractionRelation({
             conceptId: relationRule.conceptId,
             abstractionId: ID_INACTIVE_DATAKORO_RELATION_RULE,
-            transaction: transaction,
+            transaction: input.transaction,
         });
 
         // TODO: Add task to inheritance system (be careful!!)
@@ -133,11 +119,7 @@ export class DbRelationRuleManager {
         return rawRelationRule;
     }
 
-    public static async findActiveRelationRuleByAbstractionAndProperty({
-        abstractionId,
-        propertyId,
-        transaction,
-    }: {
+    public static async findActiveRelationRuleByAbstractionAndProperty(input: {
         abstractionId: ConceptId;
         propertyId: ConceptId;
         transaction: DbTransaction;
@@ -148,20 +130,20 @@ export class DbRelationRuleManager {
                     field: ActiveRelationRuleField.AbstractionId,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: abstractionId,
+                        value: input.abstractionId,
                     },
                 },
                 {
                     field: ActiveRelationRuleField.PropertyId,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: propertyId,
+                        value: input.propertyId,
                     },
                 },
             ],
         };
         const dbRelationRules = await ActiveRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (0 === dbRelationRules.length) {
@@ -172,10 +154,7 @@ export class DbRelationRuleManager {
         return relationRule;
     }
 
-    public static async findActiveRelationRuleByConceptId({
-        conceptId,
-        transaction,
-    }: {
+    public static async findActiveRelationRuleByConceptId(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule | null> {
@@ -185,13 +164,13 @@ export class DbRelationRuleManager {
                     field: ActiveRelationRuleField.ConceptId,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: conceptId,
+                        value: input.conceptId,
                     },
                 },
             ],
         };
         const dbRelationRules = await ActiveRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (0 === dbRelationRules.length) {
@@ -202,10 +181,7 @@ export class DbRelationRuleManager {
         return relationRule;
     }
 
-    public static async findActiveRelationRuleById({
-        relationRuleId,
-        transaction,
-    }: {
+    public static async findActiveRelationRuleById(input: {
         relationRuleId: RelationRuleId;
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule | null> {
@@ -215,13 +191,13 @@ export class DbRelationRuleManager {
                     field: ActiveRelationRuleField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: relationRuleId,
+                        value: input.relationRuleId,
                     },
                 },
             ],
         };
         const dbRelationRules = await ActiveRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (0 === dbRelationRules.length) {
@@ -232,10 +208,7 @@ export class DbRelationRuleManager {
         return relationRule;
     }
 
-    public static async findActiveRelationRulesByIdInBulk({
-        relationRuleIds,
-        transaction,
-    }: {
+    public static async findActiveRelationRulesByIdInBulk(input: {
         relationRuleIds: RelationRuleId[];
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule[]> {
@@ -245,14 +218,14 @@ export class DbRelationRuleManager {
                     field: ActiveRelationRuleField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: relationRuleIds,
+                        value: input.relationRuleIds,
                     },
                 },
             ],
         };
         const dbActiveRelationRules =
             await ActiveRelationRuleSqlExecutor.select(
-                transaction.prismaTx,
+                input.transaction.prismaTx,
                 criteria,
             );
         const activeRelationRules = dbActiveRelationRules.map((r) =>
@@ -261,10 +234,7 @@ export class DbRelationRuleManager {
         return activeRelationRules;
     }
 
-    public static async findRawRelationRuleById({
-        relationRuleId,
-        transaction,
-    }: {
+    public static async findRawRelationRuleById(input: {
         relationRuleId: RelationRuleId;
         transaction: DbTransaction;
     }): Promise<RawRelationRule | null> {
@@ -274,13 +244,13 @@ export class DbRelationRuleManager {
                     field: RawRelationRuleField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: relationRuleId,
+                        value: input.relationRuleId,
                     },
                 },
             ],
         };
         const dbRelationRules = await RawRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (0 === dbRelationRules.length) {
@@ -291,10 +261,7 @@ export class DbRelationRuleManager {
         return relationRule;
     }
 
-    public static async findRawRelationRulesByIdInBulk({
-        relationRuleIds,
-        transaction,
-    }: {
+    public static async findRawRelationRulesByIdInBulk(input: {
         relationRuleIds: RelationRuleId[];
         transaction: DbTransaction;
     }): Promise<RawRelationRule[]> {
@@ -304,24 +271,20 @@ export class DbRelationRuleManager {
                     field: RawRelationRuleField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: relationRuleIds,
+                        value: input.relationRuleIds,
                     },
                 },
             ],
         };
         const dbRawRelationRules = await RawRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         const rawRelationRules = dbRawRelationRules.map((r) => r.toDomain());
         return rawRelationRules;
     }
 
-    public static async getActiveRelationRuleByAbstractionAndProperty({
-        abstractionId,
-        propertyId,
-        transaction,
-    }: {
+    public static async getActiveRelationRuleByAbstractionAndProperty(input: {
         abstractionId: ConceptId;
         propertyId: ConceptId;
         transaction: DbTransaction;
@@ -329,85 +292,76 @@ export class DbRelationRuleManager {
         const activeRelationRule =
             await DbRelationRuleManager.findActiveRelationRuleByAbstractionAndProperty(
                 {
-                    abstractionId: abstractionId,
-                    propertyId: propertyId,
-                    transaction: transaction,
+                    abstractionId: input.abstractionId,
+                    propertyId: input.propertyId,
+                    transaction: input.transaction,
                 },
             );
 
         if (null == activeRelationRule) {
             throw new RelationRuleNotFoundException({
-                abstractionId: abstractionId.shortValue,
-                propertyId: propertyId.shortValue,
+                abstractionId: input.abstractionId.shortValue,
+                propertyId: input.propertyId.shortValue,
             });
         }
 
         return activeRelationRule;
     }
 
-    public static async getActiveRelationRuleByConceptId({
-        conceptId,
-        transaction,
-    }: {
+    public static async getActiveRelationRuleByConceptId(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule> {
         const activeRelationRule =
             await DbRelationRuleManager.findActiveRelationRuleByConceptId({
-                conceptId: conceptId,
-                transaction: transaction,
+                conceptId: input.conceptId,
+                transaction: input.transaction,
             });
 
         if (null == activeRelationRule) {
             throw new RelationRuleNotFoundException({
-                conceptId: conceptId.shortValue,
+                conceptId: input.conceptId.shortValue,
             });
         }
 
         return activeRelationRule;
     }
 
-    public static async getActiveRelationRuleById({
-        relationRuleId,
-        transaction,
-    }: {
+    public static async getActiveRelationRuleById(input: {
         relationRuleId: RelationRuleId;
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule> {
         const activeRelationRule =
             await DbRelationRuleManager.findActiveRelationRuleById({
-                relationRuleId: relationRuleId,
-                transaction: transaction,
+                relationRuleId: input.relationRuleId,
+                transaction: input.transaction,
             });
 
         if (null == activeRelationRule) {
             throw new RelationRuleNotFoundException({
-                relationRuleId: relationRuleId.shortValue,
+                relationRuleId: input.relationRuleId.shortValue,
             });
         }
 
         return activeRelationRule;
     }
 
-    public static async getActiveRelationRulesByIdInBulk({
-        relationRuleIds,
-        transaction,
-    }: {
+    public static async getActiveRelationRulesByIdInBulk(input: {
         relationRuleIds: RelationRuleId[];
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule[]> {
         const activeRelationRules =
             await DbRelationRuleManager.findActiveRelationRulesByIdInBulk({
-                relationRuleIds: relationRuleIds,
-                transaction: transaction,
+                relationRuleIds: input.relationRuleIds,
+                transaction: input.transaction,
             });
 
-        if (relationRuleIds.length !== activeRelationRules.length) {
+        if (input.relationRuleIds.length !== activeRelationRules.length) {
             const exceptions = [];
             const foundIdShortValues = activeRelationRules.map(
                 (c) => c.id.shortValue,
             );
-            for (const relationRuleId of relationRuleIds) {
+            for (const relationRuleId of input.relationRuleIds) {
                 if (foundIdShortValues.includes(relationRuleId.shortValue)) {
                     continue;
                 }
@@ -422,47 +376,41 @@ export class DbRelationRuleManager {
         return activeRelationRules;
     }
 
-    public static async getRawRelationRuleById({
-        relationRuleId,
-        transaction,
-    }: {
+    public static async getRawRelationRuleById(input: {
         relationRuleId: RelationRuleId;
         transaction: DbTransaction;
     }): Promise<RawRelationRule> {
         const rawRelationRule =
             await DbRelationRuleManager.findRawRelationRuleById({
-                relationRuleId: relationRuleId,
-                transaction: transaction,
+                relationRuleId: input.relationRuleId,
+                transaction: input.transaction,
             });
 
         if (null == rawRelationRule) {
             throw new RelationRuleNotFoundException({
-                relationRuleId: relationRuleId.shortValue,
+                relationRuleId: input.relationRuleId.shortValue,
             });
         }
 
         return rawRelationRule;
     }
 
-    public static async getRawRelationRulesByIdInBulk({
-        relationRuleIds,
-        transaction,
-    }: {
+    public static async getRawRelationRulesByIdInBulk(input: {
         relationRuleIds: RelationRuleId[];
         transaction: DbTransaction;
     }): Promise<RawRelationRule[]> {
         const rawRelationRules =
             await DbRelationRuleManager.findRawRelationRulesByIdInBulk({
-                relationRuleIds: relationRuleIds,
-                transaction: transaction,
+                relationRuleIds: input.relationRuleIds,
+                transaction: input.transaction,
             });
 
-        if (relationRuleIds.length !== rawRelationRules.length) {
+        if (input.relationRuleIds.length !== rawRelationRules.length) {
             const exceptions = [];
             const foundIdShortValues = rawRelationRules.map(
                 (c) => c.id.shortValue,
             );
-            for (const relationRuleId of relationRuleIds) {
+            for (const relationRuleId of input.relationRuleIds) {
                 if (foundIdShortValues.includes(relationRuleId.shortValue)) {
                     continue;
                 }
@@ -477,44 +425,31 @@ export class DbRelationRuleManager {
         return rawRelationRules;
     }
 
-    public static async searchActiveRelationRules({
-        criteria,
-        transaction,
-    }: {
+    public static async searchActiveRelationRules(input: {
         criteria: ActiveRelationRuleSearchCriteria;
         transaction: DbTransaction;
     }): Promise<ActiveRelationRule[]> {
         const dbRelationRules = await ActiveRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
-            criteria,
+            input.transaction.prismaTx,
+            input.criteria,
         );
         const relationRules = dbRelationRules.map((r) => r.toDomain());
         return relationRules;
     }
 
-    public static async searchRawRelationRules({
-        criteria,
-        transaction,
-    }: {
+    public static async searchRawRelationRules(input: {
         criteria: RawRelationRuleSearchCriteria;
         transaction: DbTransaction;
     }): Promise<RawRelationRule[]> {
         const dbRelationRules = await RawRelationRuleSqlExecutor.select(
-            transaction.prismaTx,
-            criteria,
+            input.transaction.prismaTx,
+            input.criteria,
         );
         const relationRules = dbRelationRules.map((r) => r.toDomain());
         return relationRules;
     }
 
-    public static async updateRelationRule({
-        fixedOrder,
-        maxRelationNumber,
-        relationRuleId,
-        transaction,
-        uniquePerBranch,
-        uniquePerConcept,
-    }: {
+    public static async updateRelationRule(input: {
         fixedOrder: RelationRuleFixedOrder;
         maxRelationNumber: RelationRuleMaxRelationNumber;
         relationRuleId: RelationRuleId;
@@ -524,17 +459,17 @@ export class DbRelationRuleManager {
     }): Promise<ActiveRelationRule> {
         const relationRule =
             await DbRelationRuleManager.getActiveRelationRuleById({
-                relationRuleId: relationRuleId,
-                transaction: transaction,
+                relationRuleId: input.relationRuleId,
+                transaction: input.transaction,
             });
         relationRule.update({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
-            fixedOrder: fixedOrder,
-            uniquePerBranch: uniquePerBranch,
-            uniquePerConcept: uniquePerConcept,
-            maxRelationNumber: maxRelationNumber,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
+            fixedOrder: input.fixedOrder,
+            uniquePerBranch: input.uniquePerBranch,
+            uniquePerConcept: input.uniquePerConcept,
+            maxRelationNumber: input.maxRelationNumber,
         });
 
         // TODO: Assert rule changes are compatible with ALL relations...
@@ -543,7 +478,7 @@ export class DbRelationRuleManager {
         const rawRelationRule = relationRule.toRaw();
         const dbRelationRule = DbRawRelationRule.fromDomain(rawRelationRule);
         await RawRelationRuleSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbRelationRule,
         );
 

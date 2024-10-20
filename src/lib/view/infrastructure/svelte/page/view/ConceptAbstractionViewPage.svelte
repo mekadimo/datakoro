@@ -151,13 +151,13 @@
                     <td>
                         <ViewHyperlink
                             params={{
-                                c: conceptRelation.sourceConceptId.shortValue,
+                                c: conceptRelation.originConceptId.shortValue,
                                 a: ID_CONCEPT.shortValue,
                             }}
                         >
                             <code>
                                 <ConceptUiName
-                                    conceptId={conceptRelation.sourceConceptId}
+                                    conceptId={conceptRelation.originConceptId}
                                     view={data}
                                 />
                             </code>
@@ -165,7 +165,7 @@
                     </td>
                     <td>
                         <code>
-                            {conceptRelation.sourceRelationId.shortValue}
+                            {conceptRelation.originRelationId.shortValue}
                         </code>
                     </td>
                 </tr>

@@ -9,10 +9,7 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbTransactionConceptManager {
-    public static async findTransactionConceptById({
-        transaction,
-        conceptId,
-    }: {
+    public static async findTransactionConceptById(input: {
         transaction: DbTransaction;
         conceptId: ConceptId;
     }): Promise<TransactionConcept | null> {
@@ -22,14 +19,14 @@ export class DbTransactionConceptManager {
                     field: TransactionConceptField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: conceptId,
+                        value: input.conceptId,
                     },
                 },
             ],
         };
         const dbTransactionConcepts =
             await TransactionConceptSqlExecutor.select(
-                transaction.prismaTx,
+                input.transaction.prismaTx,
                 criteria,
             );
         if (dbTransactionConcepts.length) {
@@ -40,10 +37,7 @@ export class DbTransactionConceptManager {
         return transactionConcept;
     }
 
-    public static async findTransactionConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async findTransactionConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<TransactionConcept[]> {
@@ -53,14 +47,14 @@ export class DbTransactionConceptManager {
                     field: TransactionConceptField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: conceptIds,
+                        value: input.conceptIds,
                     },
                 },
             ],
         };
         const dbTransactionConcepts =
             await TransactionConceptSqlExecutor.select(
-                transaction.prismaTx,
+                input.transaction.prismaTx,
                 criteria,
             );
         const transactionConcepts = dbTransactionConcepts.map((c) =>
@@ -69,49 +63,43 @@ export class DbTransactionConceptManager {
         return transactionConcepts;
     }
 
-    public static async getTransactionConceptById({
-        conceptId,
-        transaction,
-    }: {
+    public static async getTransactionConceptById(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<TransactionConcept> {
         const transactionConcept =
             await DbTransactionConceptManager.findTransactionConceptById({
-                conceptId: conceptId,
-                transaction: transaction,
+                conceptId: input.conceptId,
+                transaction: input.transaction,
             });
 
         if (null == transactionConcept) {
             throw new TransactionConceptNotFoundException({
-                id: conceptId.shortValue,
+                id: input.conceptId.shortValue,
             });
         }
 
         return transactionConcept;
     }
 
-    public static async getTransactionConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async getTransactionConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<TransactionConcept[]> {
         const transactionConcepts =
             await DbTransactionConceptManager.findTransactionConceptsByIdInBulk(
                 {
-                    conceptIds: conceptIds,
-                    transaction: transaction,
+                    conceptIds: input.conceptIds,
+                    transaction: input.transaction,
                 },
             );
 
-        if (conceptIds.length !== transactionConcepts.length) {
+        if (input.conceptIds.length !== transactionConcepts.length) {
             const exceptions = [];
             const foundIdValues = transactionConcepts.map(
                 (c) => c.id.shortValue,
             );
-            for (const conceptId of conceptIds) {
+            for (const conceptId of input.conceptIds) {
                 if (foundIdValues.includes(conceptId.shortValue)) {
                     continue;
                 }

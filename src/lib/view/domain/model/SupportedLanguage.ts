@@ -9,18 +9,14 @@ export class SupportedLanguage {
     readonly conceptId: SupportedLanguageConceptId;
     readonly originalName: SupportedLanguageOriginalName;
 
-    constructor({
-        code,
-        conceptId,
-        originalName,
-    }: {
+    constructor(input: {
         code: SupportedLanguageCode;
         conceptId: SupportedLanguageConceptId;
         originalName: SupportedLanguageOriginalName;
     }) {
-        this.code = code;
-        this.conceptId = conceptId;
-        this.originalName = originalName;
+        this.code = input.code;
+        this.conceptId = input.conceptId;
+        this.originalName = input.originalName;
     }
 }
 

@@ -85,15 +85,15 @@ model relation {
   transaction_date                                  DateTime            @db.Timestamptz(6)
   operation_concept_id                              String              @db.Uuid
   transaction_concept_id                            String              @db.Uuid
-  relation_id_source                                String              @db.Uuid
-  concept_id_source                                 String              @db.Uuid
+  relation_id_origin                                String              @db.Uuid
+  concept_id_origin                                 String              @db.Uuid
   concept_relation_concept_id_abstractionToconcept  concept             @relation("relation_concept_id_abstractionToconcept", fields: [concept_id_abstraction], references: [id], onDelete: NoAction, onUpdate: NoAction)
   concept_relation_concept_id_conceptToconcept      concept             @relation("relation_concept_id_conceptToconcept", fields: [concept_id_concept], references: [id], onDelete: NoAction, onUpdate: NoAction)
   concept_relation_concept_id_propertyToconcept     concept             @relation("relation_concept_id_propertyToconcept", fields: [concept_id_property], references: [id], onDelete: NoAction, onUpdate: NoAction)
   concept_relation_concept_id_qualityToconcept      concept             @relation("relation_concept_id_qualityToconcept", fields: [concept_id_quality], references: [id], onDelete: NoAction, onUpdate: NoAction)
   concept_relation_concept_id_quality_typeToconcept concept             @relation("relation_concept_id_quality_typeToconcept", fields: [concept_id_quality_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
   operation_concept                                 operation_concept   @relation(fields: [operation_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
-  relation                                          relation            @relation("relationTorelation", fields: [relation_id_source, concept_id_source], references: [id, concept_id_concept], onDelete: NoAction, onUpdate: NoAction)
+  relation                                          relation            @relation("relationTorelation", fields: [relation_id_origin, concept_id_origin], references: [id, concept_id_concept], onDelete: NoAction, onUpdate: NoAction)
   other_relation                                    relation[]          @relation("relationTorelation")
   transaction_concept                               transaction_concept @relation(fields: [transaction_concept_id], references: [concept_id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -114,8 +114,8 @@ model active_relation {
   transaction_date        DateTime @db.Timestamptz(6)
   operation_concept_id    String   @db.Uuid
   transaction_concept_id  String   @db.Uuid
-  relation_id_source      String   @db.Uuid
-  concept_id_source       String   @db.Uuid
+  relation_id_origin      String   @db.Uuid
+  concept_id_origin       String   @db.Uuid
 
   @@unique([id, concept_id_concept])
 }

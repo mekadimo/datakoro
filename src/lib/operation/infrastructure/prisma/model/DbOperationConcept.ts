@@ -30,21 +30,16 @@ export class DbOperationConcept {
     start_date: Date;
     user_concept_id: string;
 
-    constructor({
-        concept_id,
-        end_date,
-        start_date,
-        user_concept_id,
-    }: {
+    constructor(input: {
         concept_id: string;
         end_date: Date | null;
         start_date: Date;
         user_concept_id: string;
     }) {
-        this.concept_id = concept_id;
-        this.end_date = end_date;
-        this.start_date = start_date;
-        this.user_concept_id = user_concept_id;
+        this.concept_id = input.concept_id;
+        this.end_date = input.end_date;
+        this.start_date = input.start_date;
+        this.user_concept_id = input.user_concept_id;
     }
 
     public static fromDomain(

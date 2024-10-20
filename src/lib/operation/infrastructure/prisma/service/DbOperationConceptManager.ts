@@ -9,10 +9,7 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbOperationConceptManager {
-    public static async findOperationConceptById({
-        transaction,
-        conceptId,
-    }: {
+    public static async findOperationConceptById(input: {
         transaction: DbTransaction;
         conceptId: ConceptId;
     }): Promise<OperationConcept | null> {
@@ -22,13 +19,13 @@ export class DbOperationConceptManager {
                     field: OperationConceptField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: conceptId,
+                        value: input.conceptId,
                     },
                 },
             ],
         };
         const dbOperationConcepts = await OperationConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbOperationConcepts.length) {
@@ -39,10 +36,7 @@ export class DbOperationConceptManager {
         return operationConcept;
     }
 
-    public static async findOperationConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async findOperationConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<OperationConcept[]> {
@@ -52,58 +46,52 @@ export class DbOperationConceptManager {
                     field: OperationConceptField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: conceptIds,
+                        value: input.conceptIds,
                     },
                 },
             ],
         };
         const dbOperationConcepts = await OperationConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         const operationConcepts = dbOperationConcepts.map((c) => c.toDomain());
         return operationConcepts;
     }
 
-    public static async getOperationConceptById({
-        conceptId,
-        transaction,
-    }: {
+    public static async getOperationConceptById(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<OperationConcept> {
         const operationConcept =
             await DbOperationConceptManager.findOperationConceptById({
-                conceptId: conceptId,
-                transaction: transaction,
+                conceptId: input.conceptId,
+                transaction: input.transaction,
             });
 
         if (null == operationConcept) {
             throw new OperationConceptNotFoundException({
-                id: conceptId.shortValue,
+                id: input.conceptId.shortValue,
             });
         }
 
         return operationConcept;
     }
 
-    public static async getOperationConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async getOperationConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<OperationConcept[]> {
         const operationConcepts =
             await DbOperationConceptManager.findOperationConceptsByIdInBulk({
-                conceptIds: conceptIds,
-                transaction: transaction,
+                conceptIds: input.conceptIds,
+                transaction: input.transaction,
             });
 
-        if (conceptIds.length !== operationConcepts.length) {
+        if (input.conceptIds.length !== operationConcepts.length) {
             const exceptions = [];
             const foundIdValues = operationConcepts.map((c) => c.id.shortValue);
-            for (const conceptId of conceptIds) {
+            for (const conceptId of input.conceptIds) {
                 if (foundIdValues.includes(conceptId.shortValue)) {
                     continue;
                 }

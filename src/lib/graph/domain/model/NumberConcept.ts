@@ -1,7 +1,7 @@
 import type { DateTimeFilter } from "../../../shared/domain/model/Filter";
+import type { DecimalNumberFilter } from "../../../shared/domain/model/Filter";
 import type { FieldOrder } from "../../../shared/domain/model/FieldOrder";
 import type { SearchCriteria } from "../../../shared/domain/model/SearchCriteria";
-import type { DecimalNumberFilter } from "../../../shared/domain/model/Filter";
 import type { UuidFilter } from "../../../shared/domain/model/Filter";
 import { ConceptId } from "../../../graph/domain/model/ConceptId";
 import { DecimalNumberValueObject } from "../../../shared/domain/model/ValueObject";
@@ -12,35 +12,27 @@ export class NumberConcept {
     readonly transactionDate: NumberConceptTransactionDate;
     readonly value: NumberConceptValue;
 
-    constructor({
-        id,
-        transactionDate,
-        value,
-    }: {
+    constructor(input: {
         id: NumberConceptId;
         transactionDate: NumberConceptTransactionDate;
         value: NumberConceptValue;
     }) {
-        this.id = id;
-        this.transactionDate = transactionDate;
-        this.value = value;
+        this.id = input.id;
+        this.transactionDate = input.transactionDate;
+        this.value = input.value;
     }
 
-    public static create({
-        conceptId,
-        value,
-        transactionConceptDate,
-    }: {
+    public static create(input: {
         conceptId: ConceptId;
         value: NumberConceptValue;
         transactionConceptDate: TransactionConceptDate;
     }): NumberConcept {
-        const id = new NumberConceptId(conceptId.longValue);
+        const id = new NumberConceptId(input.conceptId.longValue);
         const transactionDate = new NumberConceptTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
-        return new NumberConcept({ id, transactionDate, value });
+        return new NumberConcept({ id, transactionDate, value: input.value });
     }
 }
 

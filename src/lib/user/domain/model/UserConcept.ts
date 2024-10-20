@@ -20,14 +20,7 @@ export class PrivateUserConcept {
     suspendedAccount: UserConceptSuspendedAccount;
     readonly transactionDate: UserConceptTransactionDate;
 
-    constructor({
-        email,
-        id,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-        transactionDate,
-    }: {
+    constructor(input: {
         email: UserConceptEmail;
         id: UserConceptId;
         isAdmin: UserConceptIsAdmin;
@@ -35,12 +28,12 @@ export class PrivateUserConcept {
         suspendedAccount: UserConceptSuspendedAccount;
         transactionDate: UserConceptTransactionDate;
     }) {
-        this.email = email;
-        this.id = id;
-        this.isAdmin = isAdmin;
-        this.restrictedAccess = restrictedAccess;
-        this.suspendedAccount = suspendedAccount;
-        this.transactionDate = transactionDate;
+        this.email = input.email;
+        this.id = input.id;
+        this.isAdmin = input.isAdmin;
+        this.restrictedAccess = input.restrictedAccess;
+        this.suspendedAccount = input.suspendedAccount;
+        this.transactionDate = input.transactionDate;
     }
 }
 
@@ -78,24 +71,18 @@ export class PublicUserConcept {
     suspendedAccount: UserConceptSuspendedAccount;
     transactionDate: UserConceptTransactionDate;
 
-    constructor({
-        id,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-        transactionDate,
-    }: {
+    constructor(input: {
         id: UserConceptId;
         isAdmin: UserConceptIsAdmin;
         restrictedAccess: UserConceptRestrictedAccess;
         suspendedAccount: UserConceptSuspendedAccount;
         transactionDate: UserConceptTransactionDate;
     }) {
-        this.id = id;
-        this.isAdmin = isAdmin;
-        this.restrictedAccess = restrictedAccess;
-        this.suspendedAccount = suspendedAccount;
-        this.transactionDate = transactionDate;
+        this.id = input.id;
+        this.isAdmin = input.isAdmin;
+        this.restrictedAccess = input.restrictedAccess;
+        this.suspendedAccount = input.suspendedAccount;
+        this.transactionDate = input.transactionDate;
     }
 }
 

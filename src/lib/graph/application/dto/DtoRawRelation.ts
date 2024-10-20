@@ -5,11 +5,11 @@ import { RelationId } from "../../domain/model/Relation";
 import { RelationIsActive } from "../../domain/model/Relation";
 import { RelationOperationId } from "../../domain/model/Relation";
 import { RelationOrderNumber } from "../../domain/model/Relation";
+import { RelationOriginConceptId } from "../../domain/model/Relation";
+import { RelationOriginRelationId } from "../../domain/model/Relation";
 import { RelationPropertyId } from "../../domain/model/Relation";
 import { RelationQualityId } from "../../domain/model/Relation";
 import { RelationQualityTypeId } from "../../domain/model/Relation";
-import { RelationSourceConceptId } from "../../domain/model/Relation";
-import { RelationSourceRelationId } from "../../domain/model/Relation";
 import { RelationTransactionDate } from "../../domain/model/Relation";
 import { RelationTransactionId } from "../../domain/model/Relation";
 
@@ -20,11 +20,11 @@ export interface DtoRawRelation {
     readonly isActive: boolean;
     readonly operationId: string;
     readonly orderNumber: bigint;
+    readonly originConceptId: string;
+    readonly originRelationId: string;
     readonly propertyId: string;
     readonly qualityId: string;
     readonly qualityTypeId: string;
-    readonly sourceConceptId: string;
-    readonly sourceRelationId: string;
     readonly transactionDate: Date;
     readonly transactionId: string;
 }
@@ -38,11 +38,11 @@ export class DtoRawRelationTransformer {
             isActive: rawRelation.isActive.value,
             operationId: rawRelation.operationId.shortValue,
             orderNumber: rawRelation.orderNumber.value,
+            originConceptId: rawRelation.originConceptId.shortValue,
+            originRelationId: rawRelation.originRelationId.shortValue,
             propertyId: rawRelation.propertyId.shortValue,
             qualityId: rawRelation.qualityId.shortValue,
             qualityTypeId: rawRelation.qualityTypeId.shortValue,
-            sourceConceptId: rawRelation.sourceConceptId.shortValue,
-            sourceRelationId: rawRelation.sourceRelationId.shortValue,
             transactionDate: rawRelation.transactionDate.value,
             transactionId: rawRelation.transactionId.shortValue,
         };
@@ -56,13 +56,13 @@ export class DtoRawRelationTransformer {
             isActive: new RelationIsActive(dto.isActive),
             operationId: new RelationOperationId(dto.operationId),
             orderNumber: new RelationOrderNumber(dto.orderNumber),
+            originConceptId: new RelationOriginConceptId(dto.originConceptId),
+            originRelationId: new RelationOriginRelationId(
+                dto.originRelationId,
+            ),
             propertyId: new RelationPropertyId(dto.propertyId),
             qualityId: new RelationQualityId(dto.qualityId),
             qualityTypeId: new RelationQualityTypeId(dto.qualityTypeId),
-            sourceConceptId: new RelationSourceConceptId(dto.sourceConceptId),
-            sourceRelationId: new RelationSourceRelationId(
-                dto.sourceRelationId,
-            ),
             transactionDate: new RelationTransactionDate(dto.transactionDate),
             transactionId: new RelationTransactionId(dto.transactionId),
         });

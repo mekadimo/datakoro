@@ -8,10 +8,7 @@ export abstract class OperationService {
         this.userId = userId;
     }
 
-    protected abstract run<T>({
-        isReadOnly,
-        runFunction,
-    }: {
+    protected abstract run<T>(input: {
         isReadOnly: boolean;
         runFunction: (operation: Operation) => Promise<T>;
     }): Promise<T>;

@@ -65,16 +65,7 @@ export class DbUserSession {
     user_agent_request_header: string;
     user_id: string;
 
-    constructor({
-        csrf_token,
-        id,
-        ip,
-        last_request_date,
-        secret_key,
-        start_date,
-        user_agent_request_header,
-        user_id,
-    }: {
+    constructor(input: {
         csrf_token: string;
         id: string;
         ip: string;
@@ -84,14 +75,14 @@ export class DbUserSession {
         user_agent_request_header: string;
         user_id: string;
     }) {
-        this.csrf_token = csrf_token;
-        this.id = id;
-        this.ip = ip;
-        this.last_request_date = last_request_date;
-        this.secret_key = secret_key;
-        this.start_date = start_date;
-        this.user_agent_request_header = user_agent_request_header;
-        this.user_id = user_id;
+        this.csrf_token = input.csrf_token;
+        this.id = input.id;
+        this.ip = input.ip;
+        this.last_request_date = input.last_request_date;
+        this.secret_key = input.secret_key;
+        this.start_date = input.start_date;
+        this.user_agent_request_header = input.user_agent_request_header;
+        this.user_id = input.user_id;
     }
 
     public static fromServerDomain(

@@ -29,21 +29,16 @@ export class DbConcept {
     transaction_date: Date;
     transaction_concept_id: string;
 
-    constructor({
-        id,
-        operation_concept_id,
-        transaction_date,
-        transaction_concept_id,
-    }: {
+    constructor(input: {
         id: string;
         operation_concept_id: string;
         transaction_date: Date;
         transaction_concept_id: string;
     }) {
-        this.id = id;
-        this.operation_concept_id = operation_concept_id;
-        this.transaction_date = transaction_date;
-        this.transaction_concept_id = transaction_concept_id;
+        this.id = input.id;
+        this.operation_concept_id = input.operation_concept_id;
+        this.transaction_date = input.transaction_date;
+        this.transaction_concept_id = input.transaction_concept_id;
     }
 
     public static fromDomain(concept: Concept): DbConcept {

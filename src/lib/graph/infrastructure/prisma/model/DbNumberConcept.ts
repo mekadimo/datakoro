@@ -28,18 +28,14 @@ export class DbNumberConcept {
     number_value: Decimal;
     transaction_date: Date;
 
-    constructor({
-        concept_id,
-        number_value,
-        transaction_date,
-    }: {
+    constructor(input: {
         concept_id: string;
         number_value: Decimal;
         transaction_date: Date;
     }) {
-        this.concept_id = concept_id;
-        this.number_value = number_value;
-        this.transaction_date = transaction_date;
+        this.concept_id = input.concept_id;
+        this.number_value = input.number_value;
+        this.transaction_date = input.transaction_date;
     }
 
     public static fromDomain(numberConcept: NumberConcept): DbNumberConcept {

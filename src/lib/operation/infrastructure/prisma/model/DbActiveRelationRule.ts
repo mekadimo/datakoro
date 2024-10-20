@@ -59,19 +59,7 @@ export class DbActiveRelationRule {
     unique_per_branch: boolean;
     unique_per_concept: boolean;
 
-    constructor({
-        concept_id,
-        concept_id_abstraction,
-        concept_id_property,
-        fixed_order,
-        id,
-        max_relation_number,
-        operation_concept_id,
-        transaction_concept_id,
-        transaction_date,
-        unique_per_branch,
-        unique_per_concept,
-    }: {
+    constructor(input: {
         concept_id: string;
         concept_id_abstraction: string;
         concept_id_property: string;
@@ -84,17 +72,17 @@ export class DbActiveRelationRule {
         unique_per_branch: boolean;
         unique_per_concept: boolean;
     }) {
-        this.concept_id = concept_id;
-        this.concept_id_abstraction = concept_id_abstraction;
-        this.concept_id_property = concept_id_property;
-        this.fixed_order = fixed_order;
-        this.id = id;
-        this.max_relation_number = max_relation_number;
-        this.operation_concept_id = operation_concept_id;
-        this.transaction_concept_id = transaction_concept_id;
-        this.transaction_date = transaction_date;
-        this.unique_per_branch = unique_per_branch;
-        this.unique_per_concept = unique_per_concept;
+        this.concept_id = input.concept_id;
+        this.concept_id_abstraction = input.concept_id_abstraction;
+        this.concept_id_property = input.concept_id_property;
+        this.fixed_order = input.fixed_order;
+        this.id = input.id;
+        this.max_relation_number = input.max_relation_number;
+        this.operation_concept_id = input.operation_concept_id;
+        this.transaction_concept_id = input.transaction_concept_id;
+        this.transaction_date = input.transaction_date;
+        this.unique_per_branch = input.unique_per_branch;
+        this.unique_per_concept = input.unique_per_concept;
     }
 
     public static fromDomain(

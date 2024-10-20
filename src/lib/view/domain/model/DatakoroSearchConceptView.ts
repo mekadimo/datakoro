@@ -14,28 +14,23 @@ interface ViewData {
 export class DatakoroSearchConceptView extends ConceptView {
     readonly data: ViewData;
 
-    constructor({
-        conceptId,
-        data,
-        parameters,
-        names,
-    }: {
+    constructor(input: {
         conceptId: ConceptId;
         data: ViewData;
         parameters: { [key: string]: string };
         names: { [conceptIdShort: string]: ConceptName };
     }) {
-        if (conceptId.shortValue !== ID_DATAKORO_SEARCH.shortValue) {
+        if (input.conceptId.shortValue !== ID_DATAKORO_SEARCH.shortValue) {
             throw new ConceptNotFoundException({
-                id: conceptId.shortValue,
+                id: input.conceptId.shortValue,
             });
         }
 
         super({
-            conceptId: conceptId,
-            parameters: parameters,
-            names: names,
+            conceptId: input.conceptId,
+            parameters: input.parameters,
+            names: input.names,
         });
-        this.data = data;
+        this.data = input.data;
     }
 }

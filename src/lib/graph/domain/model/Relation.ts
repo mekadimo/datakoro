@@ -21,53 +21,40 @@ export class ActiveRelation {
     readonly id: RelationId;
     readonly operationId: RelationOperationId;
     readonly orderNumber: RelationOrderNumber;
+    readonly originConceptId: RelationOriginConceptId;
+    readonly originRelationId: RelationOriginRelationId;
     readonly propertyId: RelationPropertyId;
     readonly qualityId: RelationQualityId;
     readonly qualityTypeId: RelationQualityTypeId;
-    readonly sourceConceptId: RelationSourceConceptId;
-    readonly sourceRelationId: RelationSourceRelationId;
     readonly transactionDate: RelationTransactionDate;
     readonly transactionId: RelationTransactionId;
 
-    constructor({
-        abstractionId,
-        conceptId,
-        id,
-        operationId,
-        orderNumber,
-        propertyId,
-        qualityId,
-        qualityTypeId,
-        sourceConceptId,
-        sourceRelationId,
-        transactionDate,
-        transactionId,
-    }: {
+    constructor(input: {
         abstractionId: RelationAbstractionId;
         conceptId: RelationConceptId;
         id: RelationId;
         operationId: RelationOperationId;
         orderNumber: RelationOrderNumber;
+        originConceptId: RelationOriginConceptId;
+        originRelationId: RelationOriginRelationId;
         propertyId: RelationPropertyId;
         qualityId: RelationQualityId;
         qualityTypeId: RelationQualityTypeId;
-        sourceConceptId: RelationSourceConceptId;
-        sourceRelationId: RelationSourceRelationId;
         transactionDate: RelationTransactionDate;
         transactionId: RelationTransactionId;
     }) {
-        this.abstractionId = abstractionId;
-        this.conceptId = conceptId;
-        this.id = id;
-        this.operationId = operationId;
-        this.orderNumber = orderNumber;
-        this.propertyId = propertyId;
-        this.qualityId = qualityId;
-        this.qualityTypeId = qualityTypeId;
-        this.sourceConceptId = sourceConceptId;
-        this.sourceRelationId = sourceRelationId;
-        this.transactionDate = transactionDate;
-        this.transactionId = transactionId;
+        this.abstractionId = input.abstractionId;
+        this.conceptId = input.conceptId;
+        this.id = input.id;
+        this.operationId = input.operationId;
+        this.orderNumber = input.orderNumber;
+        this.originConceptId = input.originConceptId;
+        this.originRelationId = input.originRelationId;
+        this.propertyId = input.propertyId;
+        this.qualityId = input.qualityId;
+        this.qualityTypeId = input.qualityTypeId;
+        this.transactionDate = input.transactionDate;
+        this.transactionId = input.transactionId;
     }
 
     public static fromRaw(rawRelation: RawRelation): ActiveRelation {
@@ -77,11 +64,11 @@ export class ActiveRelation {
             id: rawRelation.id,
             operationId: rawRelation.operationId,
             orderNumber: rawRelation.orderNumber,
+            originConceptId: rawRelation.originConceptId,
+            originRelationId: rawRelation.originRelationId,
             propertyId: rawRelation.propertyId,
             qualityId: rawRelation.qualityId,
             qualityTypeId: rawRelation.qualityTypeId,
-            sourceConceptId: rawRelation.sourceConceptId,
-            sourceRelationId: rawRelation.sourceRelationId,
             transactionDate: rawRelation.transactionDate,
             transactionId: rawRelation.transactionId,
         });
@@ -95,11 +82,11 @@ export class ActiveRelation {
             isActive: new RelationIsActive(true),
             operationId: this.operationId,
             orderNumber: this.orderNumber,
+            originConceptId: this.originConceptId,
+            originRelationId: this.originRelationId,
             propertyId: this.propertyId,
             qualityId: this.qualityId,
             qualityTypeId: this.qualityTypeId,
-            sourceConceptId: this.sourceConceptId,
-            sourceRelationId: this.sourceRelationId,
             transactionDate: this.transactionDate,
             transactionId: this.transactionId,
         });
@@ -117,15 +104,10 @@ export class ActiveRelation {
     }
 
     public get isOriginal(): boolean {
-        return this.id.longValue === this.sourceRelationId.longValue;
+        return this.id.longValue === this.originRelationId.longValue;
     }
 
-    public updateOrder({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-        orderNumber,
-    }: {
+    public updateOrder(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
@@ -134,13 +116,13 @@ export class ActiveRelation {
         const id = RelationId.generateRandom();
 
         const operationId = new RelationOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new RawRelation({
@@ -149,12 +131,12 @@ export class ActiveRelation {
             id: id,
             isActive: new RelationIsActive(true),
             operationId: operationId,
-            orderNumber: orderNumber,
+            orderNumber: input.orderNumber,
+            originConceptId: this.originConceptId,
+            originRelationId: this.originRelationId,
             propertyId: this.propertyId,
             qualityId: this.qualityId,
             qualityTypeId: this.qualityTypeId,
-            sourceConceptId: this.sourceConceptId,
-            sourceRelationId: this.sourceRelationId,
             transactionDate: transactionDate,
             transactionId: transactionId,
         });
@@ -167,11 +149,11 @@ export enum ActiveRelationField {
     Id = "ActiveRelationField.Id",
     OperationId = "ActiveRelationField.OperationId",
     OrderNumber = "ActiveRelationField.OrderNumber",
+    OriginConceptId = "ActiveRelationField.OriginConceptId",
+    OriginRelationId = "ActiveRelationField.OriginRelationId",
     PropertyId = "ActiveRelationField.Propertyid",
     QualityId = "ActiveRelationField.QualityId",
     QualityTypeId = "ActiveRelationField.QualityTypeId",
-    SourceConceptId = "ActiveRelationField.SourceConceptId",
-    SourceRelationId = "ActiveRelationField.SourceRelationId",
     TransactionDate = "ActiveRelationField.TransactionDate",
     TransactionId = "ActiveRelationField.TransactionId",
 }
@@ -184,11 +166,11 @@ export type ActiveRelationFilter =
     | { field: ActiveRelationField.Id; filter: UuidFilter }
     | { field: ActiveRelationField.OperationId; filter: UuidFilter }
     | { field: ActiveRelationField.OrderNumber; filter: IntegerNumberFilter }
+    | { field: ActiveRelationField.OriginConceptId; filter: UuidFilter }
+    | { field: ActiveRelationField.OriginRelationId; filter: UuidFilter }
     | { field: ActiveRelationField.PropertyId; filter: UuidFilter }
     | { field: ActiveRelationField.QualityId; filter: UuidFilter }
     | { field: ActiveRelationField.QualityTypeId; filter: UuidFilter }
-    | { field: ActiveRelationField.SourceConceptId; filter: UuidFilter }
-    | { field: ActiveRelationField.SourceRelationId; filter: UuidFilter }
     | { field: ActiveRelationField.TransactionDate; filter: DateTimeFilter }
     | { field: ActiveRelationField.TransactionId; filter: UuidFilter };
 
@@ -204,105 +186,81 @@ export class RawRelation {
     readonly isActive: RelationIsActive;
     readonly operationId: RelationOperationId;
     readonly orderNumber: RelationOrderNumber;
+    readonly originConceptId: RelationOriginConceptId;
+    readonly originRelationId: RelationOriginRelationId;
     readonly propertyId: RelationPropertyId;
     readonly qualityId: RelationQualityId;
     readonly qualityTypeId: RelationQualityTypeId;
-    readonly sourceConceptId: RelationSourceConceptId;
-    readonly sourceRelationId: RelationSourceRelationId;
     readonly transactionDate: RelationTransactionDate;
     readonly transactionId: RelationTransactionId;
 
-    constructor({
-        abstractionId,
-        conceptId,
-        id,
-        isActive,
-        operationId,
-        orderNumber,
-        propertyId,
-        qualityId,
-        qualityTypeId,
-        sourceConceptId,
-        sourceRelationId,
-        transactionDate,
-        transactionId,
-    }: {
+    constructor(input: {
         abstractionId: RelationAbstractionId;
         conceptId: RelationConceptId;
         id: RelationId;
         isActive: RelationIsActive;
         operationId: RelationOperationId;
         orderNumber: RelationOrderNumber;
+        originConceptId: RelationOriginConceptId;
+        originRelationId: RelationOriginRelationId;
         propertyId: RelationPropertyId;
         qualityId: RelationQualityId;
         qualityTypeId: RelationQualityTypeId;
-        sourceConceptId: RelationSourceConceptId;
-        sourceRelationId: RelationSourceRelationId;
         transactionDate: RelationTransactionDate;
         transactionId: RelationTransactionId;
     }) {
-        this.abstractionId = abstractionId;
-        this.conceptId = conceptId;
-        this.id = id;
-        this.isActive = isActive;
-        this.operationId = operationId;
-        this.orderNumber = orderNumber;
-        this.propertyId = propertyId;
-        this.qualityId = qualityId;
-        this.qualityTypeId = qualityTypeId;
-        this.sourceConceptId = sourceConceptId;
-        this.sourceRelationId = sourceRelationId;
-        this.transactionDate = transactionDate;
-        this.transactionId = transactionId;
+        this.abstractionId = input.abstractionId;
+        this.conceptId = input.conceptId;
+        this.id = input.id;
+        this.isActive = input.isActive;
+        this.operationId = input.operationId;
+        this.orderNumber = input.orderNumber;
+        this.originConceptId = input.originConceptId;
+        this.originRelationId = input.originRelationId;
+        this.propertyId = input.propertyId;
+        this.qualityId = input.qualityId;
+        this.qualityTypeId = input.qualityTypeId;
+        this.transactionDate = input.transactionDate;
+        this.transactionId = input.transactionId;
     }
 
-    public static create({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-        inputConceptId,
-        inputAbstractionId,
-        inputPropertyId,
-        inputOrderNumber,
-        inputQualityId,
-        inputQualityTypeId,
-    }: {
+    public static create(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
-        inputConceptId: ConceptId;
-        inputAbstractionId: ConceptId;
-        inputPropertyId: ConceptId;
-        inputOrderNumber: RelationOrderNumber | null;
-        inputQualityId: ConceptId;
-        inputQualityTypeId: ConceptId;
+        conceptId: ConceptId;
+        abstractionId: ConceptId;
+        propertyId: ConceptId;
+        orderNumber: RelationOrderNumber | null;
+        qualityId: ConceptId;
+        qualityTypeId: ConceptId;
     }): RawRelation {
         const id = RelationId.generateRandom();
 
-        const conceptId = new RelationConceptId(inputConceptId.longValue);
+        const conceptId = new RelationConceptId(input.conceptId.longValue);
 
         const abstractionId = new RelationAbstractionId(
-            inputAbstractionId.longValue,
+            input.abstractionId.longValue,
         );
-        const propertyId = new RelationPropertyId(inputPropertyId.longValue);
-        const qualityId = new RelationQualityId(inputQualityId.longValue);
+        const propertyId = new RelationPropertyId(input.propertyId.longValue);
+        const qualityId = new RelationQualityId(input.qualityId.longValue);
         const qualityTypeId = new RelationQualityTypeId(
-            inputQualityTypeId.longValue,
+            input.qualityTypeId.longValue,
         );
 
-        const sourceConceptId = new RelationSourceConceptId(
+        const originConceptId = new RelationOriginConceptId(
             conceptId.longValue,
         );
-        const sourceRelationId = new RelationSourceConceptId(id.longValue);
+        const originRelationId = new RelationOriginRelationId(id.longValue);
 
         const operationId = new RelationOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new RawRelation({
@@ -311,24 +269,19 @@ export class RawRelation {
             id: id,
             isActive: new RelationIsActive(true),
             operationId: operationId,
-            orderNumber: inputOrderNumber ?? new RelationOrderNumber(BigInt(1)),
+            orderNumber:
+                input.orderNumber ?? new RelationOrderNumber(BigInt(1)),
+            originConceptId: originConceptId,
+            originRelationId: originRelationId,
             propertyId: propertyId,
             qualityId: qualityId,
             qualityTypeId: qualityTypeId,
-            sourceConceptId: sourceConceptId,
-            sourceRelationId: sourceRelationId,
             transactionDate: transactionDate,
             transactionId: transactionId,
         });
     }
 
-    public static createInherited({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-        inheritorConceptId,
-        originalRelation,
-    }: {
+    public static createInherited(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
@@ -337,30 +290,32 @@ export class RawRelation {
     }): RawRelation {
         const id = RelationId.generateRandom();
 
-        const conceptId = new RelationConceptId(inheritorConceptId.longValue);
+        const conceptId = new RelationConceptId(
+            input.inheritorConceptId.longValue,
+        );
 
         const operationId = new RelationOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new RawRelation({
-            abstractionId: originalRelation.abstractionId,
+            abstractionId: input.originalRelation.abstractionId,
             conceptId: conceptId,
             id: id,
-            isActive: originalRelation.isActive,
+            isActive: input.originalRelation.isActive,
             operationId: operationId,
-            orderNumber: originalRelation.orderNumber,
-            propertyId: originalRelation.propertyId,
-            qualityId: originalRelation.qualityId,
-            qualityTypeId: originalRelation.qualityTypeId,
-            sourceConceptId: originalRelation.sourceConceptId,
-            sourceRelationId: originalRelation.sourceRelationId,
+            orderNumber: input.originalRelation.orderNumber,
+            originConceptId: input.originalRelation.originConceptId,
+            originRelationId: input.originalRelation.originRelationId,
+            propertyId: input.originalRelation.propertyId,
+            qualityId: input.originalRelation.qualityId,
+            qualityTypeId: input.originalRelation.qualityTypeId,
             transactionDate: transactionDate,
             transactionId: transactionId,
         });
@@ -378,14 +333,10 @@ export class RawRelation {
     }
 
     public get isOriginal(): boolean {
-        return this.id.longValue === this.sourceRelationId.longValue;
+        return this.id.longValue === this.originRelationId.longValue;
     }
 
-    public setInactive({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-    }: {
+    public setInactive(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
@@ -399,13 +350,13 @@ export class RawRelation {
         const id = RelationId.generateRandom();
 
         const operationId = new RelationOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         // TODO: Assert structural relations are not deleted!
@@ -417,11 +368,11 @@ export class RawRelation {
             isActive: new RelationIsActive(false),
             operationId: operationId,
             orderNumber: this.orderNumber,
+            originConceptId: this.originConceptId,
+            originRelationId: this.originRelationId,
             propertyId: this.propertyId,
             qualityId: this.qualityId,
             qualityTypeId: this.qualityTypeId,
-            sourceConceptId: this.sourceConceptId,
-            sourceRelationId: this.sourceRelationId,
             transactionDate: transactionDate,
             transactionId: transactionId,
         });
@@ -435,11 +386,11 @@ export enum RawRelationField {
     IsActive = "RawRelationField.IsActive",
     OperationId = "RawRelationField.OperationId",
     OrderNumber = "RawRelationField.OrderNumber",
+    OriginConceptId = "RawRelationField.OriginConceptId",
+    OriginRelationId = "RawRelationField.OriginRelationId",
     PropertyId = "RawRelationField.Propertyid",
     QualityId = "RawRelationField.QualityId",
     QualityTypeId = "RawRelationField.QualityTypeId",
-    SourceConceptId = "RawRelationField.SourceConceptId",
-    SourceRelationId = "RawRelationField.SourceRelationId",
     TransactionDate = "RawRelationField.TransactionDate",
     TransactionId = "RawRelationField.TransactionId",
 }
@@ -453,11 +404,11 @@ export type RawRelationFilter =
     | { field: RawRelationField.IsActive; filter: BooleanFilter }
     | { field: RawRelationField.OperationId; filter: UuidFilter }
     | { field: RawRelationField.OrderNumber; filter: IntegerNumberFilter }
+    | { field: RawRelationField.OriginConceptId; filter: UuidFilter }
+    | { field: RawRelationField.OriginRelationId; filter: UuidFilter }
     | { field: RawRelationField.PropertyId; filter: UuidFilter }
     | { field: RawRelationField.QualityId; filter: UuidFilter }
     | { field: RawRelationField.QualityTypeId; filter: UuidFilter }
-    | { field: RawRelationField.SourceConceptId; filter: UuidFilter }
-    | { field: RawRelationField.SourceRelationId; filter: UuidFilter }
     | { field: RawRelationField.TransactionDate; filter: DateTimeFilter }
     | { field: RawRelationField.TransactionId; filter: UuidFilter };
 
@@ -483,15 +434,15 @@ export class RelationOperationId extends OperationConceptId {}
 
 export class RelationOrderNumber extends PositiveNonZeroIntegerNumberValueObject {}
 
+export class RelationOriginConceptId extends RelationConceptId {}
+
+export class RelationOriginRelationId extends RelationId {}
+
 export class RelationPropertyId extends ConceptId {}
 
 export class RelationQualityId extends ConceptId {}
 
 export class RelationQualityTypeId extends ConceptId {}
-
-export class RelationSourceConceptId extends RelationConceptId {}
-
-export class RelationSourceRelationId extends RelationId {}
 
 export class RelationTransactionDate extends TransactionConceptDate {}
 

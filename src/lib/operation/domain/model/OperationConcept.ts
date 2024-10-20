@@ -14,38 +14,31 @@ export class OperationConcept {
     readonly startDate: OperationConceptStartDate;
     readonly userId: OperationConceptUserId;
 
-    constructor({
-        endDate,
-        id,
-        startDate,
-        userId,
-    }: {
+    constructor(input: {
         endDate: OperationConceptEndDate | null;
         id: OperationConceptId;
         startDate: OperationConceptStartDate;
         userId: OperationConceptUserId;
     }) {
-        this.endDate = endDate;
-        this.id = id;
-        this.startDate = startDate;
-        this.userId = userId;
+        this.endDate = input.endDate;
+        this.id = input.id;
+        this.startDate = input.startDate;
+        this.userId = input.userId;
     }
 
-    public static create({
-        conceptId,
-        transactionConceptDate,
-        userConceptId,
-    }: {
+    public static create(input: {
         conceptId: ConceptId;
         transactionConceptDate: TransactionConceptDate;
         userConceptId: UserConceptId;
     }): OperationConcept {
-        const id = new OperationConceptId(conceptId.longValue);
+        const id = new OperationConceptId(input.conceptId.longValue);
         const startDate = new OperationConceptStartDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
         const endDate = null;
-        const userId = new OperationConceptUserId(userConceptId.longValue);
+        const userId = new OperationConceptUserId(
+            input.userConceptId.longValue,
+        );
 
         return new OperationConcept({
             endDate,

@@ -26,15 +26,7 @@ export class ServerUserConcept {
     suspendedAccount: UserConceptSuspendedAccount;
     readonly transactionDate: UserConceptTransactionDate;
 
-    constructor({
-        email,
-        encryptedPassword,
-        id,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-        transactionDate,
-    }: {
+    constructor(input: {
         email: UserConceptEmail;
         encryptedPassword: ServerUserConceptEncryptedPassword;
         id: UserConceptId;
@@ -43,24 +35,16 @@ export class ServerUserConcept {
         suspendedAccount: UserConceptSuspendedAccount;
         transactionDate: UserConceptTransactionDate;
     }) {
-        this.email = email;
-        this.encryptedPassword = encryptedPassword;
-        this.id = id;
-        this.isAdmin = isAdmin;
-        this.restrictedAccess = restrictedAccess;
-        this.suspendedAccount = suspendedAccount;
-        this.transactionDate = transactionDate;
+        this.email = input.email;
+        this.encryptedPassword = input.encryptedPassword;
+        this.id = input.id;
+        this.isAdmin = input.isAdmin;
+        this.restrictedAccess = input.restrictedAccess;
+        this.suspendedAccount = input.suspendedAccount;
+        this.transactionDate = input.transactionDate;
     }
 
-    public static create({
-        conceptId,
-        email,
-        encryptedPassword,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-        transactionConceptDate,
-    }: {
+    public static create(input: {
         conceptId: ConceptId;
         email: UserConceptEmail;
         encryptedPassword: ServerUserConceptEncryptedPassword;
@@ -69,19 +53,19 @@ export class ServerUserConcept {
         suspendedAccount: UserConceptSuspendedAccount;
         transactionConceptDate: TransactionConceptDate;
     }): ServerUserConcept {
-        const id = new UserConceptId(conceptId.shortValue);
+        const id = new UserConceptId(input.conceptId.shortValue);
         const transactionDate = new UserConceptTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new ServerUserConcept({
-            email,
-            encryptedPassword,
-            id,
-            isAdmin,
-            restrictedAccess,
-            suspendedAccount,
-            transactionDate,
+            email: input.email,
+            encryptedPassword: input.encryptedPassword,
+            id: id,
+            isAdmin: input.isAdmin,
+            restrictedAccess: input.restrictedAccess,
+            suspendedAccount: input.suspendedAccount,
+            transactionDate: transactionDate,
         });
     }
 
@@ -106,29 +90,22 @@ export class ServerUserConcept {
         });
     }
 
-    public update({
-        email,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-    }: {
+    public update(input: {
         email: UserConceptEmail;
         isAdmin: UserConceptIsAdmin;
         restrictedAccess: UserConceptRestrictedAccess;
         suspendedAccount: UserConceptSuspendedAccount;
     }) {
-        this.email = email;
-        this.isAdmin = isAdmin;
-        this.restrictedAccess = restrictedAccess;
-        this.suspendedAccount = suspendedAccount;
+        this.email = input.email;
+        this.isAdmin = input.isAdmin;
+        this.restrictedAccess = input.restrictedAccess;
+        this.suspendedAccount = input.suspendedAccount;
     }
 
-    public updatePassword({
-        encryptedPassword,
-    }: {
-        encryptedPassword: ServerUserConceptEncryptedPassword;
-    }) {
-        this.encryptedPassword = encryptedPassword;
+    public updatePassword(
+        newEncryptedPassword: ServerUserConceptEncryptedPassword,
+    ) {
+        this.encryptedPassword = newEncryptedPassword;
     }
 }
 

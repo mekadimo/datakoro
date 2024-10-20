@@ -9,10 +9,7 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbRawRelationManager {
-    public static async findRawRelationById({
-        relationId,
-        transaction,
-    }: {
+    public static async findRawRelationById(input: {
         relationId: RelationId;
         transaction: DbTransaction;
     }): Promise<RawRelation | null> {
@@ -22,13 +19,13 @@ export class DbRawRelationManager {
                     field: RawRelationField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: relationId,
+                        value: input.relationId,
                     },
                 },
             ],
         };
         const dbRawRelations = await RawRelationSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbRawRelations.length) {
@@ -39,10 +36,7 @@ export class DbRawRelationManager {
         return rawRelation;
     }
 
-    public static async findRawRelationsByIdInBulk({
-        relationIds,
-        transaction,
-    }: {
+    public static async findRawRelationsByIdInBulk(input: {
         relationIds: RelationId[];
         transaction: DbTransaction;
     }): Promise<RawRelation[]> {
@@ -52,57 +46,53 @@ export class DbRawRelationManager {
                     field: RawRelationField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: relationIds,
+                        value: input.relationIds,
                     },
                 },
             ],
         };
         const dbRawRelations = await RawRelationSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         const rawRelations = dbRawRelations.map((ar) => ar.toDomain());
         return rawRelations;
     }
 
-    public static async getRawRelationById({
-        relationId,
-        transaction,
-    }: {
+    public static async getRawRelationById(input: {
         relationId: RelationId;
         transaction: DbTransaction;
     }): Promise<RawRelation> {
         const rawRelation = await DbRawRelationManager.findRawRelationById({
-            relationId: relationId,
-            transaction: transaction,
+            relationId: input.relationId,
+            transaction: input.transaction,
         });
 
         if (null == rawRelation) {
-            throw new RelationNotFoundException({ id: relationId.shortValue });
+            throw new RelationNotFoundException({
+                id: input.relationId.shortValue,
+            });
         }
 
         return rawRelation;
     }
 
-    public static async getRawRelationsByIdInBulk({
-        relationIds,
-        transaction,
-    }: {
+    public static async getRawRelationsByIdInBulk(input: {
         relationIds: RelationId[];
         transaction: DbTransaction;
     }): Promise<RawRelation[]> {
         const rawRelations =
             await DbRawRelationManager.findRawRelationsByIdInBulk({
-                relationIds: relationIds,
-                transaction: transaction,
+                relationIds: input.relationIds,
+                transaction: input.transaction,
             });
 
-        if (relationIds.length !== rawRelations.length) {
+        if (input.relationIds.length !== rawRelations.length) {
             const exceptions = [];
             const foundRelationIdShortValues = rawRelations.map(
                 (c) => c.id.shortValue,
             );
-            for (const relationId of relationIds) {
+            for (const relationId of input.relationIds) {
                 if (
                     foundRelationIdShortValues.includes(relationId.shortValue)
                 ) {
@@ -119,16 +109,13 @@ export class DbRawRelationManager {
         return rawRelations;
     }
 
-    public static async searchRawRelations({
-        criteria,
-        transaction,
-    }: {
+    public static async searchRawRelations(input: {
         criteria: RawRelationSearchCriteria;
         transaction: DbTransaction;
     }): Promise<RawRelation[]> {
         const dbRelations = await RawRelationSqlExecutor.select(
-            transaction.prismaTx,
-            criteria,
+            input.transaction.prismaTx,
+            input.criteria,
         );
         const relations = dbRelations.map((r) => r.toDomain());
         return relations;

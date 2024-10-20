@@ -14,16 +14,13 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbActiveRelationManager {
-    public static async deleteRelation({
-        relationId,
-        transaction,
-    }: {
+    public static async deleteRelation(input: {
         relationId: RelationId;
         transaction: DbTransaction;
     }): Promise<RawRelation> {
         const relation = await DbActiveRelationManager.getActiveRelationById({
-            relationId: relationId,
-            transaction: transaction,
+            relationId: input.relationId,
+            transaction: input.transaction,
         });
 
         // TODO: Avoid deleting some concepts (by self abstraction) and relations
@@ -31,14 +28,14 @@ export class DbActiveRelationManager {
 
         const rawRelation = relation.toRaw();
         rawRelation.setInactive({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
         });
 
         const dbRawRelation = DbRawRelation.fromDomain(rawRelation);
         await RawRelationSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbRawRelation,
         );
 
@@ -47,10 +44,7 @@ export class DbActiveRelationManager {
         return rawRelation;
     }
 
-    public static async findActiveRelationById({
-        relationId,
-        transaction,
-    }: {
+    public static async findActiveRelationById(input: {
         relationId: RelationId;
         transaction: DbTransaction;
     }): Promise<ActiveRelation | null> {
@@ -60,13 +54,13 @@ export class DbActiveRelationManager {
                     field: ActiveRelationField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: relationId,
+                        value: input.relationId,
                     },
                 },
             ],
         };
         const dbActiveRelations = await ActiveRelationSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbActiveRelations.length) {
@@ -77,10 +71,7 @@ export class DbActiveRelationManager {
         return activeRelation;
     }
 
-    public static async findActiveRelationsByIdInBulk({
-        relationIds,
-        transaction,
-    }: {
+    public static async findActiveRelationsByIdInBulk(input: {
         relationIds: RelationId[];
         transaction: DbTransaction;
     }): Promise<ActiveRelation[]> {
@@ -90,58 +81,54 @@ export class DbActiveRelationManager {
                     field: ActiveRelationField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: relationIds,
+                        value: input.relationIds,
                     },
                 },
             ],
         };
         const dbActiveRelations = await ActiveRelationSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         const activeRelations = dbActiveRelations.map((ar) => ar.toDomain());
         return activeRelations;
     }
 
-    public static async getActiveRelationById({
-        relationId,
-        transaction,
-    }: {
+    public static async getActiveRelationById(input: {
         relationId: RelationId;
         transaction: DbTransaction;
     }): Promise<ActiveRelation> {
         const activeRelation =
             await DbActiveRelationManager.findActiveRelationById({
-                relationId: relationId,
-                transaction: transaction,
+                relationId: input.relationId,
+                transaction: input.transaction,
             });
 
         if (null == activeRelation) {
-            throw new RelationNotFoundException({ id: relationId.shortValue });
+            throw new RelationNotFoundException({
+                id: input.relationId.shortValue,
+            });
         }
 
         return activeRelation;
     }
 
-    public static async getActiveRelationsByIdInBulk({
-        relationIds,
-        transaction,
-    }: {
+    public static async getActiveRelationsByIdInBulk(input: {
         relationIds: RelationId[];
         transaction: DbTransaction;
     }): Promise<ActiveRelation[]> {
         const activeRelations =
             await DbActiveRelationManager.findActiveRelationsByIdInBulk({
-                relationIds: relationIds,
-                transaction: transaction,
+                relationIds: input.relationIds,
+                transaction: input.transaction,
             });
 
-        if (relationIds.length !== activeRelations.length) {
+        if (input.relationIds.length !== activeRelations.length) {
             const exceptions = [];
             const foundRelationIdShortValues = activeRelations.map(
                 (c) => c.id.shortValue,
             );
-            for (const relationId of relationIds) {
+            for (const relationId of input.relationIds) {
                 if (
                     foundRelationIdShortValues.includes(relationId.shortValue)
                 ) {
@@ -158,34 +145,33 @@ export class DbActiveRelationManager {
         return activeRelations;
     }
 
-    public static async updateRelationOrder({
-        relationId,
-        orderNumber,
-        transaction,
-    }: {
+    public static async updateRelationOrder(input: {
         relationId: RelationId;
         orderNumber: RelationOrderNumber;
         transaction: DbTransaction;
     }): Promise<ActiveRelation> {
         const relation = await DbActiveRelationManager.getActiveRelationById({
-            transaction: transaction,
-            relationId: relationId,
+            transaction: input.transaction,
+            relationId: input.relationId,
         });
 
         await DbRelationRuleManager.assertRelationOrderCanBeUpdated({
-            transaction: transaction,
+            transaction: input.transaction,
             relation: relation,
         });
 
         relation.updateOrder({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
-            orderNumber: orderNumber,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
+            orderNumber: input.orderNumber,
         });
         const rawRelation = relation.toRaw();
         const dbRelation = DbRawRelation.fromDomain(rawRelation);
-        await RawRelationSqlExecutor.insert(transaction.prismaTx, dbRelation);
+        await RawRelationSqlExecutor.insert(
+            input.transaction.prismaTx,
+            dbRelation,
+        );
 
         // TODO: Add task to inheritance system
         // TODO: If original relation, update ALL orders of concretions

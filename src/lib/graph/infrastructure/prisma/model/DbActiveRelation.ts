@@ -12,39 +12,39 @@ import { RelationConceptId } from "../../../domain/model/Relation";
 import { RelationId } from "../../../domain/model/Relation";
 import { RelationOperationId } from "../../../domain/model/Relation";
 import { RelationOrderNumber } from "../../../domain/model/Relation";
+import { RelationOriginConceptId } from "../../../domain/model/Relation";
+import { RelationOriginRelationId } from "../../../domain/model/Relation";
 import { RelationPropertyId } from "../../../domain/model/Relation";
 import { RelationQualityId } from "../../../domain/model/Relation";
 import { RelationQualityTypeId } from "../../../domain/model/Relation";
-import { RelationSourceConceptId } from "../../../domain/model/Relation";
-import { RelationSourceRelationId } from "../../../domain/model/Relation";
 import { RelationTransactionDate } from "../../../domain/model/Relation";
 import { RelationTransactionId } from "../../../domain/model/Relation";
 
 type DbActiveRelationFilter =
     | { concept_id_abstraction: DbUuidFilter }
     | { concept_id_concept: DbUuidFilter }
+    | { concept_id_origin: DbUuidFilter }
     | { concept_id_property: DbUuidFilter }
     | { concept_id_quality: DbUuidFilter }
     | { concept_id_quality_type: DbUuidFilter }
-    | { concept_id_source: DbUuidFilter }
     | { id: DbUuidFilter }
     | { operation_concept_id: DbUuidFilter }
     | { order_number: DbIntegerNumberFilter }
-    | { relation_id_source: DbUuidFilter }
+    | { relation_id_origin: DbUuidFilter }
     | { transaction_concept_id: DbUuidFilter }
     | { transaction_date: DbDateTimeFilter };
 
 type DbActiveRelationFieldOrder =
     | { concept_id_abstraction: DbFieldOrderDirection }
     | { concept_id_concept: DbFieldOrderDirection }
+    | { concept_id_origin: DbFieldOrderDirection }
     | { concept_id_property: DbFieldOrderDirection }
     | { concept_id_quality: DbFieldOrderDirection }
     | { concept_id_quality_type: DbFieldOrderDirection }
-    | { concept_id_source: DbFieldOrderDirection }
     | { id: DbFieldOrderDirection }
     | { operation_concept_id: DbFieldOrderDirection }
     | { order_number: DbFieldOrderDirection }
-    | { relation_id_source: DbFieldOrderDirection }
+    | { relation_id_origin: DbFieldOrderDirection }
     | { transaction_concept_id: DbFieldOrderDirection }
     | { transaction_date: DbFieldOrderDirection };
 
@@ -54,67 +54,54 @@ export class DbActiveRelation {
     concept_id_property: string;
     concept_id_quality: string;
     concept_id_quality_type: string;
-    concept_id_source: string;
+    concept_id_origin: string;
     id: string;
     operation_concept_id: string;
     order_number: bigint;
-    relation_id_source: string;
+    relation_id_origin: string;
     transaction_concept_id: string;
     transaction_date: Date;
 
-    constructor({
-        concept_id_abstraction,
-        concept_id_concept,
-        concept_id_property,
-        concept_id_quality,
-        concept_id_quality_type,
-        concept_id_source,
-        id,
-        operation_concept_id,
-        order_number,
-        relation_id_source,
-        transaction_concept_id,
-        transaction_date,
-    }: {
+    constructor(input: {
         concept_id_abstraction: string;
         concept_id_concept: string;
+        concept_id_origin: string;
         concept_id_property: string;
         concept_id_quality: string;
         concept_id_quality_type: string;
-        concept_id_source: string;
         id: string;
         operation_concept_id: string;
         order_number: bigint;
-        relation_id_source: string;
+        relation_id_origin: string;
         transaction_concept_id: string;
         transaction_date: Date;
     }) {
-        this.concept_id_abstraction = concept_id_abstraction;
-        this.concept_id_concept = concept_id_concept;
-        this.concept_id_property = concept_id_property;
-        this.concept_id_quality = concept_id_quality;
-        this.concept_id_quality_type = concept_id_quality_type;
-        this.concept_id_source = concept_id_source;
-        this.id = id;
-        this.operation_concept_id = operation_concept_id;
-        this.order_number = order_number;
-        this.relation_id_source = relation_id_source;
-        this.transaction_concept_id = transaction_concept_id;
-        this.transaction_date = transaction_date;
+        this.concept_id_abstraction = input.concept_id_abstraction;
+        this.concept_id_concept = input.concept_id_concept;
+        this.concept_id_origin = input.concept_id_origin;
+        this.concept_id_property = input.concept_id_property;
+        this.concept_id_quality = input.concept_id_quality;
+        this.concept_id_quality_type = input.concept_id_quality_type;
+        this.id = input.id;
+        this.operation_concept_id = input.operation_concept_id;
+        this.order_number = input.order_number;
+        this.relation_id_origin = input.relation_id_origin;
+        this.transaction_concept_id = input.transaction_concept_id;
+        this.transaction_date = input.transaction_date;
     }
 
     public static fromDomain(activeRelation: ActiveRelation): DbActiveRelation {
         return new DbActiveRelation({
             concept_id_abstraction: activeRelation.abstractionId.longValue,
             concept_id_concept: activeRelation.conceptId.longValue,
+            concept_id_origin: activeRelation.originConceptId.longValue,
             concept_id_property: activeRelation.propertyId.longValue,
             concept_id_quality: activeRelation.qualityId.longValue,
             concept_id_quality_type: activeRelation.qualityTypeId.longValue,
-            concept_id_source: activeRelation.sourceConceptId.longValue,
             id: activeRelation.id.longValue,
             operation_concept_id: activeRelation.operationId.longValue,
             order_number: activeRelation.orderNumber.value,
-            relation_id_source: activeRelation.sourceRelationId.longValue,
+            relation_id_origin: activeRelation.originRelationId.longValue,
             transaction_concept_id: activeRelation.transactionId.longValue,
             transaction_date: activeRelation.transactionDate.value,
         });
@@ -153,6 +140,16 @@ export class DbActiveRelation {
                     ),
                 };
             }
+            case ActiveRelationField.OriginConceptId: {
+                return {
+                    concept_id_origin: DbModel.toDbUuidFilter(filter.filter),
+                };
+            }
+            case ActiveRelationField.OriginRelationId: {
+                return {
+                    relation_id_origin: DbModel.toDbUuidFilter(filter.filter),
+                };
+            }
             case ActiveRelationField.PropertyId: {
                 return {
                     concept_id_property: DbModel.toDbUuidFilter(filter.filter),
@@ -168,16 +165,6 @@ export class DbActiveRelation {
                     concept_id_quality_type: DbModel.toDbUuidFilter(
                         filter.filter,
                     ),
-                };
-            }
-            case ActiveRelationField.SourceConceptId: {
-                return {
-                    concept_id_source: DbModel.toDbUuidFilter(filter.filter),
-                };
-            }
-            case ActiveRelationField.SourceRelationId: {
-                return {
-                    relation_id_source: DbModel.toDbUuidFilter(filter.filter),
                 };
             }
             case ActiveRelationField.TransactionDate: {
@@ -237,6 +224,20 @@ export class DbActiveRelation {
                     order_number: DbModel.toDbOrderDirection(order.direction),
                 };
             }
+            case ActiveRelationField.OriginConceptId: {
+                return {
+                    concept_id_origin: DbModel.toDbOrderDirection(
+                        order.direction,
+                    ),
+                };
+            }
+            case ActiveRelationField.OriginRelationId: {
+                return {
+                    relation_id_origin: DbModel.toDbOrderDirection(
+                        order.direction,
+                    ),
+                };
+            }
             case ActiveRelationField.PropertyId: {
                 return {
                     concept_id_property: DbModel.toDbOrderDirection(
@@ -254,20 +255,6 @@ export class DbActiveRelation {
             case ActiveRelationField.QualityTypeId: {
                 return {
                     concept_id_quality_type: DbModel.toDbOrderDirection(
-                        order.direction,
-                    ),
-                };
-            }
-            case ActiveRelationField.SourceConceptId: {
-                return {
-                    concept_id_source: DbModel.toDbOrderDirection(
-                        order.direction,
-                    ),
-                };
-            }
-            case ActiveRelationField.SourceRelationId: {
-                return {
-                    relation_id_source: DbModel.toDbOrderDirection(
                         order.direction,
                     ),
                 };
@@ -305,16 +292,16 @@ export class DbActiveRelation {
             id: new RelationId(this.id),
             operationId: new RelationOperationId(this.operation_concept_id),
             orderNumber: new RelationOrderNumber(this.order_number),
+            originConceptId: new RelationOriginConceptId(
+                this.concept_id_origin,
+            ),
+            originRelationId: new RelationOriginRelationId(
+                this.relation_id_origin,
+            ),
             propertyId: new RelationPropertyId(this.concept_id_property),
             qualityId: new RelationQualityId(this.concept_id_quality),
             qualityTypeId: new RelationQualityTypeId(
                 this.concept_id_quality_type,
-            ),
-            sourceConceptId: new RelationSourceConceptId(
-                this.concept_id_source,
-            ),
-            sourceRelationId: new RelationSourceRelationId(
-                this.relation_id_source,
             ),
             transactionDate: new RelationTransactionDate(this.transaction_date),
             transactionId: new RelationTransactionId(

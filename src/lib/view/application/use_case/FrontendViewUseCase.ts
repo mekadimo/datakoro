@@ -15,144 +15,148 @@ import { ID_DATAKORO_LOGIN } from "../../../graph/domain/model/ConceptId";
 import { ID_DATAKORO_SEARCH } from "../../../graph/domain/model/ConceptId";
 import { languageCodeToConceptId } from "$lib/view/domain/model/SupportedLanguage";
 
-function collectConceptIds(data: any): ConceptId[] {
-    const result: ConceptId[] = [];
+function collectConceptIds(data: unknown): ConceptId[] {
+    const conceptIdShortValues = new Set<string>();
 
-    function recurse(obj: any) {
+    function recurse(obj: unknown) {
         if (obj instanceof ConceptId) {
-            result.push(obj);
-        } else if (typeof obj === "object" && obj !== null) {
+            conceptIdShortValues.add(obj.shortValue);
+        } else if (collectConceptIdsIsRecordHelper(obj)) {
             for (const key in obj) {
-                if (obj.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
                     recurse(obj[key]);
                 }
             }
         }
     }
-
     recurse(data);
-    return result;
+
+    return Array.from(conceptIdShortValues).map((v) => new ConceptId(v));
+}
+
+// Required for TypeScript type checking
+function collectConceptIdsIsRecordHelper(
+    obj: unknown,
+): obj is Record<string, unknown> {
+    return typeof obj === "object" && null != obj;
 }
 
 export class FrontendViewUseCase {
-    private static async getConceptAbstractionView({
-        abstractionId,
-        conceptId,
-        operationService,
-        parameters,
-        preferredLanguageConceptId,
-    }: {
+    private static async getConceptAbstractionView(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         operationService: OperationService;
         parameters: { [key: string]: string };
         preferredLanguageConceptId: ConceptId;
     }): Promise<DtoConceptAbstractionView> {
-        const response = await operationService.runToRead(async (operation) => {
-            const graphRepository = operation.graphRepository;
+        const response = await input.operationService.runToRead(
+            async (operation) => {
+                const graphRepository = operation.graphRepository;
 
-            const concept = await graphRepository.getConceptById(conceptId);
-            const conceptRelations =
-                await graphRepository.getConceptRelationsById(conceptId);
-
-            const allConceptIds = collectConceptIds([
-                conceptId,
-                abstractionId,
-                concept,
-                conceptRelations,
-            ]);
-            const conceptNames =
-                await graphRepository.getConceptNamesWithPreferredLanguage(
-                    allConceptIds,
-                    preferredLanguageConceptId,
+                const concept = await graphRepository.getConceptById(
+                    input.conceptId,
                 );
+                const conceptRelations =
+                    await graphRepository.getConceptRelationsById(
+                        input.conceptId,
+                    );
 
-            const view = new ConceptAbstractionView({
-                conceptId: conceptId,
-                abstractionId: abstractionId,
-                parameters: parameters,
-                data: {
-                    concept: concept,
-                    conceptRelations: conceptRelations,
-                },
-                names: conceptNames,
-            });
-            return DtoConceptAbstractionViewTransformer.fromDomain(view);
-        });
+                const allConceptIds = collectConceptIds([
+                    input.conceptId,
+                    input.abstractionId,
+                    concept,
+                    conceptRelations,
+                ]);
+                const conceptNames =
+                    await graphRepository.getConceptNamesWithPreferredLanguage(
+                        allConceptIds,
+                        input.preferredLanguageConceptId,
+                    );
+
+                const view = new ConceptAbstractionView({
+                    conceptId: input.conceptId,
+                    abstractionId: input.abstractionId,
+                    parameters: input.parameters,
+                    data: {
+                        concept: concept,
+                        conceptRelations: conceptRelations,
+                    },
+                    names: conceptNames,
+                });
+                return DtoConceptAbstractionViewTransformer.fromDomain(view);
+            },
+        );
         return response;
     }
 
-    private static async getDatakoroLoginConceptView({
-        conceptId,
-        operationService,
-        parameters,
-        preferredLanguageConceptId,
-    }: {
+    private static async getDatakoroLoginConceptView(input: {
         conceptId: ConceptId;
         operationService: OperationService;
         parameters: { [key: string]: string };
         preferredLanguageConceptId: ConceptId;
     }): Promise<DtoDatakoroLoginConceptView> {
-        const response = await operationService.runToRead(async (operation) => {
-            const graphRepository = operation.graphRepository;
+        const response = await input.operationService.runToRead(
+            async (operation) => {
+                const graphRepository = operation.graphRepository;
 
-            const allConceptIds = collectConceptIds([conceptId]);
-            const conceptNames =
-                await graphRepository.getConceptNamesWithPreferredLanguage(
-                    allConceptIds,
-                    preferredLanguageConceptId,
-                );
+                const allConceptIds = collectConceptIds([input.conceptId]);
+                const conceptNames =
+                    await graphRepository.getConceptNamesWithPreferredLanguage(
+                        allConceptIds,
+                        input.preferredLanguageConceptId,
+                    );
 
-            const view = new DatakoroLoginConceptView({
-                conceptId: conceptId,
-                parameters: parameters,
-                names: conceptNames,
-            });
-            return DtoDatakoroLoginConceptViewTransformer.fromDomain(view);
-        });
+                const view = new DatakoroLoginConceptView({
+                    conceptId: input.conceptId,
+                    parameters: input.parameters,
+                    names: conceptNames,
+                });
+                return DtoDatakoroLoginConceptViewTransformer.fromDomain(view);
+            },
+        );
         return response;
     }
 
-    private static async getDatakoroSearchConceptView({
-        conceptId,
-        operationService,
-        parameters,
-        preferredLanguageConceptId,
-    }: {
+    private static async getDatakoroSearchConceptView(input: {
         conceptId: ConceptId;
         operationService: OperationService;
         parameters: { [key: string]: string };
         preferredLanguageConceptId: ConceptId;
     }): Promise<DtoDatakoroSearchConceptView> {
-        const response = await operationService.runToRead(async (operation) => {
-            const graphRepository = operation.graphRepository;
+        const response = await input.operationService.runToRead(
+            async (operation) => {
+                const graphRepository = operation.graphRepository;
 
-            const conceptIds = await graphRepository.getConceptIdsBySearch(
-                parameters["q"],
-                preferredLanguageConceptId,
-            );
-
-            const allConceptIds = collectConceptIds([conceptId, conceptIds]);
-            const conceptNames =
-                await graphRepository.getConceptNamesWithPreferredLanguage(
-                    allConceptIds,
-                    preferredLanguageConceptId,
+                const conceptIds = await graphRepository.getConceptIdsBySearch(
+                    input.parameters["q"],
+                    input.preferredLanguageConceptId,
                 );
 
-            const view = new DatakoroSearchConceptView({
-                conceptId: conceptId,
-                data: {
-                    // TODO
-                    numberOfResultsPerPage: conceptIds.length,
-                    numberOfTotalResults: conceptIds.length,
-                    pageNumber: 1,
-                    results: conceptIds,
-                },
-                parameters: parameters,
-                names: conceptNames,
-            });
-            return DtoDatakoroSearchConceptViewTransformer.fromDomain(view);
-        });
+                const allConceptIds = collectConceptIds([
+                    input.conceptId,
+                    conceptIds,
+                ]);
+                const conceptNames =
+                    await graphRepository.getConceptNamesWithPreferredLanguage(
+                        allConceptIds,
+                        input.preferredLanguageConceptId,
+                    );
+
+                const view = new DatakoroSearchConceptView({
+                    conceptId: input.conceptId,
+                    data: {
+                        // TODO
+                        numberOfResultsPerPage: conceptIds.length,
+                        numberOfTotalResults: conceptIds.length,
+                        pageNumber: 1,
+                        results: conceptIds,
+                    },
+                    parameters: input.parameters,
+                    names: conceptNames,
+                });
+                return DtoDatakoroSearchConceptViewTransformer.fromDomain(view);
+            },
+        );
         return response;
     }
 

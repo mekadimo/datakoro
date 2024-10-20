@@ -222,11 +222,11 @@ CREATE TABLE relation (
     operation_concept_id   UUID NOT NULL REFERENCES operation_concept,
     transaction_concept_id UUID NOT NULL REFERENCES transaction_concept,
 
-    relation_id_source UUID NOT NULL,
-    concept_id_source  UUID NOT NULL,
+    relation_id_origin UUID NOT NULL,
+    concept_id_origin  UUID NOT NULL,
 
     UNIQUE (id, concept_id_concept),
-    FOREIGN KEY (relation_id_source, concept_id_source)
+    FOREIGN KEY (relation_id_origin, concept_id_origin)
     REFERENCES relation (id, concept_id_concept)
     DEFERRABLE INITIALLY DEFERRED
 );
@@ -249,7 +249,7 @@ CREATE VIEW active_relation AS
 WITH cte AS (
     SELECT
         ROW_NUMBER() OVER (
-            PARTITION BY concept_id_concept, relation_id_source
+            PARTITION BY concept_id_concept, relation_id_origin
             ORDER BY transaction_date DESC
         ) AS row_number,
         id,
@@ -263,8 +263,8 @@ WITH cte AS (
         transaction_date,
         operation_concept_id,
         transaction_concept_id,
-        relation_id_source,
-        concept_id_source
+        relation_id_origin,
+        concept_id_origin
     FROM relation
 ) 
 SELECT
@@ -278,7 +278,7 @@ SELECT
     transaction_date,
     operation_concept_id,
     transaction_concept_id,
-    relation_id_source,
-    concept_id_source
+    relation_id_origin,
+    concept_id_origin
 FROM cte
 WHERE row_number = 1 AND is_active;

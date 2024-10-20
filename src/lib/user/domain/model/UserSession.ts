@@ -18,14 +18,7 @@ export class PrivateUserSession {
     userAgentRequestHeader: UserSessionUserAgentRequestHeader;
     readonly userId: UserSessionUserId;
 
-    constructor({
-        id,
-        ip,
-        lastRequestDate,
-        startDate,
-        userAgentRequestHeader,
-        userId,
-    }: {
+    constructor(input: {
         id: UserSessionId;
         ip: UserSessionIp;
         lastRequestDate: UserSessionLastRequestDate;
@@ -33,12 +26,12 @@ export class PrivateUserSession {
         userAgentRequestHeader: UserSessionUserAgentRequestHeader;
         userId: UserSessionUserId;
     }) {
-        this.id = id;
-        this.ip = ip;
-        this.lastRequestDate = lastRequestDate;
-        this.startDate = startDate;
-        this.userAgentRequestHeader = userAgentRequestHeader;
-        this.userId = userId;
+        this.id = input.id;
+        this.ip = input.ip;
+        this.lastRequestDate = input.lastRequestDate;
+        this.startDate = input.startDate;
+        this.userAgentRequestHeader = input.userAgentRequestHeader;
+        this.userId = input.userId;
     }
 }
 

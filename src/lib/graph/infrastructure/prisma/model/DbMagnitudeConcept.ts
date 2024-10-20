@@ -12,21 +12,16 @@ export class DbMagnitudeConcept {
     number_range_value: [Decimal | null, Decimal | null];
     transaction_date: Date;
 
-    constructor({
-        concept_id,
-        concept_id_magnitude,
-        number_range_value,
-        transaction_date,
-    }: {
+    constructor(input: {
         concept_id: string;
         concept_id_magnitude: string;
         number_range_value: [Decimal | null, Decimal | null];
         transaction_date: Date;
     }) {
-        this.concept_id = concept_id;
-        this.concept_id_magnitude = concept_id_magnitude;
-        this.number_range_value = number_range_value;
-        this.transaction_date = transaction_date;
+        this.concept_id = input.concept_id;
+        this.concept_id_magnitude = input.concept_id_magnitude;
+        this.number_range_value = input.number_range_value;
+        this.transaction_date = input.transaction_date;
     }
 
     public static fromDomain(

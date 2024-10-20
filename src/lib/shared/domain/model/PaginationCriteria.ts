@@ -9,15 +9,9 @@ export class PaginationCriteria {
     public readonly itemsPerPage: number;
     public readonly pageNumber: number;
 
-    constructor({
-        itemsPerPage,
-        pageNumber,
-    }: {
-        itemsPerPage: number;
-        pageNumber: number;
-    }) {
-        this.itemsPerPage = itemsPerPage;
-        this.pageNumber = pageNumber;
+    constructor(input: { itemsPerPage: number; pageNumber: number }) {
+        this.itemsPerPage = input.itemsPerPage;
+        this.pageNumber = input.pageNumber;
         this.assertIsValid();
     }
 

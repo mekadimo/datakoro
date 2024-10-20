@@ -24,82 +24,68 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbGraphManager {
-    public static async addAbstractionRelation({
-        abstractionId,
-        conceptId,
-        transaction,
-    }: {
+    public static async addAbstractionRelation(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<ActiveRelation> {
         const relation = await DbGraphManager.addRelation({
-            conceptId: conceptId,
+            conceptId: input.conceptId,
             abstractionId: ID_ABSTRACTION,
             propertyId: ID_ABSTRACTION,
             orderNumber: null,
-            qualityId: abstractionId,
+            qualityId: input.abstractionId,
             qualityTypeId: ID_CONCEPT,
-            transaction: transaction,
+            transaction: input.transaction,
         });
         return relation;
     }
 
-    public static async addConcept({
-        transaction,
-        conceptId,
-        abstractionId,
-    }: {
+    public static async addConcept(input: {
         transaction: DbTransaction;
         conceptId?: ConceptId;
         abstractionId: ConceptId;
     }): Promise<Concept> {
         const concept = Concept.create({
             conceptId:
-                undefined == conceptId ? ConceptId.generateRandom() : conceptId,
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
+                undefined == input.conceptId
+                    ? ConceptId.generateRandom()
+                    : input.conceptId,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
         });
         const dbConcept = DbConcept.fromDomain(concept);
-        await ConceptSqlExecutor.insert(transaction.prismaTx, dbConcept);
+        await ConceptSqlExecutor.insert(input.transaction.prismaTx, dbConcept);
 
         const rawSelfAbstractionRelation = RawRelation.create({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
-            inputConceptId: concept.id,
-            inputAbstractionId: ID_ABSTRACTION,
-            inputPropertyId: ID_ABSTRACTION,
-            inputOrderNumber: null,
-            inputQualityId: concept.id,
-            inputQualityTypeId: ID_CONCEPT,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
+            conceptId: concept.id,
+            abstractionId: ID_ABSTRACTION,
+            propertyId: ID_ABSTRACTION,
+            orderNumber: null,
+            qualityId: concept.id,
+            qualityTypeId: ID_CONCEPT,
         });
         const dbSelfAbstractionRelation = DbRawRelation.fromDomain(
             rawSelfAbstractionRelation,
         );
         await RawRelationSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbSelfAbstractionRelation,
         );
         await DbGraphManager.addAbstractionRelation({
-            transaction: transaction,
+            transaction: input.transaction,
             conceptId: concept.id,
-            abstractionId: abstractionId,
+            abstractionId: input.abstractionId,
         });
 
         return concept;
     }
 
-    public static async addRelation({
-        conceptId,
-        abstractionId,
-        propertyId,
-        orderNumber,
-        qualityId,
-        qualityTypeId,
-        transaction,
-    }: {
+    public static async addRelation(input: {
         conceptId: ConceptId;
         abstractionId: ConceptId;
         propertyId: ConceptId;
@@ -109,31 +95,31 @@ export class DbGraphManager {
         transaction: DbTransaction;
     }): Promise<ActiveRelation> {
         const rawRelation = RawRelation.create({
-            operationConceptId: transaction.concept.operationId,
-            transactionConceptId: transaction.concept.id,
-            transactionConceptDate: transaction.concept.date,
-            inputConceptId: conceptId,
-            inputAbstractionId: abstractionId,
-            inputPropertyId: propertyId,
-            inputOrderNumber: orderNumber,
-            inputQualityId: qualityId,
-            inputQualityTypeId: qualityTypeId,
+            operationConceptId: input.transaction.concept.operationId,
+            transactionConceptId: input.transaction.concept.id,
+            transactionConceptDate: input.transaction.concept.date,
+            conceptId: input.conceptId,
+            abstractionId: input.abstractionId,
+            propertyId: input.propertyId,
+            orderNumber: input.orderNumber,
+            qualityId: input.qualityId,
+            qualityTypeId: input.qualityTypeId,
         });
         await DbGraphManager.assertNewRelationIsValid({
             rawRelation: rawRelation,
-            transaction: transaction,
+            transaction: input.transaction,
         });
 
         const dbRawRelation = DbRawRelation.fromDomain(rawRelation);
         await RawRelationSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbRawRelation,
         );
         if (rawRelation.isAbstraction) {
             await DbGraphManager.inheritRelations({
-                conceptId: conceptId,
-                abstractionId: abstractionId,
-                transaction: transaction,
+                conceptId: input.conceptId,
+                abstractionId: input.abstractionId,
+                transaction: input.transaction,
             });
         }
 
@@ -143,37 +129,26 @@ export class DbGraphManager {
         return relation;
     }
 
-    public static async assertConceptHasActiveAbstraction({
-        abstractionId,
-        conceptId,
-        transaction,
-    }: {
+    public static async assertConceptHasActiveAbstraction(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<void> {
         const hasActiveAbstraction =
             await DbGraphManager.conceptHasActiveAbstraction({
-                abstractionId: abstractionId,
-                conceptId: conceptId,
-                transaction: transaction,
+                abstractionId: input.abstractionId,
+                conceptId: input.conceptId,
+                transaction: input.transaction,
             });
         if (!hasActiveAbstraction) {
             throw new ConceptHasNotAbstractionException({
-                abstractionId: abstractionId.shortValue,
-                conceptId: conceptId.shortValue,
+                abstractionId: input.abstractionId.shortValue,
+                conceptId: input.conceptId.shortValue,
             });
         }
     }
 
-    public static async assertConceptHasActiveRelation({
-        abstractionId,
-        conceptId,
-        orderNumber,
-        propertyId,
-        qualityId,
-        transaction,
-    }: {
+    public static async assertConceptHasActiveRelation(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         orderNumber: RelationOrderNumber | null;
@@ -183,56 +158,52 @@ export class DbGraphManager {
     }): Promise<void> {
         const hasActiveRelation = await DbGraphManager.conceptHasActiveRelation(
             {
-                abstractionId: abstractionId,
-                conceptId: conceptId,
-                orderNumber: orderNumber,
-                propertyId: propertyId,
-                qualityId: qualityId,
-                transaction: transaction,
+                abstractionId: input.abstractionId,
+                conceptId: input.conceptId,
+                orderNumber: input.orderNumber,
+                propertyId: input.propertyId,
+                qualityId: input.qualityId,
+                transaction: input.transaction,
             },
         );
         if (!hasActiveRelation) {
             throw new ConceptHasNotRelationException({
-                conceptId: conceptId.shortValue,
-                abstractionId: abstractionId.shortValue,
-                orderNumber: orderNumber?.value ?? null,
-                propertyId: propertyId.shortValue,
-                qualityId: qualityId.shortValue,
+                conceptId: input.conceptId.shortValue,
+                abstractionId: input.abstractionId.shortValue,
+                orderNumber: input.orderNumber?.value ?? null,
+                propertyId: input.propertyId.shortValue,
+                qualityId: input.qualityId.shortValue,
             });
         }
     }
 
-    public static async assertConceptIsActive({
-        conceptId,
-        transaction,
-    }: {
+    public static async assertConceptIsActive(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<void> {
         const isActive = await DbGraphManager.conceptIsActive({
-            conceptId: conceptId,
-            transaction: transaction,
+            conceptId: input.conceptId,
+            transaction: input.transaction,
         });
         if (!isActive) {
-            throw new ConceptNotFoundException({ id: conceptId.shortValue });
+            throw new ConceptNotFoundException({
+                id: input.conceptId.shortValue,
+            });
         }
     }
 
-    public static async assertConceptsAreActive({
-        conceptIds,
-        transaction,
-    }: {
+    public static async assertConceptsAreActive(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<void> {
         const haveActiveAbstraction =
             await DbGraphManager.conceptsHaveActiveAbstraction({
                 abstractionId: ID_CONCEPT,
-                conceptIds: conceptIds,
-                transaction: transaction,
+                conceptIds: input.conceptIds,
+                transaction: input.transaction,
             });
         if (!haveActiveAbstraction) {
-            const exceptions = conceptIds.map((id) => {
+            const exceptions = input.conceptIds.map((id) => {
                 // TODO: Filter only the ones that couldn't be found
                 return new ConceptNotFoundException({ id: id.shortValue });
             });
@@ -240,33 +211,30 @@ export class DbGraphManager {
         }
     }
 
-    public static async assertNewRelationIsValid({
-        rawRelation,
-        transaction,
-    }: {
+    public static async assertNewRelationIsValid(input: {
         rawRelation: RawRelation;
         transaction: DbTransaction;
     }): Promise<void> {
-        if (rawRelation.isAbstraction) {
+        if (input.rawRelation.isAbstraction) {
             await DbGraphManager.assertConceptIsActive({
-                conceptId: rawRelation.conceptId,
-                transaction: transaction,
+                conceptId: input.rawRelation.conceptId,
+                transaction: input.transaction,
             });
             await DbGraphManager.assertConceptIsActive({
-                conceptId: rawRelation.qualityId,
-                transaction: transaction,
+                conceptId: input.rawRelation.qualityId,
+                transaction: input.transaction,
             });
             // TODO: Check relations can be inherited for concepts and all concretions
         } else {
             await DbGraphManager.assertConceptHasActiveAbstraction({
-                conceptId: rawRelation.conceptId,
-                abstractionId: rawRelation.abstractionId,
-                transaction: transaction,
+                conceptId: input.rawRelation.conceptId,
+                abstractionId: input.rawRelation.abstractionId,
+                transaction: input.transaction,
             });
             await DbGraphManager.assertConceptHasActiveAbstraction({
-                conceptId: rawRelation.qualityId,
-                abstractionId: rawRelation.propertyId,
-                transaction: transaction,
+                conceptId: input.rawRelation.qualityId,
+                abstractionId: input.rawRelation.propertyId,
+                transaction: input.transaction,
             });
         }
         // TODO: Check relation rules
@@ -275,34 +243,23 @@ export class DbGraphManager {
         // TODO: Ensure all validations!
     }
 
-    public static async conceptHasActiveAbstraction({
-        abstractionId,
-        conceptId,
-        transaction,
-    }: {
+    public static async conceptHasActiveAbstraction(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<boolean> {
         const exists = await DbGraphManager.conceptHasActiveRelation({
             abstractionId: ID_ABSTRACTION,
-            conceptId: conceptId,
+            conceptId: input.conceptId,
             orderNumber: null,
             propertyId: ID_ABSTRACTION,
-            qualityId: abstractionId,
-            transaction: transaction,
+            qualityId: input.abstractionId,
+            transaction: input.transaction,
         });
         return exists;
     }
 
-    public static async conceptHasActiveRelation({
-        abstractionId,
-        conceptId,
-        orderNumber,
-        propertyId,
-        qualityId,
-        transaction,
-    }: {
+    public static async conceptHasActiveRelation(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         orderNumber: RelationOrderNumber | null;
@@ -315,105 +272,88 @@ export class DbGraphManager {
                 field: ActiveRelationField.ConceptId,
                 filter: {
                     type: UuidFilterTypeValue.IsEqualTo,
-                    value: conceptId,
+                    value: input.conceptId,
                 },
             },
             {
                 field: ActiveRelationField.AbstractionId,
                 filter: {
                     type: UuidFilterTypeValue.IsEqualTo,
-                    value: abstractionId,
+                    value: input.abstractionId,
                 },
             },
             {
                 field: ActiveRelationField.PropertyId,
                 filter: {
                     type: UuidFilterTypeValue.IsEqualTo,
-                    value: propertyId,
+                    value: input.propertyId,
                 },
             },
             {
                 field: ActiveRelationField.QualityId,
                 filter: {
                     type: UuidFilterTypeValue.IsEqualTo,
-                    value: qualityId,
+                    value: input.qualityId,
                 },
             },
         ];
-        if (null != orderNumber) {
+        if (null != input.orderNumber) {
             filters.push({
                 field: ActiveRelationField.OrderNumber,
                 filter: {
                     type: IntegerNumberFilterType.IsEqualTo,
-                    value: orderNumber.value,
+                    value: input.orderNumber.value,
                 },
             });
         }
         const exists = await ActiveRelationSqlExecutor.selectExists(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             filters,
         );
         return exists;
     }
 
-    public static async conceptIsActive({
-        conceptId,
-        transaction,
-    }: {
+    public static async conceptIsActive(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<boolean> {
         const exists = await DbGraphManager.conceptHasActiveAbstraction({
             abstractionId: ID_CONCEPT,
-            conceptId: conceptId,
-            transaction: transaction,
+            conceptId: input.conceptId,
+            transaction: input.transaction,
         });
         return exists;
     }
 
-    public static async conceptsAreActive({
-        conceptIds,
-        transaction,
-    }: {
+    public static async conceptsAreActive(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<boolean> {
         const exist = await DbGraphManager.conceptsHaveActiveAbstraction({
             abstractionId: ID_CONCEPT,
-            conceptIds: conceptIds,
-            transaction: transaction,
+            conceptIds: input.conceptIds,
+            transaction: input.transaction,
         });
         return exist;
     }
 
-    public static async conceptsHaveActiveAbstraction({
-        abstractionId,
-        conceptIds,
-        transaction,
-    }: {
+    public static async conceptsHaveActiveAbstraction(input: {
         abstractionId: ConceptId;
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<boolean> {
         const exist = await DbGraphManager.conceptsHaveActiveRelation({
-            conceptIds: conceptIds,
+            conceptIds: input.conceptIds,
             abstractionId: ID_ABSTRACTION,
             propertyId: ID_ABSTRACTION,
             orderNumber: null,
-            qualityId: abstractionId,
-            transaction: transaction,
+            qualityId: input.abstractionId,
+            transaction: input.transaction,
         });
         return exist;
     }
 
-    public static async conceptsHaveActiveRelation({
-        abstractionId,
-        conceptIds,
-        orderNumber,
-        propertyId,
-        qualityId,
-        transaction,
-    }: {
+    public static async conceptsHaveActiveRelation(input: {
         abstractionId: ConceptId;
         conceptIds: ConceptId[];
         orderNumber: RelationOrderNumber | null;
@@ -423,14 +363,14 @@ export class DbGraphManager {
     }): Promise<boolean> {
         // TODO: Instead of running a query for every concept ID,
         // check everything in a single query.
-        for (const conceptId of conceptIds) {
+        for (const conceptId of input.conceptIds) {
             const exist = await DbGraphManager.conceptHasActiveRelation({
                 conceptId: conceptId,
-                abstractionId: abstractionId,
-                propertyId: propertyId,
-                orderNumber: orderNumber,
-                qualityId: qualityId,
-                transaction: transaction,
+                abstractionId: input.abstractionId,
+                propertyId: input.propertyId,
+                orderNumber: input.orderNumber,
+                qualityId: input.qualityId,
+                transaction: input.transaction,
             });
             if (!exist) {
                 return false;
@@ -439,16 +379,13 @@ export class DbGraphManager {
         return true;
     }
 
-    public static async findConceptById({
-        conceptId,
-        transaction,
-    }: {
+    public static async findConceptById(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<Concept | null> {
         const conceptIsActive = await DbGraphManager.conceptIsActive({
-            conceptId: conceptId,
-            transaction: transaction,
+            conceptId: input.conceptId,
+            transaction: input.transaction,
         });
         if (!conceptIsActive) {
             return null;
@@ -459,13 +396,13 @@ export class DbGraphManager {
                     field: ConceptField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: conceptId,
+                        value: input.conceptId,
                     },
                 },
             ],
         };
         const dbConcepts = await ConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (0 === dbConcepts.length) {
@@ -476,10 +413,7 @@ export class DbGraphManager {
         return concept;
     }
 
-    public static async findConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async findConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<Concept[]> {
@@ -487,10 +421,10 @@ export class DbGraphManager {
         // find all in a single query (a JOIN would be necessary in order
         // to check if it has any relations).
         const concepts: Concept[] = [];
-        for (const conceptId of conceptIds) {
+        for (const conceptId of input.conceptIds) {
             const concept = await DbGraphManager.findConceptById({
                 conceptId: conceptId,
-                transaction: transaction,
+                transaction: input.transaction,
             });
             if (null == concept) {
                 continue;
@@ -500,43 +434,39 @@ export class DbGraphManager {
         return concepts;
     }
 
-    public static async getConceptById({
-        conceptId,
-        transaction,
-    }: {
+    public static async getConceptById(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<Concept> {
         const concept = await DbGraphManager.findConceptById({
-            conceptId: conceptId,
-            transaction: transaction,
+            conceptId: input.conceptId,
+            transaction: input.transaction,
         });
 
         if (null == concept) {
-            throw new ConceptNotFoundException({ id: conceptId.shortValue });
+            throw new ConceptNotFoundException({
+                id: input.conceptId.shortValue,
+            });
         }
 
         return concept;
     }
 
-    public static async getConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async getConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<Concept[]> {
         const concepts = await DbGraphManager.findConceptsByIdInBulk({
-            conceptIds: conceptIds,
-            transaction: transaction,
+            conceptIds: input.conceptIds,
+            transaction: input.transaction,
         });
 
-        if (conceptIds.length !== concepts.length) {
+        if (input.conceptIds.length !== concepts.length) {
             const exceptions = [];
             const foundConceptIdShortValues = concepts.map(
                 (c) => c.id.shortValue,
             );
-            for (const conceptId of conceptIds) {
+            for (const conceptId of input.conceptIds) {
                 if (foundConceptIdShortValues.includes(conceptId.shortValue)) {
                     continue;
                 }
@@ -551,11 +481,7 @@ export class DbGraphManager {
         return concepts;
     }
 
-    public static async inheritRelations({
-        conceptId,
-        abstractionId,
-        transaction,
-    }: {
+    public static async inheritRelations(input: {
         conceptId: ConceptId;
         abstractionId: ConceptId;
         transaction: DbTransaction;
@@ -566,17 +492,17 @@ export class DbGraphManager {
                     field: ActiveRelationField.ConceptId,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: conceptId,
+                        value: input.conceptId,
                     },
                 },
             ],
         };
         const relationsOfConcept = await DbGraphManager.searchActiveRelations({
             criteria: conceptCriteria,
-            transaction: transaction,
+            transaction: input.transaction,
         });
-        const sourceRelationIdsOfConcept = relationsOfConcept.map(
-            (r) => r.sourceRelationId,
+        const originRelationIdsOfConcept = relationsOfConcept.map(
+            (r) => r.originRelationId,
         );
 
         const abstractionCriteria: ActiveRelationSearchCriteria = {
@@ -585,30 +511,30 @@ export class DbGraphManager {
                     field: ActiveRelationField.ConceptId,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: abstractionId,
+                        value: input.abstractionId,
                     },
                 },
                 {
-                    field: ActiveRelationField.SourceRelationId,
+                    field: ActiveRelationField.OriginRelationId,
                     filter: {
                         type: UuidFilterTypeList.IsNotIn,
-                        value: sourceRelationIdsOfConcept,
+                        value: originRelationIdsOfConcept,
                     },
                 },
             ],
         };
         const relationsOfAbstraction =
             await DbGraphManager.searchActiveRelations({
-                transaction: transaction,
+                transaction: input.transaction,
                 criteria: abstractionCriteria,
             });
 
         const rawRelations = relationsOfAbstraction.map((r) =>
             RawRelation.createInherited({
-                operationConceptId: transaction.concept.operationId,
-                transactionConceptId: transaction.concept.id,
-                transactionConceptDate: transaction.concept.date,
-                inheritorConceptId: conceptId,
+                operationConceptId: input.transaction.concept.operationId,
+                transactionConceptId: input.transaction.concept.id,
+                transactionConceptDate: input.transaction.concept.date,
+                inheritorConceptId: input.conceptId,
                 originalRelation: r.toRaw(),
             }),
         );
@@ -617,21 +543,18 @@ export class DbGraphManager {
             DbRawRelation.fromDomain(r),
         );
         await RawRelationSqlExecutor.insertInBulk(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbRawRelations,
         );
     }
 
-    public static async searchActiveRelations({
-        criteria,
-        transaction,
-    }: {
+    public static async searchActiveRelations(input: {
         criteria: ActiveRelationSearchCriteria;
         transaction: DbTransaction;
     }): Promise<ActiveRelation[]> {
         const dbRelations = await ActiveRelationSqlExecutor.select(
-            transaction.prismaTx,
-            criteria,
+            input.transaction.prismaTx,
+            input.criteria,
         );
         const relations = dbRelations.map((r) => r.toDomain());
         return relations;

@@ -71,8 +71,8 @@ BEGIN
         transaction_date,
         operation_concept_id,
         transaction_concept_id,
-        relation_id_source,
-        concept_id_source
+        relation_id_origin,
+        concept_id_origin
     ) VALUES (
         relation_id,
         input_concept_id,
@@ -115,8 +115,8 @@ BEGIN
         transaction_date,
         operation_concept_id,
         transaction_concept_id,
-        relation_id_source,
-        concept_id_source
+        relation_id_origin,
+        concept_id_origin
     ) VALUES (
         relation_id,
         input_concept_id,
@@ -155,8 +155,8 @@ BEGIN
         transaction_date,
         operation_concept_id,
         transaction_concept_id,
-        relation_id_source,
-        concept_id_source
+        relation_id_origin,
+        concept_id_origin
     )
     SELECT
         input_concept_id,
@@ -169,18 +169,18 @@ BEGIN
         first_transaction_date_value,
         cid_datakoro_first_operation(),
         cid_datakoro_first_transaction(),
-        r1.relation_id_source,
-        r1.concept_id_source
+        r1.relation_id_origin,
+        r1.concept_id_origin
     FROM relation r1
     WHERE
         r1.concept_id_concept = input_abstraction_id
-        AND r1.concept_id_source <> input_concept_id
+        AND r1.concept_id_origin <> input_concept_id
         AND NOT EXISTS(
             SELECT 1
             FROM relation r2
             WHERE
                 r2.concept_id_concept = input_concept_id
-                AND r2.relation_id_source = r1.relation_id_source
+                AND r2.relation_id_origin = r1.relation_id_origin
             LIMIT 1
         );
 END;

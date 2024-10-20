@@ -25,18 +25,14 @@ export class DbTransactionConcept {
     operation_concept_id: string;
     transaction_date: Date;
 
-    constructor({
-        concept_id,
-        operation_concept_id,
-        transaction_date,
-    }: {
+    constructor(input: {
         concept_id: string;
         operation_concept_id: string;
         transaction_date: Date;
     }) {
-        this.concept_id = concept_id;
-        this.operation_concept_id = operation_concept_id;
-        this.transaction_date = transaction_date;
+        this.concept_id = input.concept_id;
+        this.operation_concept_id = input.operation_concept_id;
+        this.transaction_date = input.transaction_date;
     }
 
     public static fromDomain(

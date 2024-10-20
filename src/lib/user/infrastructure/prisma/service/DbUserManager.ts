@@ -27,14 +27,7 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbUserManager {
-    public static async addUserConcept({
-        email,
-        encryptedPassword,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-        transaction,
-    }: {
+    public static async addUserConcept(input: {
         email: UserConceptEmail;
         encryptedPassword: ServerUserConceptEncryptedPassword;
         isAdmin: UserConceptIsAdmin;
@@ -44,32 +37,29 @@ export class DbUserManager {
     }): Promise<ServerUserConcept> {
         const concept = await DbGraphManager.addConcept({
             abstractionId: ID_DATAKORO_USER,
-            transaction: transaction,
+            transaction: input.transaction,
         });
 
         const userConcept = ServerUserConcept.create({
             conceptId: concept.id,
-            email: email,
-            encryptedPassword: encryptedPassword,
-            isAdmin: isAdmin,
-            restrictedAccess: restrictedAccess,
-            suspendedAccount: suspendedAccount,
-            transactionConceptDate: transaction.concept.date,
+            email: input.email,
+            encryptedPassword: input.encryptedPassword,
+            isAdmin: input.isAdmin,
+            restrictedAccess: input.restrictedAccess,
+            suspendedAccount: input.suspendedAccount,
+            transactionConceptDate: input.transaction.concept.date,
         });
 
         const dbUserConcept = DbUserConcept.fromServerDomain(userConcept);
         await UserConceptSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbUserConcept,
         );
 
         return userConcept;
     }
 
-    public static async findUserConceptByEmail({
-        email,
-        transaction,
-    }: {
+    public static async findUserConceptByEmail(input: {
         email: UserConceptEmail;
         transaction: DbTransaction;
     }): Promise<ServerUserConcept | null> {
@@ -80,14 +70,14 @@ export class DbUserManager {
                     filter: {
                         caseSensitive: true,
                         type: TextFilterTypeValue.IsEqualTo,
-                        value: email.value,
+                        value: input.email.value,
                     },
                 },
             ],
         };
 
         const dbUserConcepts = await UserConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbUserConcepts.length) {
@@ -99,10 +89,7 @@ export class DbUserManager {
         return userConcept;
     }
 
-    public static async findUserConceptById({
-        userConceptId,
-        transaction,
-    }: {
+    public static async findUserConceptById(input: {
         userConceptId: UserConceptId;
         transaction: DbTransaction;
     }): Promise<ServerUserConcept | null> {
@@ -112,13 +99,13 @@ export class DbUserManager {
                     field: ServerUserConceptField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: userConceptId,
+                        value: input.userConceptId,
                     },
                 },
             ],
         };
         const dbUserConcepts = await UserConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbUserConcepts.length) {
@@ -129,10 +116,7 @@ export class DbUserManager {
         return userConcept;
     }
 
-    public static async findUserConceptsByIdInBulk({
-        userConceptIds,
-        transaction,
-    }: {
+    public static async findUserConceptsByIdInBulk(input: {
         userConceptIds: UserConceptId[];
         transaction: DbTransaction;
     }): Promise<ServerUserConcept[]> {
@@ -142,13 +126,13 @@ export class DbUserManager {
                     field: ServerUserConceptField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: userConceptIds,
+                        value: input.userConceptIds,
                     },
                 },
             ],
         };
         const dbServerUserConcepts = await UserConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         const userConcepts = dbServerUserConcepts.map((c) =>
@@ -157,10 +141,7 @@ export class DbUserManager {
         return userConcepts;
     }
 
-    public static async findUserSessionById({
-        userSessionId,
-        transaction,
-    }: {
+    public static async findUserSessionById(input: {
         userSessionId: UserSessionId;
         transaction: DbTransaction;
     }): Promise<ServerUserSession | null> {
@@ -170,13 +151,13 @@ export class DbUserManager {
                     field: ServerUserSessionField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: userSessionId,
+                        value: input.userSessionId,
                     },
                 },
             ],
         };
         const dbUserSessions = await UserSessionSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbUserSessions.length) {
@@ -187,95 +168,82 @@ export class DbUserManager {
         return userSession;
     }
 
-    public static async finishUserSession({
-        userSessionId,
-        transaction,
-    }: {
+    public static async finishUserSession(input: {
         userSessionId: UserSessionId;
         transaction: DbTransaction;
     }): Promise<void> {
         const userSession = await DbUserManager.getUserSessionById({
-            userSessionId: userSessionId,
-            transaction: transaction,
+            userSessionId: input.userSessionId,
+            transaction: input.transaction,
         });
         await UserSessionSqlExecutor.delete(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             userSession.id,
         );
     }
 
-    public static async finishUserSessions({
-        userSessionIds,
-        transaction,
-    }: {
+    public static async finishUserSessions(input: {
         userSessionIds: UserSessionId[];
         transaction: DbTransaction;
     }): Promise<void> {
         // TODO: Do it in a single query
-        for (const userSessionId of userSessionIds) {
+        for (const userSessionId of input.userSessionIds) {
             await DbUserManager.finishUserSession({
                 userSessionId: userSessionId,
-                transaction: transaction,
+                transaction: input.transaction,
             });
         }
     }
 
-    public static async getUserConceptByEmail({
-        email,
-        transaction,
-    }: {
+    public static async getUserConceptByEmail(input: {
         email: UserConceptEmail;
         transaction: DbTransaction;
     }): Promise<ServerUserConcept> {
         const userConcept = await DbUserManager.findUserConceptByEmail({
-            email: email,
-            transaction: transaction,
-        });
-
-        if (null == userConcept) {
-            throw new UserConceptNotFoundException({ email: email.value });
-        }
-
-        return userConcept;
-    }
-
-    public static async getUserConceptById({
-        userConceptId,
-        transaction,
-    }: {
-        userConceptId: UserConceptId;
-        transaction: DbTransaction;
-    }): Promise<ServerUserConcept> {
-        const userConcept = await DbUserManager.findUserConceptById({
-            userConceptId: userConceptId,
-            transaction: transaction,
+            email: input.email,
+            transaction: input.transaction,
         });
 
         if (null == userConcept) {
             throw new UserConceptNotFoundException({
-                id: userConceptId.shortValue,
+                email: input.email.value,
             });
         }
 
         return userConcept;
     }
 
-    public static async getUserConceptsByIdInBulk({
-        userConceptIds,
-        transaction,
-    }: {
+    public static async getUserConceptById(input: {
+        userConceptId: UserConceptId;
+        transaction: DbTransaction;
+    }): Promise<ServerUserConcept> {
+        const userConcept = await DbUserManager.findUserConceptById({
+            userConceptId: input.userConceptId,
+            transaction: input.transaction,
+        });
+
+        if (null == userConcept) {
+            throw new UserConceptNotFoundException({
+                id: input.userConceptId.shortValue,
+            });
+        }
+
+        return userConcept;
+    }
+
+    public static async getUserConceptsByIdInBulk(input: {
         userConceptIds: UserConceptId[];
         transaction: DbTransaction;
     }): Promise<ServerUserConcept[]> {
         const userConcepts = await DbUserManager.findUserConceptsByIdInBulk({
-            userConceptIds: userConceptIds,
-            transaction: transaction,
+            userConceptIds: input.userConceptIds,
+            transaction: input.transaction,
         });
 
-        if (userConceptIds.length !== userConcepts.length) {
+        if (input.userConceptIds.length !== userConcepts.length) {
             const exceptions = [];
             const foundIdValues = userConcepts.map((c) => c.id.shortValue);
-            for (const userConceptId of userConceptIds) {
+            for (const userConceptId of input.userConceptIds) {
                 if (foundIdValues.includes(userConceptId.shortValue)) {
                     continue;
                 }
@@ -290,106 +258,83 @@ export class DbUserManager {
         return userConcepts;
     }
 
-    public static async getUserSessionById({
-        userSessionId,
-        transaction,
-    }: {
+    public static async getUserSessionById(input: {
         userSessionId: UserSessionId;
         transaction: DbTransaction;
     }): Promise<ServerUserSession> {
         const userSession = await DbUserManager.findUserSessionById({
-            userSessionId: userSessionId,
-            transaction: transaction,
+            userSessionId: input.userSessionId,
+            transaction: input.transaction,
         });
 
         if (null == userSession) {
             throw new UserSessionNotFoundException({
-                id: userSessionId.longValue,
+                id: input.userSessionId.longValue,
             });
         }
 
         return userSession;
     }
 
-    public static async startUserSession({
-        userId,
-        ip,
-        userAgentRequestHeader,
-        transaction,
-    }: {
+    public static async startUserSession(input: {
         userId: UserConceptId;
         ip: UserSessionIp;
         userAgentRequestHeader: UserSessionUserAgentRequestHeader;
         transaction: DbTransaction;
     }): Promise<ServerUserSession> {
         const userSession = ServerUserSession.create({
-            userId: userId,
-            ip: ip,
-            userAgentRequestHeader: userAgentRequestHeader,
+            userId: input.userId,
+            ip: input.ip,
+            userAgentRequestHeader: input.userAgentRequestHeader,
         });
         const dbUserSession = DbUserSession.fromServerDomain(userSession);
         await UserSessionSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbUserSession,
         );
         return userSession;
     }
 
-    public static async updateUserSessionAfterLogin({
-        userSessionId,
-        ip,
-        userAgentRequestHeader,
-        transaction,
-    }: {
+    public static async updateUserSessionAfterLogin(input: {
         userSessionId: UserConceptId;
         ip: UserSessionIp;
         userAgentRequestHeader: UserSessionUserAgentRequestHeader;
         transaction: DbTransaction;
     }): Promise<void> {
         const userSession = await DbUserManager.getUserSessionById({
-            userSessionId: userSessionId,
-            transaction: transaction,
+            userSessionId: input.userSessionId,
+            transaction: input.transaction,
         });
         userSession.updateAfterLogin({
-            ip: ip,
-            userAgentRequestHeader: userAgentRequestHeader,
+            ip: input.ip,
+            userAgentRequestHeader: input.userAgentRequestHeader,
         });
 
         const dbUserSession = DbUserSession.fromServerDomain(userSession);
         await UserSessionSqlExecutor.update(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbUserSession,
         );
     }
 
-    public static async updateUserSessionLastRequestDate({
-        userSessionId,
-        transaction,
-    }: {
+    public static async updateUserSessionLastRequestDate(input: {
         userSessionId: UserConceptId;
         transaction: DbTransaction;
     }): Promise<void> {
         const userSession = await DbUserManager.getUserSessionById({
-            userSessionId: userSessionId,
-            transaction: transaction,
+            userSessionId: input.userSessionId,
+            transaction: input.transaction,
         });
         userSession.updateLastRequestDate();
 
         const dbUserSession = DbUserSession.fromServerDomain(userSession);
         await UserSessionSqlExecutor.update(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbUserSession,
         );
     }
 
-    public static async updateUserConcept({
-        userId,
-        email,
-        isAdmin,
-        restrictedAccess,
-        suspendedAccount,
-        transaction,
-    }: {
+    public static async updateUserConcept(input: {
         userId: UserConceptId;
         email: UserConceptEmail;
         isAdmin: UserConceptIsAdmin;
@@ -398,43 +343,37 @@ export class DbUserManager {
         transaction: DbTransaction;
     }): Promise<void> {
         const userConcept = await DbUserManager.getUserConceptById({
-            userConceptId: userId,
-            transaction: transaction,
+            userConceptId: input.userId,
+            transaction: input.transaction,
         });
         userConcept.update({
-            email: email,
-            isAdmin: isAdmin,
-            restrictedAccess: restrictedAccess,
-            suspendedAccount: suspendedAccount,
+            email: input.email,
+            isAdmin: input.isAdmin,
+            restrictedAccess: input.restrictedAccess,
+            suspendedAccount: input.suspendedAccount,
         });
 
         const dbUserConcept = DbUserConcept.fromServerDomain(userConcept);
         await UserConceptSqlExecutor.update(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbUserConcept,
         );
     }
 
-    public static async updateUserPassword({
-        userId,
-        encryptedPassword,
-        transaction,
-    }: {
+    public static async updateUserPassword(input: {
         userId: UserConceptId;
         encryptedPassword: ServerUserConceptEncryptedPassword;
         transaction: DbTransaction;
     }): Promise<void> {
         const userConcept = await DbUserManager.getUserConceptById({
-            userConceptId: userId,
-            transaction: transaction,
+            userConceptId: input.userId,
+            transaction: input.transaction,
         });
-        userConcept.updatePassword({
-            encryptedPassword: encryptedPassword,
-        });
+        userConcept.updatePassword(input.encryptedPassword);
 
         const dbUserConcept = DbUserConcept.fromServerDomain(userConcept);
         await UserConceptSqlExecutor.update(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbUserConcept,
         );
     }

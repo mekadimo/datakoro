@@ -25,19 +25,7 @@ export class ActiveRelationRule {
     readonly uniquePerBranch: RelationRuleUniquePerBranch;
     readonly uniquePerConcept: RelationRuleUniquePerConcept;
 
-    constructor({
-        abstractionId,
-        conceptId,
-        fixedOrder,
-        id,
-        maxRelationNumber,
-        operationId,
-        propertyId,
-        transactionDate,
-        transactionId,
-        uniquePerBranch,
-        uniquePerConcept,
-    }: {
+    constructor(input: {
         abstractionId: RelationRuleAbstractionId;
         conceptId: RelationRuleConceptId;
         fixedOrder: RelationRuleFixedOrder;
@@ -50,17 +38,17 @@ export class ActiveRelationRule {
         uniquePerBranch: RelationRuleUniquePerBranch;
         uniquePerConcept: RelationRuleUniquePerConcept;
     }) {
-        this.abstractionId = abstractionId;
-        this.conceptId = conceptId;
-        this.fixedOrder = fixedOrder;
-        this.id = id;
-        this.maxRelationNumber = maxRelationNumber;
-        this.operationId = operationId;
-        this.propertyId = propertyId;
-        this.transactionDate = transactionDate;
-        this.transactionId = transactionId;
-        this.uniquePerBranch = uniquePerBranch;
-        this.uniquePerConcept = uniquePerConcept;
+        this.abstractionId = input.abstractionId;
+        this.conceptId = input.conceptId;
+        this.fixedOrder = input.fixedOrder;
+        this.id = input.id;
+        this.maxRelationNumber = input.maxRelationNumber;
+        this.operationId = input.operationId;
+        this.propertyId = input.propertyId;
+        this.transactionDate = input.transactionDate;
+        this.transactionId = input.transactionId;
+        this.uniquePerBranch = input.uniquePerBranch;
+        this.uniquePerConcept = input.uniquePerConcept;
     }
 
     public static fromRaw(
@@ -98,15 +86,7 @@ export class ActiveRelationRule {
         });
     }
 
-    public update({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-        fixedOrder,
-        uniquePerBranch,
-        uniquePerConcept,
-        maxRelationNumber,
-    }: {
+    public update(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
@@ -118,28 +98,28 @@ export class ActiveRelationRule {
         const id = RelationRuleId.generateRandom();
 
         const operationId = new RelationRuleOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationRuleTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationRuleTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new RawRelationRule({
             abstractionId: this.abstractionId,
             conceptId: this.conceptId,
-            fixedOrder: fixedOrder,
+            fixedOrder: input.fixedOrder,
             id: id,
             isActive: new RelationRuleIsActive(true),
-            maxRelationNumber: maxRelationNumber,
+            maxRelationNumber: input.maxRelationNumber,
             operationId: operationId,
             propertyId: this.propertyId,
             transactionDate: transactionDate,
             transactionId: transactionId,
-            uniquePerBranch: uniquePerBranch,
-            uniquePerConcept: uniquePerConcept,
+            uniquePerBranch: input.uniquePerBranch,
+            uniquePerConcept: input.uniquePerConcept,
         });
     }
 }
@@ -198,20 +178,7 @@ export class RawRelationRule {
     readonly uniquePerBranch: RelationRuleUniquePerBranch;
     readonly uniquePerConcept: RelationRuleUniquePerConcept;
 
-    constructor({
-        abstractionId,
-        conceptId,
-        fixedOrder,
-        id,
-        isActive,
-        maxRelationNumber,
-        operationId,
-        propertyId,
-        transactionDate,
-        transactionId,
-        uniquePerBranch,
-        uniquePerConcept,
-    }: {
+    constructor(input: {
         abstractionId: RelationRuleAbstractionId;
         conceptId: RelationRuleConceptId;
         fixedOrder: RelationRuleFixedOrder;
@@ -225,32 +192,21 @@ export class RawRelationRule {
         uniquePerBranch: RelationRuleUniquePerBranch;
         uniquePerConcept: RelationRuleUniquePerConcept;
     }) {
-        this.abstractionId = abstractionId;
-        this.conceptId = conceptId;
-        this.fixedOrder = fixedOrder;
-        this.id = id;
-        this.isActive = isActive;
-        this.maxRelationNumber = maxRelationNumber;
-        this.operationId = operationId;
-        this.propertyId = propertyId;
-        this.transactionDate = transactionDate;
-        this.transactionId = transactionId;
-        this.uniquePerBranch = uniquePerBranch;
-        this.uniquePerConcept = uniquePerConcept;
+        this.abstractionId = input.abstractionId;
+        this.conceptId = input.conceptId;
+        this.fixedOrder = input.fixedOrder;
+        this.id = input.id;
+        this.isActive = input.isActive;
+        this.maxRelationNumber = input.maxRelationNumber;
+        this.operationId = input.operationId;
+        this.propertyId = input.propertyId;
+        this.transactionDate = input.transactionDate;
+        this.transactionId = input.transactionId;
+        this.uniquePerBranch = input.uniquePerBranch;
+        this.uniquePerConcept = input.uniquePerConcept;
     }
 
-    public static create({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-        conceptConceptId,
-        conceptAbstractionId,
-        conceptPropertyId,
-        maxRelationNumber,
-        fixedOrder,
-        uniquePerBranch,
-        uniquePerConcept,
-    }: {
+    public static create(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
@@ -264,59 +220,57 @@ export class RawRelationRule {
     }): RawRelationRule {
         const id = RelationRuleId.generateRandom();
 
-        const conceptId = new RelationRuleConceptId(conceptConceptId.longValue);
+        const conceptId = new RelationRuleConceptId(
+            input.conceptConceptId.longValue,
+        );
 
         const abstractionId = new RelationRuleAbstractionId(
-            conceptAbstractionId.longValue,
+            input.conceptAbstractionId.longValue,
         );
         const propertyId = new RelationRulePropertyId(
-            conceptPropertyId.longValue,
+            input.conceptPropertyId.longValue,
         );
 
         const operationId = new RelationRuleOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationRuleTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationRuleTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new RawRelationRule({
             abstractionId: abstractionId,
             conceptId: conceptId,
-            fixedOrder: fixedOrder,
+            fixedOrder: input.fixedOrder,
             id: id,
             isActive: new RelationRuleIsActive(true),
-            maxRelationNumber: maxRelationNumber,
+            maxRelationNumber: input.maxRelationNumber,
             operationId: operationId,
             propertyId: propertyId,
             transactionDate: transactionDate,
             transactionId: transactionId,
-            uniquePerBranch: uniquePerBranch,
-            uniquePerConcept: uniquePerConcept,
+            uniquePerBranch: input.uniquePerBranch,
+            uniquePerConcept: input.uniquePerConcept,
         });
     }
 
-    public setInactive({
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-    }: {
+    public setInactive(input: {
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
     }): RawRelationRule {
         const id = RelationRuleId.generateRandom();
         const operationId = new RelationRuleOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new RelationRuleTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new RelationRuleTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         // TODO: Assert structural rules are not deleted!

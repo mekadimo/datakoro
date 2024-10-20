@@ -6,20 +6,16 @@ import { UserConceptId } from "../../../../user/domain/model/UserConcept";
 export class DbTransaction extends Transaction {
     public prismaTx: PrismaTransaction;
 
-    constructor({
-        prismaTx,
-        transactionConcept,
-        userId,
-    }: {
+    constructor(input: {
         prismaTx: PrismaTransaction;
         transactionConcept: TransactionConcept | null;
         userId: UserConceptId | null;
     }) {
         super({
-            transactionConcept: transactionConcept,
-            userId: userId,
+            transactionConcept: input.transactionConcept,
+            userId: input.userId,
         });
 
-        this.prismaTx = prismaTx;
+        this.prismaTx = input.prismaTx;
     }
 }

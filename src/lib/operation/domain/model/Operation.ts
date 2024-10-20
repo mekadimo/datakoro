@@ -9,18 +9,14 @@ export abstract class Operation {
     public transaction: Transaction;
     public readonly userId: UserConceptId | null;
 
-    constructor({
-        operationConcept,
-        transaction,
-        userId,
-    }: {
+    constructor(input: {
         operationConcept: OperationConcept | null;
         transaction: Transaction;
         userId: UserConceptId | null;
     }) {
-        this.userId = userId;
-        this._concept = operationConcept;
-        this.transaction = transaction;
+        this.userId = input.userId;
+        this._concept = input.operationConcept;
+        this.transaction = input.transaction;
     }
 
     public get concept(): OperationConcept {

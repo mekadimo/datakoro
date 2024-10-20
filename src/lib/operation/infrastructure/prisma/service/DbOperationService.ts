@@ -56,10 +56,7 @@ export class DbOperationService extends OperationService {
         );
     }
 
-    protected async run<T>({
-        isReadOnly,
-        runFunction,
-    }: {
+    protected async run<T>(input: {
         isReadOnly: boolean;
         runFunction: (operation: Operation) => Promise<T>;
     }): Promise<T> {
@@ -69,7 +66,7 @@ export class DbOperationService extends OperationService {
                     let transaction: DbTransaction;
                     let operation: DbOperation;
 
-                    if (isReadOnly) {
+                    if (input.isReadOnly) {
                         transaction = new DbTransaction({
                             transactionConcept: null,
                             userId: this.userId,
@@ -124,7 +121,7 @@ export class DbOperationService extends OperationService {
                         );
                     }
 
-                    const functionResult = await runFunction(operation);
+                    const functionResult = await input.runFunction(operation);
                     return functionResult;
                 },
                 {

@@ -13,43 +13,33 @@ export class Concept {
     readonly transactionDate: ConceptTransactionDate;
     readonly transactionId: ConceptTransactionId;
 
-    constructor({
-        id,
-        operationId,
-        transactionDate,
-        transactionId,
-    }: {
+    constructor(input: {
         id: ConceptId;
         operationId: ConceptOperationId;
         transactionDate: ConceptTransactionDate;
         transactionId: ConceptTransactionId;
     }) {
-        this.id = id;
-        this.operationId = operationId;
-        this.transactionDate = transactionDate;
-        this.transactionId = transactionId;
+        this.id = input.id;
+        this.operationId = input.operationId;
+        this.transactionDate = input.transactionDate;
+        this.transactionId = input.transactionId;
     }
 
-    public static create({
-        conceptId,
-        operationConceptId,
-        transactionConceptId,
-        transactionConceptDate,
-    }: {
+    public static create(input: {
         conceptId: ConceptId;
         operationConceptId: OperationConceptId;
         transactionConceptId: TransactionConceptId;
         transactionConceptDate: TransactionConceptDate;
     }): Concept {
-        const id = new ConceptId(conceptId.longValue);
+        const id = new ConceptId(input.conceptId.longValue);
         const operationId = new ConceptOperationId(
-            operationConceptId.longValue,
+            input.operationConceptId.longValue,
         );
         const transactionId = new ConceptTransactionId(
-            transactionConceptId.longValue,
+            input.transactionConceptId.longValue,
         );
         const transactionDate = new ConceptTransactionDate(
-            transactionConceptDate.value,
+            input.transactionConceptDate.value,
         );
 
         return new Concept({

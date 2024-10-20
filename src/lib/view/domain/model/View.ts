@@ -17,21 +17,16 @@ export abstract class View {
     readonly parameters: { [key: string]: string };
     readonly names: { [conceptIdShort: string]: ConceptName };
 
-    constructor({
-        conceptId,
-        abstractionId,
-        parameters,
-        names,
-    }: {
+    constructor(input: {
         conceptId: ConceptId;
         abstractionId: ConceptId | null;
         parameters: { [key: string]: string };
         names: { [conceptIdShort: string]: ConceptName };
     }) {
-        this.conceptId = conceptId;
-        this.abstractionId = abstractionId;
-        this.parameters = parameters;
-        this.names = names;
+        this.conceptId = input.conceptId;
+        this.abstractionId = input.abstractionId;
+        this.parameters = input.parameters;
+        this.names = input.names;
     }
 
     public getConceptName(conceptId: ConceptId): ConceptName | null {
@@ -45,23 +40,18 @@ export abstract class View {
 export abstract class AbstractionView extends View {
     declare readonly abstractionId: ConceptId;
 
-    constructor({
-        conceptId,
-        abstractionId,
-        parameters,
-        names,
-    }: {
+    constructor(input: {
         conceptId: ConceptId;
         abstractionId: ConceptId;
         parameters: { [key: string]: string };
         names: { [conceptIdShort: string]: ConceptName };
     }) {
-        AbstractionView.assertIsSupported(abstractionId);
+        AbstractionView.assertIsSupported(input.abstractionId);
         super({
-            conceptId: conceptId,
-            abstractionId: abstractionId,
-            parameters: parameters,
-            names: names,
+            conceptId: input.conceptId,
+            abstractionId: input.abstractionId,
+            parameters: input.parameters,
+            names: input.names,
         });
     }
 
@@ -81,21 +71,17 @@ export abstract class AbstractionView extends View {
 export abstract class ConceptView extends View {
     declare readonly abstractionId: null;
 
-    constructor({
-        conceptId,
-        parameters,
-        names,
-    }: {
+    constructor(input: {
         conceptId: ConceptId;
         parameters: { [key: string]: string };
         names: { [conceptIdShort: string]: ConceptName };
     }) {
-        ConceptView.assertIsSupported(conceptId);
+        ConceptView.assertIsSupported(input.conceptId);
         super({
-            conceptId: conceptId,
+            conceptId: input.conceptId,
             abstractionId: null,
-            parameters: parameters,
-            names: names,
+            parameters: input.parameters,
+            names: input.names,
         });
     }
 

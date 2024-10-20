@@ -26,18 +26,14 @@ export class DbTextConcept {
     text_value: string;
     transaction_date: Date;
 
-    constructor({
-        concept_id,
-        text_value,
-        transaction_date,
-    }: {
+    constructor(input: {
         concept_id: string;
         text_value: string;
         transaction_date: Date;
     }) {
-        this.concept_id = concept_id;
-        this.text_value = text_value;
-        this.transaction_date = transaction_date;
+        this.concept_id = input.concept_id;
+        this.text_value = input.text_value;
+        this.transaction_date = input.transaction_date;
     }
 
     public static fromDomain(textConcept: TextConcept): DbTextConcept {

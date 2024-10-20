@@ -14,37 +14,31 @@ import { UuidFilterTypeList } from "../../../../shared/domain/model/Filter";
 import { UuidFilterTypeValue } from "../../../../shared/domain/model/Filter";
 
 export class DbNumberConceptManager {
-    public static async addNumberConcept({
-        transaction,
-        value,
-    }: {
+    public static async addNumberConcept(input: {
         transaction: DbTransaction;
         value: NumberConceptValue;
     }): Promise<NumberConcept> {
         const concept = await DbGraphManager.addConcept({
-            transaction: transaction,
+            transaction: input.transaction,
             abstractionId: ID_DATAKORO_NUMBER,
         });
 
         const numberConcept = NumberConcept.create({
             conceptId: concept.id,
-            value: value,
-            transactionConceptDate: transaction.concept.date,
+            value: input.value,
+            transactionConceptDate: input.transaction.concept.date,
         });
 
         const dbNumberConcept = DbNumberConcept.fromDomain(numberConcept);
         await NumberConceptSqlExecutor.insert(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             dbNumberConcept,
         );
 
         return numberConcept;
     }
 
-    public static async findNumberConceptById({
-        transaction,
-        conceptId,
-    }: {
+    public static async findNumberConceptById(input: {
         transaction: DbTransaction;
         conceptId: ConceptId;
     }): Promise<NumberConcept | null> {
@@ -54,13 +48,13 @@ export class DbNumberConceptManager {
                     field: NumberConceptField.Id,
                     filter: {
                         type: UuidFilterTypeValue.IsEqualTo,
-                        value: conceptId,
+                        value: input.conceptId,
                     },
                 },
             ],
         };
         const dbNumberConcepts = await NumberConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbNumberConcepts.length) {
@@ -71,10 +65,7 @@ export class DbNumberConceptManager {
         return numberConcept;
     }
 
-    public static async findNumberConceptByValue({
-        transaction,
-        value,
-    }: {
+    public static async findNumberConceptByValue(input: {
         transaction: DbTransaction;
         value: NumberConceptValue;
     }): Promise<NumberConcept | null> {
@@ -84,14 +75,14 @@ export class DbNumberConceptManager {
                     field: NumberConceptField.Value,
                     filter: {
                         type: DecimalNumberFilterType.IsEqualTo,
-                        value: value.value,
+                        value: input.value.value,
                     },
                 },
             ],
         };
 
         const dbNumberConcepts = await NumberConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         if (dbNumberConcepts.length) {
@@ -103,10 +94,7 @@ export class DbNumberConceptManager {
         return numberConcept;
     }
 
-    public static async findNumberConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async findNumberConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<NumberConcept[]> {
@@ -116,80 +104,71 @@ export class DbNumberConceptManager {
                     field: NumberConceptField.Id,
                     filter: {
                         type: UuidFilterTypeList.IsIn,
-                        value: conceptIds,
+                        value: input.conceptIds,
                     },
                 },
             ],
         };
         const dbNumberConcepts = await NumberConceptSqlExecutor.select(
-            transaction.prismaTx,
+            input.transaction.prismaTx,
             criteria,
         );
         const numberConcepts = dbNumberConcepts.map((c) => c.toDomain());
         return numberConcepts;
     }
 
-    public static async getNumberConceptById({
-        conceptId,
-        transaction,
-    }: {
+    public static async getNumberConceptById(input: {
         conceptId: ConceptId;
         transaction: DbTransaction;
     }): Promise<NumberConcept> {
         const numberConcept =
             await DbNumberConceptManager.findNumberConceptById({
-                conceptId: conceptId,
-                transaction: transaction,
+                conceptId: input.conceptId,
+                transaction: input.transaction,
             });
 
         if (null == numberConcept) {
             throw new NumberConceptNotFoundException({
-                id: conceptId.shortValue,
+                id: input.conceptId.shortValue,
             });
         }
 
         return numberConcept;
     }
 
-    public static async getNumberConceptByValue({
-        value,
-        transaction,
-    }: {
+    public static async getNumberConceptByValue(input: {
         value: NumberConceptValue;
         transaction: DbTransaction;
     }): Promise<NumberConcept> {
         const numberConcept =
             await DbNumberConceptManager.findNumberConceptByValue({
-                transaction: transaction,
-                value: value,
+                transaction: input.transaction,
+                value: input.value,
             });
 
         if (null == numberConcept) {
             throw new NumberConceptNotFoundException({
-                value: value.value,
+                value: input.value.value,
             });
         }
 
         return numberConcept;
     }
 
-    public static async getNumberConceptsByIdInBulk({
-        conceptIds,
-        transaction,
-    }: {
+    public static async getNumberConceptsByIdInBulk(input: {
         conceptIds: ConceptId[];
         transaction: DbTransaction;
     }): Promise<NumberConcept[]> {
         const numberConcepts =
             await DbNumberConceptManager.findNumberConceptsByIdInBulk({
-                conceptIds: conceptIds,
-                transaction: transaction,
+                conceptIds: input.conceptIds,
+                transaction: input.transaction,
             });
 
-        if (conceptIds.length !== numberConcepts.length) {
+        if (input.conceptIds.length !== numberConcepts.length) {
             const exceptions = [];
             const foundIdValues = numberConcepts.map((c) => c.id.shortValue);
-            for (const conceptId of conceptIds) {
+            for (const conceptId of input.conceptIds) {
                 if (foundIdValues.includes(conceptId.shortValue)) {
                     continue;
                 }

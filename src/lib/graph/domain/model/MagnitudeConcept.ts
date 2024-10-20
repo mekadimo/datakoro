@@ -14,21 +14,16 @@ export class MagnitudeConcept {
     readonly magnitudeId: MagnitudeConceptMagnitudeId;
     readonly transactionDate: MagnitudeConceptTransactionDate;
 
-    constructor({
-        id,
-        interval,
-        magnitudeId,
-        transactionDate,
-    }: {
+    constructor(input: {
         id: MagnitudeConceptId;
         interval: MagnitudeConceptInterval;
         magnitudeId: MagnitudeConceptMagnitudeId;
         transactionDate: MagnitudeConceptTransactionDate;
     }) {
-        this.id = id;
-        this.interval = interval;
-        this.magnitudeId = magnitudeId;
-        this.transactionDate = transactionDate;
+        this.id = input.id;
+        this.interval = input.interval;
+        this.magnitudeId = input.magnitudeId;
+        this.transactionDate = input.transactionDate;
     }
 
     public static create(

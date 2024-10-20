@@ -14,31 +14,25 @@ interface ViewData {
 export class ConceptAbstractionView extends AbstractionView {
     readonly data: ViewData;
 
-    constructor({
-        abstractionId,
-        conceptId,
-        data,
-        parameters,
-        names,
-    }: {
+    constructor(input: {
         abstractionId: ConceptId;
         conceptId: ConceptId;
         data: ViewData;
         parameters: { [key: string]: string };
         names: { [conceptIdShort: string]: ConceptName };
     }) {
-        if (abstractionId.shortValue !== ID_CONCEPT.shortValue) {
+        if (input.abstractionId.shortValue !== ID_CONCEPT.shortValue) {
             throw new ConceptNotFoundException({
-                id: abstractionId.shortValue,
+                id: input.abstractionId.shortValue,
             });
         }
 
         super({
-            conceptId: conceptId,
-            abstractionId: abstractionId,
-            parameters: parameters,
-            names: names,
+            conceptId: input.conceptId,
+            abstractionId: input.abstractionId,
+            parameters: input.parameters,
+            names: input.names,
         });
-        this.data = data;
+        this.data = input.data;
     }
 }

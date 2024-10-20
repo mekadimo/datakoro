@@ -6,15 +6,12 @@ export abstract class Transaction {
     private readonly _concept: TransactionConcept | null;
     public readonly userId: UserConceptId | null;
 
-    constructor({
-        transactionConcept,
-        userId,
-    }: {
+    constructor(input: {
         transactionConcept: TransactionConcept | null;
         userId: UserConceptId | null;
     }) {
-        this._concept = transactionConcept;
-        this.userId = userId;
+        this._concept = input.transactionConcept;
+        this.userId = input.userId;
     }
 
     public get concept(): TransactionConcept {

@@ -77,15 +77,7 @@ export class DbUserConcept {
     suspended_account: boolean;
     transaction_date: Date;
 
-    constructor({
-        concept_id,
-        email,
-        encrypted_password,
-        is_admin,
-        restricted_access,
-        suspended_account,
-        transaction_date,
-    }: {
+    constructor(input: {
         concept_id: string;
         email: string;
         encrypted_password: string;
@@ -94,13 +86,13 @@ export class DbUserConcept {
         suspended_account: boolean;
         transaction_date: Date;
     }) {
-        this.concept_id = concept_id;
-        this.email = email;
-        this.encrypted_password = encrypted_password;
-        this.is_admin = is_admin;
-        this.restricted_access = restricted_access;
-        this.suspended_account = suspended_account;
-        this.transaction_date = transaction_date;
+        this.concept_id = input.concept_id;
+        this.email = input.email;
+        this.encrypted_password = input.encrypted_password;
+        this.is_admin = input.is_admin;
+        this.restricted_access = input.restricted_access;
+        this.suspended_account = input.suspended_account;
+        this.transaction_date = input.transaction_date;
     }
 
     public static fromServerDomain(

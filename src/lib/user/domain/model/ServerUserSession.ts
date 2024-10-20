@@ -24,16 +24,7 @@ export class ServerUserSession {
     userAgentRequestHeader: UserSessionUserAgentRequestHeader;
     readonly userId: UserSessionUserId;
 
-    constructor({
-        csrfToken,
-        id,
-        ip,
-        lastRequestDate,
-        secretKey,
-        startDate,
-        userAgentRequestHeader,
-        userId,
-    }: {
+    constructor(input: {
         csrfToken: UserSessionCsrfToken;
         id: UserSessionId;
         ip: UserSessionIp;
@@ -43,21 +34,17 @@ export class ServerUserSession {
         userAgentRequestHeader: UserSessionUserAgentRequestHeader;
         userId: UserSessionUserId;
     }) {
-        this.csrfToken = csrfToken;
-        this.id = id;
-        this.ip = ip;
-        this.lastRequestDate = lastRequestDate;
-        this.secretKey = secretKey;
-        this.startDate = startDate;
-        this.userAgentRequestHeader = userAgentRequestHeader;
-        this.userId = userId;
+        this.csrfToken = input.csrfToken;
+        this.id = input.id;
+        this.ip = input.ip;
+        this.lastRequestDate = input.lastRequestDate;
+        this.secretKey = input.secretKey;
+        this.startDate = input.startDate;
+        this.userAgentRequestHeader = input.userAgentRequestHeader;
+        this.userId = input.userId;
     }
 
-    public static create({
-        userId,
-        ip,
-        userAgentRequestHeader,
-    }: {
+    public static create(input: {
         userId: UserConceptId;
         ip: UserSessionIp;
         userAgentRequestHeader: UserSessionUserAgentRequestHeader;
@@ -73,12 +60,12 @@ export class ServerUserSession {
         return new ServerUserSession({
             csrfToken: csrfToken,
             id: id,
-            ip: ip,
+            ip: input.ip,
             lastRequestDate: lastRequestDate,
             secretKey: secretKey,
             startDate: startDate,
-            userAgentRequestHeader: userAgentRequestHeader,
-            userId: userId,
+            userAgentRequestHeader: input.userAgentRequestHeader,
+            userId: input.userId,
         });
     }
 
@@ -93,16 +80,13 @@ export class ServerUserSession {
         });
     }
 
-    public updateAfterLogin({
-        ip,
-        userAgentRequestHeader,
-    }: {
+    public updateAfterLogin(input: {
         ip: UserSessionIp;
         userAgentRequestHeader: UserSessionUserAgentRequestHeader;
     }) {
         this.lastRequestDate = new UserSessionLastRequestDate(new Date());
-        this.ip = ip;
-        this.userAgentRequestHeader = userAgentRequestHeader;
+        this.ip = input.ip;
+        this.userAgentRequestHeader = input.userAgentRequestHeader;
     }
 
     public updateLastRequestDate() {

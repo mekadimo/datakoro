@@ -53,20 +53,17 @@ export abstract class DomainException {
     public readonly i18nKey: string;
     public readonly i18nContext: DomainExceptionI18nContext;
 
-    constructor({
-        code,
-        context,
-    }: {
+    constructor(input: {
         code: DomainExceptionCode;
         context?: DomainExceptionContext;
     }) {
-        this.code = code;
-        this.i18nKey = "exception." + code;
-        this.context = Object.freeze(context ?? {});
+        this.code = input.code;
+        this.i18nKey = "exception." + input.code;
+        this.context = Object.freeze(input.context ?? {});
 
         const i18nContext: DomainExceptionI18nContext = {};
-        for (const key in context) {
-            i18nContext[key] = context[key]?.toString() ?? "null";
+        for (const key in input.context) {
+            i18nContext[key] = input.context[key]?.toString() ?? "null";
         }
         this.i18nContext = Object.freeze(i18nContext);
     }
